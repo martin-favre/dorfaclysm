@@ -1,0 +1,113 @@
+﻿#include "Vector2D.h"
+#include "Vector2DInt.h"
+#include "Helpers.h"
+Vector2D::Vector2D() {}
+Vector2D::Vector2D(double _x, double _y): x(_x), y(_y) {}
+Vector2D::Vector2D(const Vector2DInt & vec): x(vec.x), y(vec.y){}
+
+Vector2D & Vector2D::operator+=(const Vector2D & other)
+{
+	x += other.x;
+	y += other.y;
+	return *this;
+}
+
+bool Vector2D::operator==(const Vector2D& other)const
+{
+	return x == other.x && y == other.y;
+}
+
+Vector2D Vector2D::operator-(const Vector2D & other)const
+{
+	return Vector2D(x - other.x, y - other.y);
+}
+
+Vector2D Vector2D::operator+(const Vector2D & other)const
+{
+	return Vector2D(x + other.x, y + other.y);
+}
+
+double Vector2D::angle(const Vector2D& vec)
+{
+		double ret = atanf(vec.y / vec.x) / Helpers::TO_RAD;
+		if (vec.x < 0 && vec.y < 0) // quadrant Ⅲ
+			ret = 180 + ret;
+		else if (vec.x < 0) // quadrant Ⅱ
+			ret = 180 + ret; // it actually substracts
+		else if (vec.y < 0) // quadrant Ⅳ
+			ret = 270 + (90 + ret); // it actually substracts
+		return ret;
+
+}
+
+double Vector2D::magnitude()const
+{
+	return sqrt(x*x + y*y);
+}
+
+double Vector2D::magnitude_squared() const
+{
+	return x * x + y * y;
+}
+
+double Vector2D::dot(const Vector2D& other) const
+{
+	return x * other.x + y * other.y;
+}
+
+void Vector2D::rotate_around(double angle, const Vector2D pivot_point)
+{
+	angle = Helpers::TO_RAD*angle;
+	const double angle_sin = sin(angle);
+	const double angle_cos = cos(angle);
+	x -= pivot_point.x;
+	y -= pivot_point.y;
+	const double xnew = x*angle_cos - y*angle_sin;
+	const double ynew = x*angle_sin + y*angle_cos;
+	x = xnew + pivot_point.x;
+	y = ynew + pivot_point.y;
+}
+
+void Vector2D::rotate(double angle)
+{
+	angle = Helpers::TO_RAD*angle;
+	double oldX = x;
+	x = x*cos(angle) + y*sin(angle);
+	y = y*cos(angle) - oldX*sin(angle);
+}
+
+bool Vector2D::equals(const Vector2D & other, double accuracy)
+{
+	const bool same_x = abs(other.x-x) < accuracy;
+	const bool same_y = abs(other.y-y) < accuracy;
+	return same_x && same_y;
+}
+
+Vector2D Vector2D::perpendicular() const
+{
+	return Vector2D(-y, x);
+}
+
+Vector2D Vector2D::normalized() const
+{
+	const double magn = magnitude();
+	return Vector2D(x/magn, y/magn);
+}
+
+void Vector2D::set(double _x, double _y) {
+	x = _x;
+	y = _y;
+}
+
+void Vector2D::round_to_int(){
+	x = double(round(x));
+	y = double(round(y));
+}
+
+SDL_Point Vector2D::get_sdl_point() {
+	return SDL_Point{int(round(x)), int(round(y))};
+}
+std::ostream & operator <<(std::ostream & stream, const Vector2D & p){
+	stream << "(" << p.x << "," << p.y << ")";
+	return stream;
+}
