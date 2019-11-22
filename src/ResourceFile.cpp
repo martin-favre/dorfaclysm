@@ -1,56 +1,56 @@
 #include "ResourceFile.h"
 #include "Logging.h"
-ResourceFile::ResourceFile(void* data, uint size):
-	m_file_p(SDL_RWFromConstMem(data, size)),
-	m_size(size)
+#include <SDL_ttf.h>
+
+ResourceFile::ResourceFile(const void* data, size_t size):
+	mFile(SDL_RWFromConstMem(data, size)),
+	mSize(size)
 {
 	Logging::log("Created ResourceFile of size " + std::to_string(size));
-	ASSERT(m_file_p, "Resource file failed to load, SDL_Error: " + std::string(SDL_GetError()));
+	ASSERT(mFile, "Resource file failed to load, SDL_Error: " + std::string(SDL_GetError()));
 }
 
 ResourceFile::~ResourceFile() {
 	Logging::log("Destroying Resourcefile ");
-	if (!m_is_font) {
-		ASSERT(m_file_p, "Resource file should not be null");
-		SDL_RWclose(m_file_p);
-	}
+	// if (!mIsFont) {
+		ASSERT(mFile, "Resource file should not be null");
+		SDL_RWclose(mFile);
+	// }
 }
 
-SDL_RWops * ResourceFile::get_sdl_rwops() {
-	return m_file_p;
-}
-uint ResourceFile::get_size() {
-	return m_size;
+size_t ResourceFile::getSize() const {
+	return mSize;
 }
 
-TTF_Font * ResourceFile::get_font(int size) {
-	ASSERT(m_file_p, "file is null");
-	m_is_font = true;
+TTF_Font* ResourceFile::getAsFont(int fontSize) const {
+	ASSERT(mFile, "file is null");
+	mIsFont = true;
 
 	/*
 	Bug in SDL - Must free memory here
 	calling SDL_RWclose will result in
 	segmentation fault when reading the font
 	*/
-	const int free_memory_please = 1;
-	TTF_Font * out = TTF_OpenFontRW(m_file_p, free_memory_please, size);
+	// const int free_memory_please = 1;
+	const int do_not_clear_source = 0;
+	TTF_Font * out = TTF_OpenFontRW(mFile, do_not_clear_source, fontSize);
 	ASSERT(out, "Could not parse file as font " + std::string(TTF_GetError()));
 	return out;
 }
 
-SDL_Surface * ResourceFile::get_surface() {
-	ASSERT(m_file_p, "file is null");
+SDL_Surface* ResourceFile::getAsSurface() const{
+	ASSERT(mFile, "file is null");
 	const int do_not_clear_source = 0;
-	SDL_Surface * out = IMG_Load_RW(m_file_p, do_not_clear_source);
+	SDL_Surface * out = IMG_Load_RW(mFile, do_not_clear_source);
 	ASSERT(out, "Could not parse file as surface " + std::string(SDL_GetError()));
 	return out;
 }
 
-std::string ResourceFile::get_text() {
-	ASSERT(m_file_p, "file is null");
-	char * buf = new char[m_size];
+std::string ResourceFile::getAsText() const {
+	ASSERT(mFile, "file is null");
+	char * buf = new char[mSize];
 	int objects = 1; //It's a single object
-	size_t result = SDL_RWread(m_file_p, buf, m_size, objects);
+	size_t result = SDL_RWread(mFile, buf, mSize, objects);
 	ASSERT(result != 0, "Could parse file as text " + std::string(SDL_GetError()));
 	std::string text(buf);
 	delete buf;

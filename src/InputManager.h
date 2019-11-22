@@ -80,7 +80,7 @@ private:
 	static void reset_text_input();
 	static void set_mouse(int key, bool value, const SDL_MouseButtonEvent & evnt);
 	static std::string m_text_input;
-	static bool m_initialized;
+	static bool mInitialized;
 	static bool m_mouse_state;
 	static SDL_Event m_sdl_event;
 	static bool m_key_states[NOF_SDL_SCANCODES_BUFFER];

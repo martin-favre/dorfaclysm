@@ -1,3 +1,3 @@
 cd build    
 CC=clang CXX=clang cmake .
-make
+make -j4

@@ -1,29 +1,38 @@
 #include "Sprite.h"
+#include <SDL_image.h>
 
+Sprite::Sprite(SDL_Texture *newText) : Sprite(newText, false)
+{
+}
 
-Sprite::Sprite(SDL_Texture * new_text): m_texture(new_text) {
+Sprite::Sprite(SDL_Texture *newText, bool isFont) : mTexture(newText), mIsFont(isFont)
+{
 	int width = 0;
 	int height = 0;
-	SDL_QueryTexture(m_texture, NULL, NULL, &width, &height);
-	m_rect = {0, 0, width, height};
+	SDL_QueryTexture(mTexture, NULL, NULL, &width, &height);
+	mRect = {0, 0, width, height};
 }
 
-Sprite::Sprite(SDL_Texture * new_text, const SDL_Rect & new_rect):
-	m_texture(new_text),
-	m_rect(new_rect) {}
-
-
-SDL_Texture * Sprite::get_sdl_texture()const {
-	return m_texture;
+Sprite::~Sprite()
+{
+	if (mIsFont)
+	{
+		// Since text textures can't be cached
+		// We have to close the texture
+		ASSERT(mTexture, "Is not supposed to be null");
+		SDL_DestroyTexture(mTexture);
+	}
 }
 
-void Sprite::set_sdl_rect(int x, int y, int w, int h) {
-	m_rect.x = x;
-	m_rect.y = y;
-	m_rect.w = w;
-	m_rect.h = h;
+Sprite::Sprite(SDL_Texture *newText, const SDL_Rect &newRect) : mTexture(newText),
+																mRect(newRect) {}
+
+SDL_Texture *Sprite::get_sdl_texture() const
+{
+	return mTexture;
 }
 
-const SDL_Rect * Sprite::get_sdl_rect() const {
-	return &m_rect;
+const SDL_Rect *Sprite::get_sdl_rect() const
+{
+	return &mRect;
 }

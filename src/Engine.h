@@ -24,7 +24,7 @@
 
 	Engine::initialize(); 
 	Engine::register_scene("scene1", foo);
-	Engine::load_scene("scene1);
+	Engine::load_scene("scene1");
 	Engine::start();
 	Engine::teardown();
 
@@ -39,12 +39,11 @@ public:
 	static void stop();
 	template <class gameobject_type>
 	static gameobject_type* add_gameobject();
-	template <class gameobject_type>
-	static gameobject_type * get_gameobject(const GAMEOBJECT_ID id);
 	static void remove_gameobject(GameObject * gObj);
 	static size_t get_gameobject_count();
 	static void register_scene(const std::string & name,  void (*scenecreator)());
 	static void load_scene(const std::string & name);
+
 private:
 	Engine();
 	static void main_loop();
@@ -58,45 +57,30 @@ private:
 	static void remove_gameobject_from_world();
 	static void run_setups(std::vector<GameObject*> & );
 	
-	static std::map<std::string, void(*)()> m_scenes;
+	static std::map<std::string, void(*)()> mScenes;
 
-	static std::string m_scene_to_load;
-	static bool m_about_to_load_scene;
-
-	static bool m_running;
-	static bool m_initialized;
-	static std::vector<GameObject *> m_gameobjects;
-	static std::queue<GameObject*> m_gameobjects_to_add;
-	static std::set<GameObject*> m_gameobjects_to_remove;
-	static GAMEOBJECT_ID m_latest_gameobject_id;
-	static ResourceArchive m_engine_resources;
+	static std::string mSceneToLoad;
+	static bool mAboutToLoadScene;
+	static GAMEOBJECT_ID mLatestGameobjectId;
+	static bool mRunning;
+	static bool mInitialized;
+	static std::vector<std::unique_ptr<GameObject>> mGameobjects;
+	static std::queue<std::unique_ptr<GameObject>> mGameobjectsToAdd;
+	static std::set<GameObject*> mGameobjectsToRemove;
+	static ResourceArchive mEngineResources;
 };
 
 template <class gameobject_type>
 gameobject_type * Engine::add_gameobject() {
-	GAMEOBJECT_ID id = Engine::m_latest_gameobject_id;
-	gameobject_type * new_object = new gameobject_type(id);
-	if (Engine::m_latest_gameobject_id == std::numeric_limits<int>::max()) {
+	GAMEOBJECT_ID id = Engine::mLatestGameobjectId;
+	std::unique_ptr<GameObject> newObject = std::make_unique<GameObject>(id);
+	if (Engine::mLatestGameobjectId >= std::numeric_limits<int>::max()) {
 		Logging::log("Warning, gameobject id overflow");
 	}
-	Engine::m_gameobjects_to_add.push(new_object);
-	Engine::m_latest_gameobject_id++;
+	gameobject_type * out = newObject.get();
+	Engine::mGameobjectsToAdd.push(std::move(newObject));
+	Engine::mLatestGameobjectId++;
 	Logging::log("Added gameobject id " + std::to_string(id) + " type " + typeid(gameobject_type).name());
-	if (!m_running) put_gameobjects_into_world();
-	return new_object;
-}
-
-template <class gameobject_type>
-gameobject_type * Engine::get_gameobject(const GAMEOBJECT_ID id) {
-	for (auto gObj_in_world = m_gameobjects.begin();
-		gObj_in_world != m_gameobjects.end();
-		++gObj_in_world
-		)
-	{
-		if ((*gObj_in_world)->id() == id)
-		{
-			std::static_pointer_cast<gameobject_type>(*gObj_in_world);
-		}
-	}
-	return nullptr;
+	if (!mRunning) put_gameobjects_into_world();
+	return out;
 }

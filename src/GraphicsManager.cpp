@@ -1,22 +1,21 @@
 #include "GraphicsManager.h"
 #include "Logging.h"
 #include "Helpers.h"
-
+#include "SpriteLoader.h"
 /* Parameters */
 
-bool GraphicsManager::m_initialized = false;
-SDL_Window * GraphicsManager::m_main_window = nullptr;
-SDL_Surface * GraphicsManager::m_main_surface = nullptr;
-SDL_Renderer * GraphicsManager::m_main_renderer = nullptr;	
-unsigned int GraphicsManager::m_screen_width = 1024 ;
-unsigned int GraphicsManager::m_screen_height = 768;
-std::map<ResourceFile *, SDL_Texture*> GraphicsManager::m_textures;
-std::string GraphicsManager::m_window_name = "Let's go bois";
-SDL_Color GraphicsManager::m_render_draw_color = {0, 0, 0, 1};
+bool GraphicsManager::mInitialized = false;
+SDL_Window * GraphicsManager::mMainWindow = nullptr;
+SDL_Surface * GraphicsManager::mMainSurface = nullptr;
+SDL_Renderer * GraphicsManager::mMainRenderer = nullptr;	
+unsigned int GraphicsManager::mScreenWidth = 1024 ;
+unsigned int GraphicsManager::mScreenHeight = 768;
+std::string GraphicsManager::mWindowName = "Let's go bois";
+SDL_Color GraphicsManager::mRenderDrawColor = {0, 0, 0, 1};
 /* Public Routines */
 
 void GraphicsManager::initialize() {
-	ASSERT(!GraphicsManager::m_initialized, "You cannot initialize GraphicsManager twice!");
+	ASSERT(!GraphicsManager::mInitialized, "You cannot initialize GraphicsManager twice!");
 	int ok = SDL_Init(SDL_INIT_VIDEO);
 	ASSERT(ok >= 0,
 	       "SDL could not initialize! SDL_Error: " +  std::string(SDL_GetError()));
@@ -24,31 +23,31 @@ void GraphicsManager::initialize() {
 	{
 		Logging::log("Warning: Linear texture filtering not enabled!");
 	}
-	GraphicsManager::m_main_window = SDL_CreateWindow(
-	                                     GraphicsManager::m_window_name.c_str(),
+	GraphicsManager::mMainWindow = SDL_CreateWindow(
+	                                     GraphicsManager::mWindowName.c_str(),
 	                                     SDL_WINDOWPOS_UNDEFINED,
 	                                     SDL_WINDOWPOS_UNDEFINED,
-	                                     m_screen_width,
-	                                     m_screen_height,
+	                                     mScreenWidth,
+	                                     mScreenHeight,
 	                                     SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE );
 
-	ASSERT(GraphicsManager::m_main_window != NULL,
+	ASSERT(GraphicsManager::mMainWindow != NULL,
 	       "Window could not be created! SDL_Error:" + std::string(SDL_GetError()));
 
-	GraphicsManager::m_main_renderer = SDL_CreateRenderer(
-	                                       GraphicsManager::m_main_window,
+	GraphicsManager::mMainRenderer = SDL_CreateRenderer(
+	                                       GraphicsManager::mMainWindow,
 	                                       -1,
 	                                       SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-	ASSERT(GraphicsManager::m_main_renderer != NULL,
+	ASSERT(GraphicsManager::mMainRenderer != NULL,
 	       "Renderer could not be created! SDL Error: " + std::string(SDL_GetError()));
 
-	GraphicsManager::m_main_surface = SDL_GetWindowSurface( GraphicsManager::m_main_window );
+	GraphicsManager::mMainSurface = SDL_GetWindowSurface( GraphicsManager::mMainWindow );
 
-	ASSERT(GraphicsManager::m_main_surface != NULL,
+	ASSERT(GraphicsManager::mMainSurface != NULL,
 	       "Surface could not be created! SDL Error: " + std::string(SDL_GetError()));
 
-	SDL_SetRenderDrawColor(GraphicsManager::m_main_renderer, 0x0, 0x0, 0x0, 0x0);
+	SDL_SetRenderDrawColor(GraphicsManager::mMainRenderer, 0x0, 0x0, 0x0, 0x0);
 
 	int img_flags = IMG_INIT_PNG;
 	ok = IMG_Init(img_flags) & img_flags;
@@ -59,28 +58,27 @@ void GraphicsManager::initialize() {
 	ok = TTF_Init();
 	ASSERT(ok != -1,
 	       "SDL_ttf could not initialize! SDL_ttf Error: " + std::string(TTF_GetError()));
-	GraphicsManager::m_initialized = true;
+	GraphicsManager::mInitialized = true;
 	Logging::log("Finished initialing GraphicsManager");
 }
 
 void GraphicsManager::teardown() {
-	for (auto i = GraphicsManager::m_textures.begin(); i != GraphicsManager::m_textures.end(); ++i) {
-		SDL_DestroyTexture((*i).second);
-	}
-	SDL_DestroyRenderer(GraphicsManager::m_main_renderer);
-	SDL_FreeSurface(GraphicsManager::m_main_surface);
-	SDL_DestroyWindow(GraphicsManager::m_main_window );
+
+	SpriteLoader::teardown();
+	SDL_DestroyRenderer(GraphicsManager::mMainRenderer);
+	SDL_FreeSurface(GraphicsManager::mMainSurface);
+	SDL_DestroyWindow(GraphicsManager::mMainWindow );
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
-	m_initialized = false;
+	mInitialized = false;
 	Logging::log("Finished teardown GraphicsManager");
 		
 }
 
 void GraphicsManager::prepare_rendering() {
-	set_render_draw_color(0, 0, 0, 0);
-	SDL_RenderClear(GraphicsManager::m_main_renderer);
+	set_render_draw_color(SDL_Color{0,0,0,0});
+	SDL_RenderClear(GraphicsManager::mMainRenderer);
 }
 
 void GraphicsManager::render_texture(const Sprite & sprite,
@@ -111,7 +109,7 @@ void GraphicsManager::render_texture(const Sprite & sprite,
 	                    int(round(scaley))
 	                   };
 	SDL_RenderCopyEx(
-	    GraphicsManager::m_main_renderer,  	// SDL_Renderer*          renderer
+	    GraphicsManager::mMainRenderer,  	// SDL_Renderer*          renderer
 	    texture, 							// SDL_Texture*           texture
 	    sprite.get_sdl_rect(), 				// const SDL_Rect*        srcrect. selects a subpart of the texture.
 	    &dstrect, 							// const SDL_Rect*        dstrect
@@ -134,14 +132,14 @@ void GraphicsManager::draw_circle(const Vector2D & pos, int radius)
 	while (x >= y)
 	{
 		//  Each of the following renders an octant of the circle
-		SDL_RenderDrawPoint(m_main_renderer, posx + x, posy - y);
-		SDL_RenderDrawPoint(m_main_renderer, posx + x, posy + y);
-		SDL_RenderDrawPoint(m_main_renderer, posx - x, posy - y);
-		SDL_RenderDrawPoint(m_main_renderer, posx - x, posy + y);
-		SDL_RenderDrawPoint(m_main_renderer, posx + y, posy - x);
-		SDL_RenderDrawPoint(m_main_renderer, posx + y, posy + x);
-		SDL_RenderDrawPoint(m_main_renderer, posx - y, posy - x);
-		SDL_RenderDrawPoint(m_main_renderer, posx - y, posy + x);
+		SDL_RenderDrawPoint(mMainRenderer, posx + x, posy - y);
+		SDL_RenderDrawPoint(mMainRenderer, posx + x, posy + y);
+		SDL_RenderDrawPoint(mMainRenderer, posx - x, posy - y);
+		SDL_RenderDrawPoint(mMainRenderer, posx - x, posy + y);
+		SDL_RenderDrawPoint(mMainRenderer, posx + y, posy - x);
+		SDL_RenderDrawPoint(mMainRenderer, posx + y, posy + x);
+		SDL_RenderDrawPoint(mMainRenderer, posx - y, posy - x);
+		SDL_RenderDrawPoint(mMainRenderer, posx - y, posy + x);
 
 		if (err <= 0)
 		{
@@ -163,7 +161,7 @@ void GraphicsManager::draw_point(const Vector2D& pos)
 {
 	int x = Helpers::round_to_int(pos.x);
 	int y = Helpers::round_to_int(pos.y);
-	int success = SDL_RenderDrawPoint(m_main_renderer, x, y);
+	int success = SDL_RenderDrawPoint(mMainRenderer, x, y);
 	ASSERT(success == 0, SDL_GetError());
 }
 
@@ -173,60 +171,19 @@ void GraphicsManager::draw_line(const Vector2D& from, const Vector2D& to)
 	int from_y = (int)round(from.y);
 	int to_x = (int)round(to.x);
 	int to_y = (int)round(to.y);
-	int success = SDL_RenderDrawLine(m_main_renderer, from_x, from_y, to_x, to_y);
+	int success = SDL_RenderDrawLine(mMainRenderer, from_x, from_y, to_x, to_y);
 	ASSERT(success == 0, SDL_GetError());
 }
 
 void GraphicsManager::execute_rendering() {
-	SDL_RenderPresent(GraphicsManager::m_main_renderer);
+	SDL_RenderPresent(GraphicsManager::mMainRenderer);
 }
 
-SDL_Texture * GraphicsManager::load_texture(ResourceFile * file) {
-	if (m_textures.count(file)) return m_textures[file];
-	Logging::log("Loaded texture ");
-    SDL_Surface * new_surf = file->get_surface();
-    SDL_Texture * new_text = GraphicsManager::convert_surface_to_texture(new_surf);
-	m_textures[file] = new_text;
-	return m_textures[file];
-}
-
-SDL_Texture * GraphicsManager::get_texture(ResourceFile * file) {
-	ASSERT(m_textures.count(file), "Has not loaded texture ");
-	return m_textures[file];
-}
-
-SDL_Texture * GraphicsManager::get_texture_from_text(const std::string & text, TTF_Font * font , SDL_Color & textColor) {
-	SDL_Surface * new_surf = TTF_RenderText_Solid(font, text.c_str(), textColor);
-	SDL_Texture *  new_text = convert_surface_to_texture(new_surf);
-	SDL_FreeSurface(new_surf);
-	return new_text;
-}
-
-void GraphicsManager::set_render_draw_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+void GraphicsManager::set_render_draw_color(const SDL_Color& color)
 {
-	SDL_SetRenderDrawColor(GraphicsManager::m_main_renderer,
-		r,
-		g,
-		b,
-		a);
-}
-
-void GraphicsManager::destroy_texture(SDL_Texture * text)
-{
-	ASSERT(text != nullptr, "Trying to destroy nullptr");
-	SDL_DestroyTexture(text);
-}
-
-/* Private routines */
-
-SDL_Surface * GraphicsManager::load_image_to_surface(const std::string & filename) {
-	SDL_Surface * new_surf = IMG_Load(filename.c_str());
-    ASSERT(new_surf, IMG_GetError());
-    return new_surf;
-}
-
-SDL_Texture  * GraphicsManager::convert_surface_to_texture(SDL_Surface* new_surf) {
-	SDL_Texture * out = SDL_CreateTextureFromSurface(GraphicsManager::m_main_renderer, new_surf);
-	ASSERT(out, "Could not load texture, SDL_Error: " + std::string(SDL_GetError()));
-	return out;
+	SDL_SetRenderDrawColor(GraphicsManager::mMainRenderer,
+		color.r,
+		color.g,
+		color.b,
+		color.a);
 }

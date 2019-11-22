@@ -1,12 +1,10 @@
 #pragma once
 #include <string>
 #include <iostream>
-#include <cassert>
-#include <signal.h>
 #include <vector>
+#include <sstream>
 
 typedef unsigned int uint;
-#define HELPERS_CALL_SIG_HANDLER do {} while (false)  /* Do fuckall */
 
 /*-------------------------------------------------------
 Terminates if condition is false. Turn off with DEBUG flag.
@@ -16,7 +14,24 @@ Outside namespace for convenience.
 @param message - Gets logged
 ---------------------------------------------------------*/
 
-#define ASSERT(condition, message) do {} while (false)
+//#define ASSERT(condition, message) do {} while (false)
+#ifndef DEBUG
+inline void ASSERT(bool condition, const std::string& message){
+	(void) condition;
+	(void) message;
+}
+#else
+#define ASSERT(condition, message) \
+   do { \
+       if (! (condition)) { \
+           Logging::log(std::stringstream() << "std::endl" <<  "Assertion: " #condition << std::endl << \
+           "Failed in file: " << __FILE__  << std::endl << \
+           "line: " << __LINE__ << std::endl << \
+           "Message: " << message << std::endl << std::endl); \
+           std::terminate(); \
+       } \
+   } while (false)
+#endif
 
 class Vector2DInt;
 namespace Helpers {

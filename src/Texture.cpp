@@ -6,7 +6,7 @@
 class Internals
 {
 public:
-	SDL_Texture* m_texture;
+	SDL_Texture* mTexture;
 };
 
 

@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 2.6)
 set(GAME_NAME  Vidya)
 project (Benis)
 
-SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -pedantic -g -Wall -Wextra")
+SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -DDebug -Werror -pedantic -g -Wall -Wextra")
 add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../out)
