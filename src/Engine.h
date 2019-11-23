@@ -23,8 +23,8 @@
 	}
 
 	Engine::initialize(); 
-	Engine::register_scene("scene1", foo);
-	Engine::load_scene("scene1");
+	Engine::registerScene("scene1", foo);
+	Engine::loadScene("scene1");
 	Engine::start();
 	Engine::teardown();
 
@@ -37,25 +37,25 @@ public:
 	static void teardown();
 	static void start();
 	static void stop();
-	template <class gameobject_type>
-	static gameobject_type* add_gameobject();
-	static void remove_gameobject(GameObject * gObj);
-	static size_t get_gameobject_count();
-	static void register_scene(const std::string & name,  void (*scenecreator)());
-	static void load_scene(const std::string & name);
+	template <class gameObjectType>
+	static gameObjectType* addGameObject();
+	static void removeGameObject(GameObject * gObj);
+	static size_t getGameObjectCount();
+	static void registerScene(const std::string & name,  void (*scenecreator)());
+	static void loadScene(const std::string & name);
 
 private:
 	Engine();
-	static void main_loop();
-	static void replace_scene();
-	static void update_gameobjects();
-	static void render_gameobjects();
-	static void clear_all_gameobjects();
+	static void mainLoop();
+	static void replaceScene();
+	static void updateGameObjects();
+	static void renderGameObjects();
+	static void clearAllGameObjects();
 	
 	/*Actually puts the changes in place*/
-	static void put_gameobjects_into_world();
-	static void remove_gameobject_from_world();
-	static void run_setups(std::vector<GameObject*> & );
+	static void putGameObjectsIntoWorld();
+	static void removeGameObjectFromWorld();
+	static void runSetups(std::vector<GameObject*> & );
 	
 	static std::map<std::string, void(*)()> mScenes;
 
@@ -70,17 +70,17 @@ private:
 	static ResourceArchive mEngineResources;
 };
 
-template <class gameobject_type>
-gameobject_type * Engine::add_gameobject() {
+template <class gameObjectType>
+gameObjectType * Engine::addGameObject() {
 	GAMEOBJECT_ID id = Engine::mLatestGameobjectId;
 	std::unique_ptr<GameObject> newObject = std::make_unique<GameObject>(id);
 	if (Engine::mLatestGameobjectId >= std::numeric_limits<int>::max()) {
 		Logging::log("Warning, gameobject id overflow");
 	}
-	gameobject_type * out = newObject.get();
+	gameObjectType * out = newObject.get();
 	Engine::mGameobjectsToAdd.push(std::move(newObject));
 	Engine::mLatestGameobjectId++;
-	Logging::log("Added gameobject id " + std::to_string(id) + " type " + typeid(gameobject_type).name());
-	if (!mRunning) put_gameobjects_into_world();
+	Logging::log("Added gameobject id " + std::to_string(id) + " type " + typeid(gameObjectType).name());
+	if (!mRunning) putGameObjectsIntoWorld();
 	return out;
 }

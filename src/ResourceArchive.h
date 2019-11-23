@@ -24,7 +24,7 @@ public:
 						 Set to false for large files.
 	@return Pointer to ResourceFile
 	---------------------------------------------------------*/
-	ResourceFile * get_item(const std::string & name);
+	ResourceFile * getItem(const std::string & name);
 	
 	/*-------------------------------------------------------
 	Free resource item based on path.
@@ -32,10 +32,10 @@ public:
 	---------------------------------------------------------
 	@param name, relative path to item
 	---------------------------------------------------------*/
-	void free_item(const std::string & name);
+	void freeItem(const std::string & name);
 
 private:
-	void read_file(const std::string & path, void ** buffer, size_t* size);
-	std::map<std::string, ResourceFile *> m_files;
-	std::string m_source_path;
+	void readFile(const std::string & path, void ** buffer, size_t* size);
+	std::map<std::string, std::unique_ptr<ResourceFile>> m_files;
+	const std::string m_source_path;
 };

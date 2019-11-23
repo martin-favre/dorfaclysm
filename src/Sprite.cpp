@@ -27,12 +27,12 @@ Sprite::~Sprite()
 Sprite::Sprite(SDL_Texture *newText, const SDL_Rect &newRect) : mTexture(newText),
 																mRect(newRect) {}
 
-SDL_Texture *Sprite::get_sdl_texture() const
+SDL_Texture *Sprite::getSdlTexture() const
 {
 	return mTexture;
 }
 
-const SDL_Rect *Sprite::get_sdl_rect() const
+const SDL_Rect *Sprite::getSdlRect() const
 {
 	return &mRect;
 }

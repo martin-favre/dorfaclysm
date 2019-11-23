@@ -19,18 +19,18 @@ class GraphicsManager {
 public:
 	static void initialize();
 	static void teardown();
-	static void prepare_rendering();
-	static void render_texture(const Sprite &,
+	static void prepareRendering();
+	static void renderTexture(const Sprite &,
 	                           const Vector2D & pos,
 	                           const Vector2D & scale,
 	                           const double angle,
 	                           bool centered,
 	                           const SDL_RendererFlip flip);
-	static void draw_circle(const Vector2D & pos, int radius);
-	static void draw_point(const Vector2D& pos);
-	static void draw_line(const Vector2D& from, const Vector2D& to);
-	static void execute_rendering();
-	static void set_render_draw_color(const SDL_Color& color);
+	static void drawCircle(const Vector2D & pos, int radius);
+	static void drawPoint(const Vector2D& pos);
+	static void drawLine(const Vector2D& from, const Vector2D& to);
+	static void executeRendering();
+	static void setRenderDrawColor(const SDL_Color& color);
 	/*-------------------------------------------------------
 		Converts the surface to an SDL_Texture.
 		Note that GraphicsManager does not own the returned
@@ -39,9 +39,8 @@ public:
 	@param surf - The surface to convert to a texture.
 	@return - pointer to the created texture.
 	---------------------------------------------------------*/
-	static SDL_Texture * convert_surface_to_texture(SDL_Surface* surf);
-	static unsigned int get_screen_height() {return mScreenHeight;}
-	static unsigned int get_screen_width() {return mScreenWidth;}
+	static unsigned int getScreenHeight() {return mScreenHeight;}
+	static unsigned int getScreenWidth() {return mScreenWidth;}
 	friend class SpriteLoader;
 
 private:

@@ -43,7 +43,7 @@ namespace Helpers {
 	@return result
 	---------------------------------------------------------*/
 	
-	int random_int(int min, int max);
+	int randomInt(int min, int max);
 
 	/*-------------------------------------------------------
 		Extracts the filename from path.
@@ -53,7 +53,7 @@ namespace Helpers {
 	@return filename
 	---------------------------------------------------------*/
 	
-	std::string get_filename_from_path(const std::string & path);
+	std::string getFilenameFromPath(const std::string & path);
 
 	/*-------------------------------------------------------
 		Rounds floating point value to integer. 
@@ -64,8 +64,8 @@ namespace Helpers {
 	@param v - floating point value
 	@return closest integer.
 	---------------------------------------------------------*/
-	int round_to_int(float v);
-	int round_to_int(double v);
+	int roundToInt(float v);
+	int roundToInt(double v);
 
 	/*-------------------------------------------------------
 	Takes a vector and add the second argument to all elements.
@@ -73,7 +73,7 @@ namespace Helpers {
 	The type needs to support +=
 	---------------------------------------------------------*/
 	template<typename T, typename Allocator>
-	void add_to_all(std::vector<T, Allocator>& vec, const T& to_add)
+	void addToAll(std::vector<T, Allocator>& vec, const T& to_add)
 	{
 		for (size_t i = 0; i < vec.size(); ++i)
 		{
@@ -90,7 +90,7 @@ namespace Helpers {
 	@return - distance between the two positions
 	---------------------------------------------------------*/
 	
-	double get_squared_distance_between_positions(const Vector2DInt & a, const Vector2DInt & b);
+	double getSquaredPositionBetweenPositions(const Vector2DInt & a, const Vector2DInt & b);
 
 	/*-------------------------------------------------------
 	Parameters

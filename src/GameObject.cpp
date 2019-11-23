@@ -1,57 +1,46 @@
 #include "GameObject.h"
 #include "Engine.h"
-GameObject::GameObject(GAMEOBJECT_ID id): m_id(id) {
+GameObject::GameObject(GAMEOBJECT_ID id): mId(id) {
 }
 
 GameObject::~GameObject() {
-	m_components.clear();
+	mComponents.clear();
 }
 
 bool & GameObject::enabled() {
-	return m_enabled;
+	return mEnabled;
 }
 
 void GameObject::setup()
 {
-	for (auto i = m_components.begin(); i != m_components.end(); ++i)
+	for(auto& component : mComponents)
 	{
-		(*i)->setup();
+		component->setup();
 	}
 }
-
 
 void GameObject::teardown()
 {
-	for (auto i = m_components.begin(); i != m_components.end(); ++i)
+	for(auto& component : mComponents)
 	{
-		(*i)->teardown();
+		component->teardown();
 	}
 }
 
-
-
-void GameObject::update_collision()
-{
-	if (!m_enabled) return;
-	for (auto i = m_components.begin(); i != m_components.end(); ++i)
+void GameObject::updateComponents() {
+	if (!mEnabled) return;
+	for(auto& component : mComponents)
 	{
-		(*i)->collision_step();
-	}
-}
-
-void GameObject::update_components() {
-	if (!m_enabled) return;
-	for (auto i = m_components.begin(); i != m_components.end(); ++i) {
-		(*i)->update();
+		component->update();
 	}
 }
 
 void GameObject::render() {
-	if (!m_enabled) return;
-	for (auto i = m_components.begin(); i != m_components.end(); ++i) {
-		(*i)->render();
+	if (!mEnabled) return;
+	for(auto& component : mComponents)
+	{
+		component->render();
 	}
-
 }
 
 int GameObject::getRenderDepth() const
@@ -65,12 +54,12 @@ const Vector2D& GameObject::getPosition() const
 }
 
 void GameObject::destroy() {
-	Engine::remove_gameobject(this);
+	Engine::removeGameObject(this);
 }
 
 GAMEOBJECT_ID GameObject::id()const {
-	return m_id;
+	return mId;
 }
 std::string & GameObject::name() {
-	return m_name;
+	return mName;
 }

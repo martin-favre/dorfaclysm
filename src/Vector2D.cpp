@@ -45,7 +45,7 @@ double Vector2D::magnitude()const
 	return sqrt(x*x + y*y);
 }
 
-double Vector2D::magnitude_squared() const
+double Vector2D::magnitudeSquared() const
 {
 	return x * x + y * y;
 }
@@ -55,7 +55,7 @@ double Vector2D::dot(const Vector2D& other) const
 	return x * other.x + y * other.y;
 }
 
-void Vector2D::rotate_around(double angle, const Vector2D pivot_point)
+void Vector2D::rotateAround(double angle, const Vector2D pivot_point)
 {
 	angle = Helpers::TO_RAD*angle;
 	const double angle_sin = sin(angle);
@@ -99,12 +99,12 @@ void Vector2D::set(double _x, double _y) {
 	y = _y;
 }
 
-void Vector2D::round_to_int(){
+void Vector2D::roundToInt(){
 	x = double(round(x));
 	y = double(round(y));
 }
 
-SDL_Point Vector2D::get_sdl_point() {
+SDL_Point Vector2D::getSdlPoint() {
 	return SDL_Point{int(round(x)), int(round(y))};
 }
 std::ostream & operator <<(std::ostream & stream, const Vector2D & p){

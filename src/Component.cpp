@@ -2,5 +2,5 @@
 
 
 bool & Component::enabled(){
-	return m_enabled;
+	return mEnabled;
 }

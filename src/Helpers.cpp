@@ -7,24 +7,24 @@ namespace Helpers {
 	static std::mt19937 random_int_rng(random_int_rd());
 	
 	
-	int random_int(int min, int max) {
+	int randomInt(int min, int max) {
 		std::uniform_int_distribution<int> uni(min, max);
 		return uni(random_int_rng);
 	}
 	
-	int round_to_int(float v)
+	int roundToInt(float v)
 	{
 		return int(v + 0.5);
 	}
 
 	
-	int round_to_int(double v)
+	int roundToInt(double v)
 	{
 		return int(v + 0.5);
 	}
 
 	
-	double get_squared_distance_between_positions(const Vector2DInt & a, const Vector2DInt & b)
+	double getSquaredPositionBetweenPositions(const Vector2DInt & a, const Vector2DInt & b)
 	{
 		const double xdiff = b.x - a.x;
 		const double ydiff = b.y - a.y;
@@ -32,7 +32,7 @@ namespace Helpers {
 	}
 
 	
-	std::string get_filename_from_path(const std::string & path) {
+	std::string getFilenameFromPath(const std::string & path) {
 		std::size_t found = path.find_last_of("/\\");
 		if (found == std::string::npos) {
 			return "";

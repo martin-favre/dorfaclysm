@@ -6,7 +6,8 @@ typedef unsigned long GAMEOBJECT_ID;
 #include <map>
 #include "Component.h"
 #include "Vector2D.h"
-class Component;
+#include <memory>
+
 class GameObject {
 public:
 	GameObject(GAMEOBJECT_ID id);
@@ -24,8 +25,8 @@ public:
 	---------------------------------------------------------
 	@return pointer to the component that was just added.
 	---------------------------------------------------------*/
-	template <typename component_type>
-	component_type * add_component();
+	template <typename componentType>
+	componentType * addComponent();
 
 
 	/*-------------------------------------------------------
@@ -36,8 +37,8 @@ public:
 	---------------------------------------------------------
 	@return pointer to component. nullptr if no component found.
 	---------------------------------------------------------*/
-	template <class component_type>
-	component_type * get_component();
+	template <class componentType>
+	componentType * getComponent();
 
 	int getRenderDepth() const;
 	const Vector2D& getPosition() const;
@@ -71,35 +72,33 @@ protected:
 	/*-------------------------------------------------------
 	Runs all components' update.
 	---------------------------------------------------------*/
-	void update_components();
+	void updateComponents();
 
-	void update_collision();
 	Vector2D mPosition;
 	int mRenderDepth;
-	bool m_enabled = true;
-	bool m_dynamic = true;
-	std::string m_name = "NoName";
-	const GAMEOBJECT_ID m_id;
-	std::vector<Component*> m_components;
+	bool mEnabled = true;
+	std::string mName = "NoName";
+	const GAMEOBJECT_ID mId;
+	std::vector<std::unique_ptr<Component>> mComponents;
 };
 
 
-template <typename component_type>
-component_type * GameObject::add_component() {
-	component_type * new_comp_type = new component_type(this);
-	m_components.push_back(new_comp_type);
-	return new_comp_type;
+template <typename componentType>
+componentType * GameObject::addComponent() {
+	auto newComp = std::make_unique<componentType>(*this); 
+	componentType* ptr = newComp.get();
+	mComponents.push_back(std::move(newComp));
+	return ptr;
 }
 
-template <class component_type>
-component_type * GameObject::get_component() {
-
-	for (auto it = m_components.begin(); it != m_components.end(); ++it)
+template <class componentType>
+componentType * GameObject::getComponent() {
+	for(const auto& item : mComponents)
 	{
-		component_type* comp_cast = dynamic_cast<component_type*>(*it);
-		if (comp_cast)
+		auto casted = std::dynamic_pointer_cast<componentType>(item);
+		if(casted)
 		{
-			return comp_cast;
+			return casted;
 		}
 	}
 	return nullptr;

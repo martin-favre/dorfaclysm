@@ -19,16 +19,16 @@ public:
 	---------------------------------------------------------*/
 
 	static double angle(const Vector2D& vec);
-	template <typename multiplier_type>
-	Vector2D operator*(const multiplier_type& value)const;
-	template <typename multiplier_type>
-	Vector2D operator/(const multiplier_type& value)const;
-	template <typename multiplier_type>
-	Vector2D& operator/=(const multiplier_type& value);
+	template <typename multiplierType>
+	Vector2D operator*(const multiplierType& value)const;
+	template <typename multiplierType>
+	Vector2D operator/(const multiplierType& value)const;
+	template <typename multiplierType>
+	Vector2D& operator/=(const multiplierType& value);
 	double magnitude()const;
-	double magnitude_squared()const;
+	double magnitudeSquared()const;
 	double dot(const Vector2D& other)const;
-	void rotate_around(double angle, Vector2D point);
+	void rotateAround(double angle, Vector2D point);
 	void rotate(double angle);
 	bool equals(const Vector2D & other, double accuracy);
 	/*-------------------------------------------------------
@@ -37,8 +37,8 @@ public:
 	Vector2D perpendicular()const;
 	Vector2D normalized()const;
 	void set(double, double);
-	void round_to_int();
-	SDL_Point get_sdl_point();
+	void roundToInt();
+	SDL_Point getSdlPoint();
 	double x = 0;
 	double y = 0;
 	friend std::ostream & operator <<(std::ostream & stream, const Vector2D &);
@@ -46,19 +46,19 @@ private:
 	
 };
 
-template<typename multiplier_type>
-inline Vector2D Vector2D::operator*(const multiplier_type & value)const
+template<typename multiplierType>
+inline Vector2D Vector2D::operator*(const multiplierType & value)const
 {	
 	return Vector2D(x*value, y*value);
 }
 
-template<typename multiplier_type>
-inline Vector2D Vector2D::operator/(const multiplier_type& value)const
+template<typename multiplierType>
+inline Vector2D Vector2D::operator/(const multiplierType& value)const
 {
 	return Vector2D(x / value, y / value);
 }
-template<typename multiplier_type>
-inline Vector2D& Vector2D::operator/=(const multiplier_type& value)
+template<typename multiplierType>
+inline Vector2D& Vector2D::operator/=(const multiplierType& value)
 {
 	x /= value;
 	y /= value;

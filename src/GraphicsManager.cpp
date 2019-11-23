@@ -76,26 +76,26 @@ void GraphicsManager::teardown() {
 		
 }
 
-void GraphicsManager::prepare_rendering() {
-	set_render_draw_color(SDL_Color{0,0,0,0});
+void GraphicsManager::prepareRendering() {
+	setRenderDrawColor(SDL_Color{0,0,0,0});
 	SDL_RenderClear(GraphicsManager::mMainRenderer);
 }
 
-void GraphicsManager::render_texture(const Sprite & sprite,
+void GraphicsManager::renderTexture(const Sprite & sprite,
                                      const Vector2D & pos,
                                      const Vector2D & scale,
                                      const double angle,
                                      bool centered,
                                      const SDL_RendererFlip flip) {
-	SDL_Texture * texture = sprite.get_sdl_texture();
+	SDL_Texture * texture = sprite.getSdlTexture();
 	ASSERT(texture != nullptr, "Trying to render null texture");
 	int width = 0;
 	int height = 0;
 	SDL_QueryTexture(texture, NULL, NULL, &width, &height);
 	double posx = 0;
 	double posy = 0;
-	double scalex = sprite.get_sdl_rect()->h * scale.x;
-	double scaley = sprite.get_sdl_rect()->w * scale.y;
+	double scalex = sprite.getSdlRect()->h * scale.x;
+	double scaley = sprite.getSdlRect()->w * scale.y;
 	if (centered) {
 		posx = round(pos.x - scalex / 2);
 		posy = round(pos.y - scaley / 2);
@@ -111,14 +111,14 @@ void GraphicsManager::render_texture(const Sprite & sprite,
 	SDL_RenderCopyEx(
 	    GraphicsManager::mMainRenderer,  	// SDL_Renderer*          renderer
 	    texture, 							// SDL_Texture*           texture
-	    sprite.get_sdl_rect(), 				// const SDL_Rect*        srcrect. selects a subpart of the texture.
+	    sprite.getSdlRect(), 				// const SDL_Rect*        srcrect. selects a subpart of the texture.
 	    &dstrect, 							// const SDL_Rect*        dstrect
 	    angle, 								// const double           angle
 	    NULL, 								// const SDL_Point*       center
 	    flip);								// const SDL_RendererFlip flip
 }
 
-void GraphicsManager::draw_circle(const Vector2D & pos, int radius)
+void GraphicsManager::drawCircle(const Vector2D & pos, int radius)
 {
 	/* Stolen by https://stackoverflow.com/questions/38334081/howto-draw-circles-arcs-and-vector-graphics-in-sdl */
 	int x = radius - 1;
@@ -127,8 +127,8 @@ void GraphicsManager::draw_circle(const Vector2D & pos, int radius)
 	int ty = 1;
 	int err = tx - (radius << 1); // shifting bits left by 1 effectively
 								  // doubles the value. == tx - diameter
-	int posx = Helpers::round_to_int(pos.x);
-	int posy = Helpers::round_to_int(pos.y);
+	int posx = Helpers::roundToInt(pos.x);
+	int posy = Helpers::roundToInt(pos.y);
 	while (x >= y)
 	{
 		//  Each of the following renders an octant of the circle
@@ -157,15 +157,15 @@ void GraphicsManager::draw_circle(const Vector2D & pos, int radius)
 
 }
 
-void GraphicsManager::draw_point(const Vector2D& pos)
+void GraphicsManager::drawPoint(const Vector2D& pos)
 {
-	int x = Helpers::round_to_int(pos.x);
-	int y = Helpers::round_to_int(pos.y);
+	int x = Helpers::roundToInt(pos.x);
+	int y = Helpers::roundToInt(pos.y);
 	int success = SDL_RenderDrawPoint(mMainRenderer, x, y);
 	ASSERT(success == 0, SDL_GetError());
 }
 
-void GraphicsManager::draw_line(const Vector2D& from, const Vector2D& to)
+void GraphicsManager::drawLine(const Vector2D& from, const Vector2D& to)
 {
 	int from_x = (int)round(from.x);
 	int from_y = (int)round(from.y);
@@ -175,11 +175,11 @@ void GraphicsManager::draw_line(const Vector2D& from, const Vector2D& to)
 	ASSERT(success == 0, SDL_GetError());
 }
 
-void GraphicsManager::execute_rendering() {
+void GraphicsManager::executeRendering() {
 	SDL_RenderPresent(GraphicsManager::mMainRenderer);
 }
 
-void GraphicsManager::set_render_draw_color(const SDL_Color& color)
+void GraphicsManager::setRenderDrawColor(const SDL_Color& color)
 {
 	SDL_SetRenderDrawColor(GraphicsManager::mMainRenderer,
 		color.r,

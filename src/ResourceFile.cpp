@@ -53,6 +53,6 @@ std::string ResourceFile::getAsText() const {
 	size_t result = SDL_RWread(mFile, buf, mSize, objects);
 	ASSERT(result != 0, "Could parse file as text " + std::string(SDL_GetError()));
 	std::string text(buf);
-	delete buf;
+	delete[] buf;
 	return text;
 }

@@ -25,7 +25,7 @@ Arbitrary value hopefully not occupied by SDL keys
 class InputManager {
 public:
 	static void initialize();
-	static void read_inputs();
+	static void readInputs();
 
 	/*-------------------------------------------------------
 		Get the current state of the key
@@ -33,7 +33,7 @@ public:
 	@param key - which key.
 	@return - true if the key is pushed down.
 	---------------------------------------------------------*/
-	static bool get_key(int key);
+	static bool getKey(int key);
 
 	/*-------------------------------------------------------
 		Get if the key was pushed down this update
@@ -41,7 +41,7 @@ public:
 	@param key - which key.
 	@return - true if the key is pushed down.
 	---------------------------------------------------------*/
-	static bool get_key_down(int key);
+	static bool getKeyDown(int key);
 	
 	/*-------------------------------------------------------
 		Get the current state of the mouse button
@@ -49,7 +49,7 @@ public:
 	@param mousebtn - which mouse button.
 	@return - true if the mouse button is pushed down.
 	---------------------------------------------------------*/
-	static bool get_mouse(int mousebtn);
+	static bool getMouse(int mousebtn);
 
 	/*-------------------------------------------------------
 		Get if the mouse button was pushed down this update
@@ -57,7 +57,7 @@ public:
 	@param mousebtn - which mouse button.
 	@return - true if the mouse button is pushed down.
 	---------------------------------------------------------*/
-	static bool get_mouse_down(int mousebtn);
+	static bool getMouseDown(int mousebtn);
 
 	/*-------------------------------------------------------
 		Populates evnt with the latest mouse event of that button
@@ -68,24 +68,23 @@ public:
 		event has not happened yet this is not populates.
 	@return - false if the event has not happened yet.
 	---------------------------------------------------------*/
-	static bool get_latest_mouse_event(int mousebtn, SDL_MouseButtonEvent * evnt);
+	static bool getLatestMouseEvent(int mousebtn, SDL_MouseButtonEvent * evnt);
 
-	static Vector2DInt get_mouse_position();
+	static Vector2DInt getMousePosition();
 
 private:
 	InputManager();
-	static void set_key(int key, bool value);
-	static void reset_keys();
-	static void add_text_input(const std::string & new_text);
-	static void reset_text_input();
-	static void set_mouse(int key, bool value, const SDL_MouseButtonEvent & evnt);
-	static std::string m_text_input;
+	static void setKey(int key, bool value);
+	static void resetKeys();
+	static void addTextInput(const std::string & new_text);
+	static void resetTextInput();
+	static void setMouse(int key, bool value, const SDL_MouseButtonEvent & evnt);
+	static std::string mTextInput;
 	static bool mInitialized;
-	static bool m_mouse_state;
-	static SDL_Event m_sdl_event;
-	static bool m_key_states[NOF_SDL_SCANCODES_BUFFER];
-	static bool m_mouse_states[NOF_SDL_SCANCODES_BUFFER];
-	static bool m_mouse_states_current[NOF_SDL_SCANCODES_BUFFER];
-	static SDL_MouseButtonEvent m_mouse_latest_event[NOF_SDL_SCANCODES_BUFFER];
-	static bool m_key_states_current[NOF_SDL_SCANCODES_BUFFER]; //Contains if the key was added this frame
+	static SDL_Event mSdlEvent;
+	static bool mKeyStates[NOF_SDL_SCANCODES_BUFFER];
+	static bool mMouseStates[NOF_SDL_SCANCODES_BUFFER];
+	static bool mMouseStatesThisFrame[NOF_SDL_SCANCODES_BUFFER];
+	static SDL_MouseButtonEvent mMouseLatestEvent[NOF_SDL_SCANCODES_BUFFER];
+	static bool mKeyStatesThisFrame[NOF_SDL_SCANCODES_BUFFER]; //Contains if the key was added this frame
 };

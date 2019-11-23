@@ -3,10 +3,10 @@
 class Timer{
 public:
 	void start();
-	int64_t get_elapsed_microseconds();
-	int64_t get_elapsed_milliseconds();
-	int64_t get_elapsed_seconds();
+	int64_t getElapsedMicroSeconds();
+	int64_t getElapsedMilliseconds();
+	int64_t getElapsedSeconds();
 private:
-	std::chrono::time_point<std::chrono::high_resolution_clock> m_start_time;
-	std::chrono::high_resolution_clock m_clock;
+	std::chrono::time_point<std::chrono::high_resolution_clock> mStartTime;
+	std::chrono::high_resolution_clock mClock;
 };
