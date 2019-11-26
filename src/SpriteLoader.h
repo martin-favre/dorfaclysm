@@ -2,15 +2,20 @@
 #include "Sprite.h"
 #include "ResourceFile.h"
 #include <map>
+class Font;
 class SpriteLoader
 {
     public:
-    static std::unique_ptr<Sprite> loadSprite(const ResourceFile* file);
-    static std::unique_ptr<Sprite> getSpriteFromText(const std::string & text, TTF_Font* font, SDL_Color& color);
+    static std::unique_ptr<Sprite> loadSprite(const std::string& path, const Rect& area);
+    static std::unique_ptr<Sprite> loadSprite(const std::string& path);
+    static std::unique_ptr<Sprite> getSpriteFromText(const std::string & text, Font& font, SDL_Color& color);
+    static std::unique_ptr<Font> loadFont(const std::string& path, int size);
     static void initialize();
     static void teardown();
     private:
     SpriteLoader();
-    static SDL_Texture* convertSurfaceToTexture(SDL_Surface* new_surf);
-    static std::map<const ResourceFile *, SDL_Texture*> m_textures;
+    static void loadTexture(const std::string& path);
+    static SDL_Texture* convertSurfaceToTexture(SDL_Surface* newSurf);
+    static std::map<std::string, SDL_Texture*> mTextures;
+    static std::map<std::pair<std::string, int>, TTF_Font*> mFonts;
 };

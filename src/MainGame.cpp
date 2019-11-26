@@ -1,5 +1,21 @@
 #include "MainGame.h"
 #include "Engine.h"
+#include "Component.h"
+class TextComponent:public Component
+{
+	public:
+	TextComponent(GameObject& owner):Component(owner){}
+
+	void setup() override
+	{
+
+	}
+	
+	void update() override
+	{
+
+	}
+}
 
 void foo()
 {

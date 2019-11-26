@@ -13,7 +13,7 @@ public:
 	bool & enabled();
 	GameObject & owner() { return mOwner; }
 	const GameObject & owner()const {return mOwner;}
-protected:
+private:
 	bool mEnabled = true;
 
 	GameObject& mOwner;

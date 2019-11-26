@@ -27,6 +27,11 @@ void GameObject::teardown()
 	}
 }
 
+void GameObject::addComponent(std::unique_ptr<Component>&& newComponent)
+{
+	mComponents.push_back(std::move(newComponent));
+}
+
 void GameObject::updateComponents() {
 	if (!mEnabled) return;
 	for(auto& component : mComponents)
@@ -51,6 +56,11 @@ int GameObject::getRenderDepth() const
 const Vector2D& GameObject::getPosition() const
 {
 	return mPosition;
+}
+
+double GameObject::getRotation() const
+{
+	return mRotation;
 }
 
 void GameObject::destroy() {

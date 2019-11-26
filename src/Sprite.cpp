@@ -1,11 +1,12 @@
 #include "Sprite.h"
 #include <SDL_image.h>
+#include "Rect.h"
 
-Sprite::Sprite(SDL_Texture *newText) : Sprite(newText, false)
+Sprite::Sprite(SDL_Texture *newText, const Rect &area, bool isFont) : mTexture(newText), mRect(area), mIsFont(isFont)
 {
 }
 
-Sprite::Sprite(SDL_Texture *newText, bool isFont) : mTexture(newText), mIsFont(isFont)
+Sprite::Sprite(SDL_Texture *newText, bool isFont) : mIsFont(isFont)
 {
 	int width = 0;
 	int height = 0;
@@ -24,15 +25,12 @@ Sprite::~Sprite()
 	}
 }
 
-Sprite::Sprite(SDL_Texture *newText, const SDL_Rect &newRect) : mTexture(newText),
-																mRect(newRect) {}
-
 SDL_Texture *Sprite::getSdlTexture() const
 {
 	return mTexture;
 }
 
-const SDL_Rect *Sprite::getSdlRect() const
+const SDL_Rect &Sprite::getSdlRect() const
 {
-	return &mRect;
+	return mRect;
 }

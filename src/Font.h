@@ -1,0 +1,11 @@
+#pragma once
+#include <SDL_ttf.h>
+class Font
+{
+    public:
+    Font(TTF_Font* font, int size);
+    TTF_Font* getSdlFont();
+    private:
+    TTF_Font* mFont{nullptr};
+    const int mSize{0};
+}

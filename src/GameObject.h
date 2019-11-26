@@ -11,7 +11,7 @@ typedef unsigned long GAMEOBJECT_ID;
 class GameObject {
 public:
 	GameObject(GAMEOBJECT_ID id);
-	virtual ~GameObject();
+	~GameObject();
 
 	/*-------------------------------------------------------
 	Get/Set if the gameobject is enabled.
@@ -28,6 +28,7 @@ public:
 	template <typename componentType>
 	componentType * addComponent();
 
+	addComponent(std::unique_ptr<Component>&& newComponent);
 
 	/*-------------------------------------------------------
 	Gets pointer to component of type.
@@ -42,6 +43,8 @@ public:
 
 	int getRenderDepth() const;
 	const Vector2D& getPosition() const;
+	const Vector2D& getScale() const;
+	double getRotation() const;
 
 	/*-------------------------------------------------------
 	Orders the removal of the GameObject. It will be removed
@@ -52,7 +55,8 @@ public:
 	void destroy();
 	GAMEOBJECT_ID id()const;
 	std::string & name();
-protected:
+
+private:
 	friend class Engine;
 	/*-------------------------------------------------------
 	Runs all components' setups. 
@@ -75,10 +79,12 @@ protected:
 	void updateComponents();
 
 	Vector2D mPosition;
-	int mRenderDepth;
-	bool mEnabled = true;
-	std::string mName = "NoName";
-	const GAMEOBJECT_ID mId;
+	int mRenderDepth{0};
+	Vector2D mScale{1,1};
+	double rotation{0};
+	bool mEnabled{true};
+	std::string mName{"NoName"};
+	const GAMEOBJECT_ID mId{0};
 	std::vector<std::unique_ptr<Component>> mComponents;
 };
 

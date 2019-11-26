@@ -76,7 +76,7 @@ private:
 	InputManager();
 	static void setKey(int key, bool value);
 	static void resetKeys();
-	static void addTextInput(const std::string & new_text);
+	static void addTextInput(const std::string & newText);
 	static void resetTextInput();
 	static void setMouse(int key, bool value, const SDL_MouseButtonEvent & evnt);
 	static std::string mTextInput;
