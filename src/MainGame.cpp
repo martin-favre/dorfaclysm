@@ -19,7 +19,7 @@ class TextComponent:public Component
 
 void foo()
 {
-
+	
 }
 void MainGame::run()
 {

@@ -6,3 +6,8 @@ TTF_Font* Font::getSdlFont()
 {
     return mFont;
 }
+
+int Font::getSize()
+{
+    return mSize;
+}

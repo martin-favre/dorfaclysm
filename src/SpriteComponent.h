@@ -17,7 +17,6 @@ public:
 
 private:
 	std::unique_ptr<Sprite> mSprite;
-	double mAngle = 0;
 	bool mCentered = false;
 	SDL_RendererFlip mFlip = SDL_FLIP_NONE;
 };

@@ -11,7 +11,7 @@ typedef unsigned long GAMEOBJECT_ID;
 class GameObject {
 public:
 	GameObject(GAMEOBJECT_ID id);
-	~GameObject();
+	virtual ~GameObject();
 
 	/*-------------------------------------------------------
 	Get/Set if the gameobject is enabled.

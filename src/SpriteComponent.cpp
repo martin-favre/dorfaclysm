@@ -1,4 +1,4 @@
-#include "spritecomponent.h"
+#include "SpriteComponent.h"
 #include "Vector2D.h"
 #include "GraphicsManager.h"
 #include "Rect.h"
