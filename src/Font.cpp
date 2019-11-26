@@ -1,8 +1,8 @@
 #include "Font.h"
 
-Font::Font(TTF_Font* font, int mSize) : mFont(font), msize(size){}
+Font::Font(TTF_Font* font, int size) : mFont(font), mSize(size){}
 
-const TTF_Font* Font::getSdlFont()
+TTF_Font* Font::getSdlFont()
 {
     return mFont;
 }

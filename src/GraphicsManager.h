@@ -7,7 +7,6 @@
 #include <SDL_ttf.h>
 #include "Vector2D.h"
 #include "Sprite.h"
-#include "ResourceFile.h"
 
 /*-------------------------------------------------------
 	Interface for presenting images to the screen.

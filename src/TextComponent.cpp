@@ -1,6 +1,10 @@
-#include "textcomponent.hpp"
+#include "TextComponent.h"
 #include "SpriteLoader.h"
-TextComponent::TextComponent(GameObject * owner): Component(owner){
+#include "GraphicsManager.h"
+#include "Font.h"
+#include "GameObject.h"
+
+TextComponent::TextComponent(GameObject& owner): Component(owner){
 }
 
 TextComponent::~TextComponent() {
@@ -8,15 +12,12 @@ TextComponent::~TextComponent() {
 
 void TextComponent::initialize(const std::string& pathToFont, int size)
 {
-	ASSERT(file, "Trying to initialize Textcomponent with null resourcefile");
-	mFontSource = file;
+	mFontSource = pathToFont;
 	mFont = SpriteLoader::loadFont(pathToFont, size);
 }
 
 void TextComponent::setFontSize(int size) {
-	mFont = mFontSource->getAsFont(size);
-	ASSERT(mFont, "Could not load font ");
-	setText(mText);
+	mFont = SpriteLoader::loadFont(mFontSource, size);
 }
 
 std::string TextComponent::getText() {
@@ -24,8 +25,8 @@ std::string TextComponent::getText() {
 }
 
 void TextComponent::setText(const std::string & text) {
-	mSprite = SpriteLoader::getSpriteFromText(mText, mFont, mColor);
-	ASSERT(mSprite.getSdlTexture(), "Could not set text " + std::string(SDL_GetError()));
+	mText = text;
+	mSprite = SpriteLoader::getSpriteFromText(text, *mFont, mColor);
 }
 
 void TextComponent::setColor(const SDL_Color& color) {
@@ -34,9 +35,9 @@ void TextComponent::setColor(const SDL_Color& color) {
 
 void TextComponent::render() {
 	if (mSprite->getSdlTexture() == nullptr) return;
-	GraphicsManager::render_texture(
+	GraphicsManager::renderTexture(
 	    *mSprite,
-	    owner()->get_position(),
+	    owner().getPosition(),
 	    mScale,
 	    mAngle,
 	    mCentered,

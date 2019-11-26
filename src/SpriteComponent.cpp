@@ -3,29 +3,30 @@
 #include "GraphicsManager.h"
 #include "Rect.h"
 #include "Sprite.h"
-#include "ResourceFile.h"
 #include "SpriteLoader.h"
-#include "GameObject"
-void SpriteComponent::loadSpriteFromImage(const std::string& path)
+#include "GameObject.h"
+#include <string>
+
+void SpriteComponent::loadSpriteFromImage(const std::string &path)
 {
 	mSprite = SpriteLoader::loadSprite(path);
 }
 
-void SpriteComponent::loadSpriteFromImage(const std::string& path, const Rect & rect)
+void SpriteComponent::loadSpriteFromImage(const std::string &path, const Rect &rect)
 {
 	mSprite = SpriteLoader::loadSprite(path, rect);
 }
 
-void SpriteComponent::render() {
+void SpriteComponent::render()
+{
 	if (mSprite)
 	{
 		GraphicsManager::renderTexture(
 			*mSprite,
-			owner().get_position(),
-			owner().get_scale(),
-			owner().get_rotation(),
+			owner().getPosition(),
+			owner().getScale(),
+			owner().getRotation(),
 			mCentered,
-			mFlip
-		);
+			mFlip);
 	}
 }

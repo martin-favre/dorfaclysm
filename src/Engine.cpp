@@ -5,6 +5,7 @@
 #include "GraphicsManager.h"
 #include "Timer.h"
 #include "debug_closegamecomponent.hpp"
+#include "Helpers.h"
 #include <string>
 std::map<std::string, void(*)()> Engine::mScenes;
 std::string Engine::mSceneToLoad = "";
@@ -15,7 +16,6 @@ GAMEOBJECT_ID Engine::mLatestGameobjectId{0};
 std::vector<std::unique_ptr<GameObject>> Engine::mGameobjects;
 std::queue<std::unique_ptr<GameObject>> Engine::mGameobjectsToAdd;
 std::set<GameObject*> Engine::mGameobjectsToRemove;
-ResourceArchive Engine::mEngineResources("EngineResources");
 
 /* Public routines */
 void Engine::initialize() {

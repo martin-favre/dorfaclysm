@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "Component.h"
+#include <memory>
 
 class Rect;
 class Sprite;
@@ -10,8 +11,8 @@ class SpriteComponent : public Component
 {
 public:
 	SpriteComponent(GameObject &owner) : Component(owner) {}
-	void loadSpriteFromImage(const std::string& path);
-	void loadSpriteFromImage(const std::string& path, const Rect &);
+	void loadSpriteFromImage(const std::string &path);
+	void loadSpriteFromImage(const std::string &path, const Rect &);
 	void render() override;
 
 private:

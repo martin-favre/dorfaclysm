@@ -15,7 +15,7 @@ class TextComponent:public Component
 	{
 
 	}
-}
+};
 
 void foo()
 {

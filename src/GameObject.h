@@ -28,7 +28,7 @@ public:
 	template <typename componentType>
 	componentType * addComponent();
 
-	addComponent(std::unique_ptr<Component>&& newComponent);
+	void addComponent(std::unique_ptr<Component>&& newComponent);
 
 	/*-------------------------------------------------------
 	Gets pointer to component of type.
@@ -81,7 +81,7 @@ private:
 	Vector2D mPosition;
 	int mRenderDepth{0};
 	Vector2D mScale{1,1};
-	double rotation{0};
+	double mRotation{0};
 	bool mEnabled{true};
 	std::string mName{"NoName"};
 	const GAMEOBJECT_ID mId{0};

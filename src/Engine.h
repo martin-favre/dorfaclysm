@@ -12,7 +12,6 @@
 
 
 #include "GameObject.h"
-#include "ResourceArchive.h"
 #include "Logging.h"
 #include <memory>
 /*
@@ -67,7 +66,6 @@ private:
 	static std::vector<std::unique_ptr<GameObject>> mGameobjects;
 	static std::queue<std::unique_ptr<GameObject>> mGameobjectsToAdd;
 	static std::set<GameObject*> mGameobjectsToRemove;
-	static ResourceArchive mEngineResources;
 };
 
 template <class gameObjectType>

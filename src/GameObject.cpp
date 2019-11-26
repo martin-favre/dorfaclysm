@@ -58,6 +58,11 @@ const Vector2D& GameObject::getPosition() const
 	return mPosition;
 }
 
+const Vector2D& GameObject::getScale() const
+{
+	return mScale;	
+}
+
 double GameObject::getRotation() const
 {
 	return mRotation;

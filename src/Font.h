@@ -8,4 +8,4 @@ class Font
     private:
     TTF_Font* mFont{nullptr};
     const int mSize{0};
-}
+};

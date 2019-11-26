@@ -1,17 +1,16 @@
 #pragma once
 #include <string>
 #include <SDL_ttf.h>
-#include <cstdint>
-#include "../basics/sprite.hpp"
-#include "../basics/vector2d.hpp"
-#include "../graphicsmanager.hpp"
-#include "../gameobject.hpp"
-#include "../filesystem/resourcearchive.hpp"
-#include "../basics/helpers.hpp"
+#include "Vector2D.h"
+#include "Component.h"
+#include <memory>
 
+class Font;
+class Sprite;
+class GameObject;
 class TextComponent : public Component {
 public:
-	TextComponent(GameObject *);
+	TextComponent(GameObject & owner);
 	~TextComponent();
 	void initialize(const std::string& pathToFont, int size = 16);
 	void setFontSize(int);
@@ -20,9 +19,9 @@ public:
 	void setColor(const SDL_Color& color);
 	void render() final override;
 private:
-	std::string mText{""};
+	std::string mText;
 	std::unique_ptr<Sprite> mSprite;
-	std::unique_ptr<Font> mFont{nullptr};
+	std::unique_ptr<Font> mFont;
 	std::string mFontSource;
 	Vector2D mScale{1, 1};
 	double mAngle{0};

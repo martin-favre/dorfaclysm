@@ -94,8 +94,8 @@ void GraphicsManager::renderTexture(const Sprite & sprite,
 	SDL_QueryTexture(texture, NULL, NULL, &width, &height);
 	double posx = 0;
 	double posy = 0;
-	double scalex = sprite.getSdlRect()->h * scale.x;
-	double scaley = sprite.getSdlRect()->w * scale.y;
+	double scalex = sprite.getRect().getSdlRect().h * scale.x;
+	double scaley = sprite.getRect().getSdlRect().w * scale.y;
 	if (centered) {
 		posx = round(pos.x - scalex / 2);
 		posy = round(pos.y - scaley / 2);
@@ -111,7 +111,7 @@ void GraphicsManager::renderTexture(const Sprite & sprite,
 	SDL_RenderCopyEx(
 	    GraphicsManager::mMainRenderer,  	// SDL_Renderer*          renderer
 	    texture, 							// SDL_Texture*           texture
-	    sprite.getSdlRect(), 				// const SDL_Rect*        srcrect. selects a subpart of the texture.
+	    &sprite.getRect().getSdlRect(), 	 // const SDL_Rect*        srcrect. selects a subpart of the texture.
 	    &dstrect, 							// const SDL_Rect*        dstrect
 	    angle, 								// const double           angle
 	    NULL, 								// const SDL_Point*       center
