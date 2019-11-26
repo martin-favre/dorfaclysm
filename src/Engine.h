@@ -72,7 +72,7 @@ template <class gameObjectType>
 gameObjectType * Engine::addGameObject() {
 	GAMEOBJECT_ID id = Engine::mLatestGameobjectId;
 	std::unique_ptr<GameObject> newObject = std::make_unique<GameObject>(id);
-	if (Engine::mLatestGameobjectId >= std::numeric_limits<int>::max()) {
+	if (Engine::mLatestGameobjectId >= std::numeric_limits<unsigned long>::max()) {
 		Logging::log("Warning, gameobject id overflow");
 	}
 	gameObjectType * out = newObject.get();
