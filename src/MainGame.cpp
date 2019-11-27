@@ -1,6 +1,7 @@
 #include "MainGame.h"
 #include "Engine.h"
 #include "Component.h"
+#include "GridMap.h"
 class TextComponent:public Component
 {
 	public:
@@ -23,9 +24,10 @@ void foo()
 }
 void MainGame::run()
 {
-	Engine::initialize(); 
-	Engine::registerScene("scene1", foo);
-	Engine::loadScene("scene1");
-	Engine::start();
-	Engine::teardown();
+	GridMap map;
+	//Engine::initialize(); 
+	//Engine::registerScene("scene1", foo);
+	//Engine::loadScene("scene1");
+	//Engine::start();
+	//Engine::teardown();
 }
