@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Component.h"
 #include "GridMap.h"
+#include "Vector2DInt.h"
 class TextComponent:public Component
 {
 	public:
@@ -24,10 +25,10 @@ void foo()
 }
 void MainGame::run()
 {
-	GridMap map;
-	//Engine::initialize(); 
-	//Engine::registerScene("scene1", foo);
-	//Engine::loadScene("scene1");
-	//Engine::start();
-	//Engine::teardown();
+	GridMap map(Vector2DInt(100, 100));
+	Engine::initialize(); 
+	Engine::registerScene("scene1", foo);
+	Engine::loadScene("scene1");
+	Engine::start();
+	Engine::teardown();
 }

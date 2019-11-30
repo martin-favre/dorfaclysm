@@ -2,7 +2,7 @@
 class Tile
 {
     public:
-    virtual ~Tile();
+    virtual ~Tile()=default;
     bool getIfTileIsEnterable() const;
     private:
     bool mEnterable{true};

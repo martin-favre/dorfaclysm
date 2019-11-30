@@ -14,6 +14,8 @@
 			"string_view": "cpp",
 			"initializer_list": "cpp",
 			"*.tcc": "cpp"
-		}
+		},
+		"cmakeExplorer.buildDir": "build",
+		"catch2TestExplorer.executables":"testBin/*"
 	}
 }

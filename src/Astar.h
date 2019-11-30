@@ -1,10 +1,12 @@
 #pragma once
-#include "basics/vector2dint.hpp"
+#include "Vector2DInt.h"
 #include <stack>
 class TileInfo;
+class GridMap;
 class Astar
 {
 public:
+	Astar() = default;
 
 	/*------------------------------------
 	Get path in the grid from a position, to a position.
@@ -13,7 +15,6 @@ public:
 	Parameter(out): std::stack<Vector2DInt> & path, will be populated with the path
 		Not changed if no good path is found.
 	------------------------------------*/
-	static bool get_path(Vector2DInt from, Vector2DInt to, std::stack<Vector2DInt> & path);
+	bool getPath(const Vector2DInt& from, const Vector2DInt& to, const GridMap& map, std::stack<Vector2DInt> & path);
 	private:
-	Astar() = default;
 };

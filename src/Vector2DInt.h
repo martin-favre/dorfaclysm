@@ -33,6 +33,8 @@ public:
 		sense.
 	---------------------------------------------------------*/
 	bool operator<(const Vector2DInt & left)const;
+	
+	bool operator!=(const Vector2DInt & other)const;
 	bool operator==(const Vector2DInt & other)const;
 	Vector2DInt operator*(const int & val);
 	Vector2DInt& operator+=(const Vector2DInt & other);
