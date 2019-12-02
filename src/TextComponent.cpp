@@ -4,16 +4,7 @@
 #include "Font.h"
 #include "GameObject.h"
 
-TextComponent::TextComponent(GameObject& owner): Component(owner){
-}
-
-TextComponent::~TextComponent() {
-}
-
-void TextComponent::initialize(const std::string& pathToFont, int size)
-{
-	mFontSource = pathToFont;
-	mFont = SpriteLoader::loadFont(pathToFont, size);
+TextComponent::TextComponent(GameObject & owner, const std::string& pathToFont, int size): Component(owner), mFontSource(pathToFont), mFont(SpriteLoader::loadFont(pathToFont, size)){
 }
 
 void TextComponent::setFontSize(int size) {

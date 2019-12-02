@@ -26,9 +26,10 @@ public:
 	@return pointer to the component that was just added.
 	---------------------------------------------------------*/
 	template <typename componentType>
-	componentType * addComponent();
+	componentType& addComponent();
 
-	void addComponent(std::unique_ptr<Component>&& newComponent);
+	template <typename componentType>
+	componentType& addComponent(std::unique_ptr<componentType>&& newComponent);
 
 	/*-------------------------------------------------------
 	Gets pointer to component of type.
@@ -88,13 +89,12 @@ private:
 	std::vector<std::unique_ptr<Component>> mComponents;
 };
 
-
 template <typename componentType>
-componentType * GameObject::addComponent() {
-	auto newComp = std::make_unique<componentType>(*this); 
-	componentType* ptr = newComp.get();
-	mComponents.push_back(std::move(newComp));
-	return ptr;
+componentType& GameObject::addComponent(std::unique_ptr<componentType>&& newComponent)
+{
+	componentType* ptr = newComponent.get();
+	mComponents.push_back(std::move(newComponent));
+	return *ptr;
 }
 
 template <class componentType>

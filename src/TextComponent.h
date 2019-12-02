@@ -10,9 +10,8 @@ class Sprite;
 class GameObject;
 class TextComponent : public Component {
 public:
-	TextComponent(GameObject & owner);
-	~TextComponent();
-	void initialize(const std::string& pathToFont, int size = 16);
+	TextComponent(GameObject & owner, const std::string& pathToFont, int size = 16);
+	~TextComponent() = default;
 	void setFontSize(int);
 	std::string getText();
 	void setText(const std::string &);
@@ -21,8 +20,8 @@ public:
 private:
 	std::string mText;
 	std::unique_ptr<Sprite> mSprite;
-	std::unique_ptr<Font> mFont;
 	std::string mFontSource;
+	std::unique_ptr<Font> mFont;
 	Vector2D mScale{1, 1};
 	double mAngle{0};
 	bool mCentered{false};

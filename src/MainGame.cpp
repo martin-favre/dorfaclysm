@@ -3,25 +3,13 @@
 #include "Component.h"
 #include "GridMap.h"
 #include "Vector2DInt.h"
-class TextComponent:public Component
-{
-	public:
-	TextComponent(GameObject& owner):Component(owner){}
-
-	void setup() override
-	{
-
-	}
-	
-	void update() override
-	{
-
-	}
-};
 
 void foo()
 {
-	
+	{
+		//GameObject* gObj = Engine::addGameObject<GameObject>();
+		
+	} 	
 }
 void MainGame::run()
 {
