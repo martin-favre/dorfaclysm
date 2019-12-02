@@ -4,11 +4,11 @@
 
 class GameObject;
 struct Debug_CloseGameComponent : public Component {
-	Debug_CloseGameComponent(GameObject&owner) :Component(owner) {}
-	inline void update() final override {
-		if (InputManager::getKeyDown(INPUT_KEY_QUIT) ||
-		        InputManager::getKeyDown(SDL_SCANCODE_Q)) {
-			Engine::stop();
-		}
-	}
+  Debug_CloseGameComponent(GameObject& owner) : Component(owner) {}
+  inline void update() final override {
+    if (InputManager::getKeyDown(INPUT_KEY_QUIT) ||
+        InputManager::getKeyDown(SDL_SCANCODE_Q)) {
+      Engine::stop();
+    }
+  }
 };

@@ -1,194 +1,181 @@
 #include "GraphicsManager.h"
-#include "Logging.h"
+
 #include "Helpers.h"
+#include "Logging.h"
 #include "SpriteLoader.h"
 /* Parameters */
 
 bool GraphicsManager::mInitialized = false;
-SDL_Window * GraphicsManager::mMainWindow = nullptr;
-SDL_Surface * GraphicsManager::mMainSurface = nullptr;
-SDL_Renderer * GraphicsManager::mMainRenderer = nullptr;	
-unsigned int GraphicsManager::mScreenWidth = 1700 ;
+SDL_Window* GraphicsManager::mMainWindow = nullptr;
+SDL_Surface* GraphicsManager::mMainSurface = nullptr;
+SDL_Renderer* GraphicsManager::mMainRenderer = nullptr;
+unsigned int GraphicsManager::mScreenWidth = 1700;
 unsigned int GraphicsManager::mScreenHeight = 800;
 std::string GraphicsManager::mWindowName = "Let's go bois";
 SDL_Color GraphicsManager::mRenderDrawColor = {0, 0, 0, 1};
 /* Public Routines */
 
 void GraphicsManager::initialize() {
-	ASSERT(!GraphicsManager::mInitialized, "You cannot initialize GraphicsManager twice!");
-	int ok = SDL_Init(SDL_INIT_VIDEO);
-	ASSERT(ok >= 0,
-	       "SDL could not initialize! SDL_Error: " +  std::string(SDL_GetError()));
-	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0")) // 0 = nearest pixel sampling
-	{
-		Logging::log("Warning: Linear texture filtering not enabled!");
-	}
-	GraphicsManager::mMainWindow = SDL_CreateWindow(
-	                                     GraphicsManager::mWindowName.c_str(),
-	                                     SDL_WINDOWPOS_UNDEFINED,
-	                                     SDL_WINDOWPOS_UNDEFINED,
-	                                     mScreenWidth,
-	                                     mScreenHeight,
-	                                     SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE );
+  ASSERT(!GraphicsManager::mInitialized,
+         "You cannot initialize GraphicsManager twice!");
+  int ok = SDL_Init(SDL_INIT_VIDEO);
+  ASSERT(ok >= 0,
+         "SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
+  if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,
+                   "0"))  // 0 = nearest pixel sampling
+  {
+    Logging::log("Warning: Linear texture filtering not enabled!");
+  }
+  GraphicsManager::mMainWindow = SDL_CreateWindow(
+      GraphicsManager::mWindowName.c_str(), SDL_WINDOWPOS_UNDEFINED,
+      SDL_WINDOWPOS_UNDEFINED, mScreenWidth, mScreenHeight,
+      SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-	ASSERT(GraphicsManager::mMainWindow != NULL,
-	       "Window could not be created! SDL_Error:" + std::string(SDL_GetError()));
+  ASSERT(
+      GraphicsManager::mMainWindow != NULL,
+      "Window could not be created! SDL_Error:" + std::string(SDL_GetError()));
 
-	GraphicsManager::mMainRenderer = SDL_CreateRenderer(
-	                                       GraphicsManager::mMainWindow,
-	                                       -1,
-	                                       SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  GraphicsManager::mMainRenderer =
+      SDL_CreateRenderer(GraphicsManager::mMainWindow, -1,
+                         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-	ASSERT(GraphicsManager::mMainRenderer != NULL,
-	       "Renderer could not be created! SDL Error: " + std::string(SDL_GetError()));
+  ASSERT(GraphicsManager::mMainRenderer != NULL,
+         "Renderer could not be created! SDL Error: " +
+             std::string(SDL_GetError()));
 
-	GraphicsManager::mMainSurface = SDL_GetWindowSurface( GraphicsManager::mMainWindow );
+  GraphicsManager::mMainSurface =
+      SDL_GetWindowSurface(GraphicsManager::mMainWindow);
 
-	ASSERT(GraphicsManager::mMainSurface != NULL,
-	       "Surface could not be created! SDL Error: " + std::string(SDL_GetError()));
+  ASSERT(GraphicsManager::mMainSurface != NULL,
+         "Surface could not be created! SDL Error: " +
+             std::string(SDL_GetError()));
 
-	SDL_SetRenderDrawColor(GraphicsManager::mMainRenderer, 0x0, 0x0, 0x0, 0x0);
+  SDL_SetRenderDrawColor(GraphicsManager::mMainRenderer, 0x0, 0x0, 0x0, 0x0);
 
-	int img_flags = IMG_INIT_PNG;
-	ok = IMG_Init(img_flags) & img_flags;
+  int img_flags = IMG_INIT_PNG;
+  ok = IMG_Init(img_flags) & img_flags;
 
-	ASSERT(ok,
-	       "SDL_image could not initialize! SDL_image Error: " + std::string(IMG_GetError()));
+  ASSERT(ok, "SDL_image could not initialize! SDL_image Error: " +
+                 std::string(IMG_GetError()));
 
-	ok = TTF_Init();
-	ASSERT(ok != -1,
-	       "SDL_ttf could not initialize! SDL_ttf Error: " + std::string(TTF_GetError()));
-	GraphicsManager::mInitialized = true;
-	Logging::log("Finished initialing GraphicsManager");
+  ok = TTF_Init();
+  ASSERT(ok != -1, "SDL_ttf could not initialize! SDL_ttf Error: " +
+                       std::string(TTF_GetError()));
+  GraphicsManager::mInitialized = true;
+  Logging::log("Finished initialing GraphicsManager");
 }
 
 void GraphicsManager::teardown() {
-
-	SpriteLoader::teardown();
-	SDL_DestroyRenderer(GraphicsManager::mMainRenderer);
-	SDL_FreeSurface(GraphicsManager::mMainSurface);
-	SDL_DestroyWindow(GraphicsManager::mMainWindow );
-	TTF_Quit();
-	IMG_Quit();
-	SDL_Quit();
-	mInitialized = false;
-	Logging::log("Finished teardown GraphicsManager");
-		
+  SpriteLoader::teardown();
+  SDL_DestroyRenderer(GraphicsManager::mMainRenderer);
+  SDL_FreeSurface(GraphicsManager::mMainSurface);
+  SDL_DestroyWindow(GraphicsManager::mMainWindow);
+  TTF_Quit();
+  IMG_Quit();
+  SDL_Quit();
+  mInitialized = false;
+  Logging::log("Finished teardown GraphicsManager");
 }
 
 void GraphicsManager::prepareRendering() {
-	setRenderDrawColor(SDL_Color{0,0,0,0});
-	SDL_RenderClear(GraphicsManager::mMainRenderer);
+  setRenderDrawColor(SDL_Color{0, 0, 0, 0});
+  SDL_RenderClear(GraphicsManager::mMainRenderer);
 }
 
-void GraphicsManager::renderTexture(const Sprite & sprite,
-                                     const Vector2D & pos,
-                                     const Vector2D & scale,
-                                     const double angle,
-                                     bool centered,
-                                     const SDL_RendererFlip flip) {
-	SDL_Texture * texture = sprite.getSdlTexture();
-	ASSERT(texture != nullptr, "Trying to render null texture");
-	int width = 0;
-	int height = 0;
-	SDL_QueryTexture(texture, NULL, NULL, &width, &height);
-	double posx = 0;
-	double posy = 0;
-	double scalex = sprite.getRect().getSdlRect().h * scale.x;
-	double scaley = sprite.getRect().getSdlRect().w * scale.y;
-	if (centered) {
-		posx = round(pos.x - scalex / 2);
-		posy = round(pos.y - scaley / 2);
-	} else {
-		posx = round(pos.x);
-		posy = round(pos.y);
-	}
-	SDL_Rect dstrect = {int(round(posx)),
-	                    int(round(posy)),
-	                    int(round(scalex)),
-	                    int(round(scaley))
-	                   };
-	SDL_RenderCopyEx(
-	    GraphicsManager::mMainRenderer,  	// SDL_Renderer*          renderer
-	    texture, 							// SDL_Texture*           texture
-	    &sprite.getRect().getSdlRect(), 	 // const SDL_Rect*        srcrect. selects a subpart of the texture.
-	    &dstrect, 							// const SDL_Rect*        dstrect
-	    angle, 								// const double           angle
-	    NULL, 								// const SDL_Point*       center
-	    flip);								// const SDL_RendererFlip flip
+void GraphicsManager::renderTexture(const Sprite& sprite, const Vector2D& pos,
+                                    const Vector2D& scale, const double angle,
+                                    bool centered,
+                                    const SDL_RendererFlip flip) {
+  SDL_Texture* texture = sprite.getSdlTexture();
+  ASSERT(texture != nullptr, "Trying to render null texture");
+  int width = 0;
+  int height = 0;
+  SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+  double posx = 0;
+  double posy = 0;
+  double scalex = sprite.getRect().getSdlRect().h * scale.x;
+  double scaley = sprite.getRect().getSdlRect().w * scale.y;
+  if (centered) {
+    posx = round(pos.x - scalex / 2);
+    posy = round(pos.y - scaley / 2);
+  } else {
+    posx = round(pos.x);
+    posy = round(pos.y);
+  }
+  SDL_Rect dstrect = {int(round(posx)), int(round(posy)), int(round(scalex)),
+                      int(round(scaley))};
+  SDL_RenderCopyEx(
+      GraphicsManager::mMainRenderer,  // SDL_Renderer*          renderer
+      texture,                         // SDL_Texture*           texture
+      &sprite.getRect().getSdlRect(),  // const SDL_Rect*        srcrect.
+                                       // selects a subpart of the texture.
+      &dstrect,                        // const SDL_Rect*        dstrect
+      angle,                           // const double           angle
+      NULL,                            // const SDL_Point*       center
+      flip);                           // const SDL_RendererFlip flip
 }
 
-void GraphicsManager::drawCircle(const Vector2D & pos, int radius)
-{
-	/* Stolen by https://stackoverflow.com/questions/38334081/howto-draw-circles-arcs-and-vector-graphics-in-sdl */
-	int x = radius - 1;
-	int y = 0;
-	int tx = 1;
-	int ty = 1;
-	int err = tx - (radius << 1); // shifting bits left by 1 effectively
-								  // doubles the value. == tx - diameter
-	int posx = Helpers::roundToInt(pos.x);
-	int posy = Helpers::roundToInt(pos.y);
-	while (x >= y)
-	{
-		//  Each of the following renders an octant of the circle
-		SDL_RenderDrawPoint(mMainRenderer, posx + x, posy - y);
-		SDL_RenderDrawPoint(mMainRenderer, posx + x, posy + y);
-		SDL_RenderDrawPoint(mMainRenderer, posx - x, posy - y);
-		SDL_RenderDrawPoint(mMainRenderer, posx - x, posy + y);
-		SDL_RenderDrawPoint(mMainRenderer, posx + y, posy - x);
-		SDL_RenderDrawPoint(mMainRenderer, posx + y, posy + x);
-		SDL_RenderDrawPoint(mMainRenderer, posx - y, posy - x);
-		SDL_RenderDrawPoint(mMainRenderer, posx - y, posy + x);
+void GraphicsManager::drawCircle(const Vector2D& pos, int radius) {
+  /* Stolen by
+   * https://stackoverflow.com/questions/38334081/howto-draw-circles-arcs-and-vector-graphics-in-sdl
+   */
+  int x = radius - 1;
+  int y = 0;
+  int tx = 1;
+  int ty = 1;
+  int err = tx - (radius << 1);  // shifting bits left by 1 effectively
+                                 // doubles the value. == tx - diameter
+  int posx = Helpers::roundToInt(pos.x);
+  int posy = Helpers::roundToInt(pos.y);
+  while (x >= y) {
+    //  Each of the following renders an octant of the circle
+    SDL_RenderDrawPoint(mMainRenderer, posx + x, posy - y);
+    SDL_RenderDrawPoint(mMainRenderer, posx + x, posy + y);
+    SDL_RenderDrawPoint(mMainRenderer, posx - x, posy - y);
+    SDL_RenderDrawPoint(mMainRenderer, posx - x, posy + y);
+    SDL_RenderDrawPoint(mMainRenderer, posx + y, posy - x);
+    SDL_RenderDrawPoint(mMainRenderer, posx + y, posy + x);
+    SDL_RenderDrawPoint(mMainRenderer, posx - y, posy - x);
+    SDL_RenderDrawPoint(mMainRenderer, posx - y, posy + x);
 
-		if (err <= 0)
-		{
-			y++;
-			err += ty;
-			ty += 2;
-		}
-		if (err > 0)
-		{
-			x--;
-			tx += 2;
-			err += tx - (radius << 1);
-		}
-	}
-
+    if (err <= 0) {
+      y++;
+      err += ty;
+      ty += 2;
+    }
+    if (err > 0) {
+      x--;
+      tx += 2;
+      err += tx - (radius << 1);
+    }
+  }
 }
 
-void GraphicsManager::drawPoint(const Vector2D& pos)
-{
-	int x = Helpers::roundToInt(pos.x);
-	int y = Helpers::roundToInt(pos.y);
-	int success = SDL_RenderDrawPoint(mMainRenderer, x, y);
-	ASSERT(success == 0, SDL_GetError());
+void GraphicsManager::drawPoint(const Vector2D& pos) {
+  int x = Helpers::roundToInt(pos.x);
+  int y = Helpers::roundToInt(pos.y);
+  int success = SDL_RenderDrawPoint(mMainRenderer, x, y);
+  ASSERT(success == 0, SDL_GetError());
 }
 
-void GraphicsManager::drawLine(const Vector2D& from, const Vector2D& to)
-{
-	int from_x = (int)round(from.x);
-	int from_y = (int)round(from.y);
-	int to_x = (int)round(to.x);
-	int to_y = (int)round(to.y);
-	int success = SDL_RenderDrawLine(mMainRenderer, from_x, from_y, to_x, to_y);
-	ASSERT(success == 0, SDL_GetError());
+void GraphicsManager::drawLine(const Vector2D& from, const Vector2D& to) {
+  int from_x = (int)round(from.x);
+  int from_y = (int)round(from.y);
+  int to_x = (int)round(to.x);
+  int to_y = (int)round(to.y);
+  int success = SDL_RenderDrawLine(mMainRenderer, from_x, from_y, to_x, to_y);
+  ASSERT(success == 0, SDL_GetError());
 }
 
-void GraphicsManager::drawRect(const Rect& rect)
-{
-	SDL_RenderFillRect(mMainRenderer, &rect.getSdlRect());
+void GraphicsManager::drawRect(const Rect& rect) {
+  SDL_RenderFillRect(mMainRenderer, &rect.getSdlRect());
 }
 
 void GraphicsManager::executeRendering() {
-	SDL_RenderPresent(GraphicsManager::mMainRenderer);
+  SDL_RenderPresent(GraphicsManager::mMainRenderer);
 }
 
-void GraphicsManager::setRenderDrawColor(const SDL_Color& color)
-{
-	SDL_SetRenderDrawColor(GraphicsManager::mMainRenderer,
-		color.r,
-		color.g,
-		color.b,
-		color.a);
+void GraphicsManager::setRenderDrawColor(const SDL_Color& color) {
+  SDL_SetRenderDrawColor(GraphicsManager::mMainRenderer, color.r, color.g,
+                         color.b, color.a);
 }

@@ -1,6 +1,3 @@
 #include "Tile.h"
 
-bool Tile::isOpen() const
-{
-    return mOpen;
-}
+bool Tile::isOpen() const { return mOpen; }

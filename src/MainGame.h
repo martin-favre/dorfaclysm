@@ -1,7 +1,6 @@
 
 #pragma once
-class MainGame
-{
-    public:
-    void run();
+class MainGame {
+ public:
+  void run();
 };
