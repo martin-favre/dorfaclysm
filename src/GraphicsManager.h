@@ -28,6 +28,7 @@ public:
 	static void drawCircle(const Vector2D & pos, int radius);
 	static void drawPoint(const Vector2D& pos);
 	static void drawLine(const Vector2D& from, const Vector2D& to);
+	static void drawRect(const Rect& rect);
 	static void executeRendering();
 	static void setRenderDrawColor(const SDL_Color& color);
 	/*-------------------------------------------------------

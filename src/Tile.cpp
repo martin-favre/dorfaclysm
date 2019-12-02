@@ -1,6 +1,6 @@
 #include "Tile.h"
 
-bool Tile::getIfTileIsEnterable() const
+bool Tile::isOpen() const
 {
-    return mEnterable;
+    return mOpen;
 }

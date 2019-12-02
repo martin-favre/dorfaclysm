@@ -32,8 +32,15 @@ const Tile* GridMap::getTile(const Vector2DInt& pos) const
     return &mTiles[pos.y][pos.x];
 }
 
+bool GridMap::setTile(const Vector2DInt& pos, const Tile& tile)
+{
+    if(!isPosInMap(pos)) return false;
+    mTiles[pos.y][pos.x] = tile;
+    return true;
+}
+
 bool GridMap::isTileFree(const Vector2DInt& pos) const
 {
     if(!isPosInMap(pos)) return false;
-    return getTile(pos)->getIfTileIsEnterable();
+    return getTile(pos)->isOpen();
 }

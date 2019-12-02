@@ -8,8 +8,8 @@ bool GraphicsManager::mInitialized = false;
 SDL_Window * GraphicsManager::mMainWindow = nullptr;
 SDL_Surface * GraphicsManager::mMainSurface = nullptr;
 SDL_Renderer * GraphicsManager::mMainRenderer = nullptr;	
-unsigned int GraphicsManager::mScreenWidth = 1024 ;
-unsigned int GraphicsManager::mScreenHeight = 768;
+unsigned int GraphicsManager::mScreenWidth = 1700 ;
+unsigned int GraphicsManager::mScreenHeight = 800;
 std::string GraphicsManager::mWindowName = "Let's go bois";
 SDL_Color GraphicsManager::mRenderDrawColor = {0, 0, 0, 1};
 /* Public Routines */
@@ -173,6 +173,11 @@ void GraphicsManager::drawLine(const Vector2D& from, const Vector2D& to)
 	int to_y = (int)round(to.y);
 	int success = SDL_RenderDrawLine(mMainRenderer, from_x, from_y, to_x, to_y);
 	ASSERT(success == 0, SDL_GetError());
+}
+
+void GraphicsManager::drawRect(const Rect& rect)
+{
+	SDL_RenderFillRect(mMainRenderer, &rect.getSdlRect());
 }
 
 void GraphicsManager::executeRendering() {

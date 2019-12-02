@@ -8,8 +8,8 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            //"program": "${workspaceFolder}/out/Vidya",
-            "program": "${workspaceFolder}/testBin/astar_test",
+            "program": "${workspaceFolder}/out/Vidya",
+            //"program": "${workspaceFolder}/testBin/astar_test",
             
             "args": [],
             "stopAtEntry": false,

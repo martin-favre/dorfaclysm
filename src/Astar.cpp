@@ -36,12 +36,12 @@ class AStarNode
 	static constexpr int estimation_weight = 10;
 
 
-	Vector2DInt position;
+	const Vector2DInt position;
 	// total distance already traveled to reach the node
 	int level;
 	// priority=level+remaining distance estimate
 	int priority;  // smaller: higher priority
-	int direction;
+	const int direction;
 
 	
 	const AStarNode * parent;
@@ -127,7 +127,7 @@ bool Astar::getPath(const Vector2DInt& start, const Vector2DInt& finish, const G
 	while (!node_queue.empty())
 	{
 		++steps;
-		if (steps > 10000)
+		if (steps > 100000)
 		{
 			Logging::log("Could not find path, over max number of steps");
 			return false;

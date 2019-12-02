@@ -13,7 +13,9 @@
 			"vector": "cpp",
 			"string_view": "cpp",
 			"initializer_list": "cpp",
-			"*.tcc": "cpp"
+			"*.tcc": "cpp",
+			"chrono": "cpp",
+			"thread": "cpp"
 		},
 		"cmakeExplorer.buildDir": "build",
 		"catch2TestExplorer.executables":"testBin/*"
