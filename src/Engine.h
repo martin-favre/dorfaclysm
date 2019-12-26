@@ -36,7 +36,7 @@ class Engine {
   static void start();
   static void stop();
   template <class gameObjectType>
-  static gameObjectType* addGameObject();
+  static gameObjectType& addGameObject();
   static void removeGameObject(GameObject* gObj);
   static size_t getGameObjectCount();
   static void registerScene(const std::string& name, void (*scenecreator)());
@@ -68,7 +68,7 @@ class Engine {
 };
 
 template <class gameObjectType>
-gameObjectType* Engine::addGameObject() {
+gameObjectType& Engine::addGameObject() {
   GAMEOBJECT_ID id = Engine::mLatestGameobjectId;
   std::unique_ptr<GameObject> newObject = std::make_unique<GameObject>(id);
   if (Engine::mLatestGameobjectId >=
@@ -81,5 +81,5 @@ gameObjectType* Engine::addGameObject() {
   Logging::log("Added gameobject id " + std::to_string(id) + " type " +
                typeid(gameObjectType).name());
   if (!mRunning) putGameObjectsIntoWorld();
-  return out;
+  return *out;
 }

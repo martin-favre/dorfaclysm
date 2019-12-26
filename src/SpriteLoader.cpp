@@ -17,7 +17,7 @@ SDL_Texture *SpriteLoader::convertSurfaceToTexture(SDL_Surface *newSurf) {
   return out;
 }
 
-std::unique_ptr<Sprite> SpriteLoader::getSpriteFromText(const std::string &text,
+std::unique_ptr<Sprite> SpriteLoader::getSpriteFromTextFast(const std::string &text,
                                                         Font &font,
                                                         SDL_Color &textColor) {
   SDL_Surface *newSurf =
@@ -33,6 +33,10 @@ std::unique_ptr<Sprite> SpriteLoader::getSpriteFromText(const std::string &text,
 void SpriteLoader::teardown() {
   for (const auto &item : mTextures) {
     SDL_DestroyTexture(item.second);
+  }
+  for(const auto& item : mFonts)
+  {
+    TTF_CloseFont(item.second);
   }
 }
 

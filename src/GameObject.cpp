@@ -33,12 +33,14 @@ void GameObject::render() {
   }
 }
 
+void GameObject::setPosition(const Vector2D& pos) { mPosition = pos; }
+
 int GameObject::getRenderDepth() const { return mRenderDepth; }
 
 const Vector2D& GameObject::getPosition() const { return mPosition; }
 
 const Vector2D& GameObject::getScale() const { return mScale; }
-
+void GameObject::setScale(const Vector2D& newScale) { mScale = newScale; }
 double GameObject::getRotation() const { return mRotation; }
 
 void GameObject::destroy() { Engine::removeGameObject(this); }

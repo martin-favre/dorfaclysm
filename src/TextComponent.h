@@ -26,9 +26,8 @@ class TextComponent : public Component {
   std::unique_ptr<Sprite> mSprite;
   std::string mFontSource;
   std::unique_ptr<Font> mFont;
-  Vector2D mScale{1, 1};
   double mAngle{0};
   bool mCentered{false};
   SDL_RendererFlip mFlip{SDL_FLIP_NONE};
-  SDL_Color mColor{255, 255, 255, 1};
+  SDL_Color mColor{255, 255, 255, 255};
 };

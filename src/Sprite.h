@@ -7,7 +7,7 @@
 class Sprite {
  public:
   Sprite(SDL_Texture* newText, bool isFont = false);
-  Sprite(SDL_Texture* newText, const Rect&, bool isFont = false);
+  Sprite(SDL_Texture* newText, const Rect& area, bool isFont = false);
   ~Sprite();
   SDL_Texture* getSdlTexture() const;
   const Rect& getRect() const;

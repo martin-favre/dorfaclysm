@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
-
 typedef unsigned int uint;
 
 /*-------------------------------------------------------
@@ -24,16 +24,10 @@ inline void ASSERT(bool condition, const std::string& message) {
 #define ASSERT(condition, message)                                \
   do {                                                            \
     if (!(condition)) {                                           \
-      Logging::log(std::stringstream()                            \
-                   << "std::endl"                                 \
-                   << "Assertion: " #condition << std::endl       \
-                   << "Failed in file: " << __FILE__ << std::endl \
-                   << "line: " << __LINE__ << std::endl           \
-                   << "Message: " << message << std::endl         \
-                   << std::endl);                                 \
-      std::terminate();                                           \
+      throw std::runtime_error(message + "\n file: " + __file__ + \
+                               "\nline:" + __line__ + "\n\n");    \
     }                                                             \
-  } while (false)
+  } while (false);
 #endif
 
 class Vector2DInt;

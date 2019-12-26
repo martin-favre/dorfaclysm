@@ -11,7 +11,7 @@ class SpriteLoader {
   static std::unique_ptr<Sprite> loadSprite(const std::string &path,
                                             const Rect &area);
   static std::unique_ptr<Sprite> loadSprite(const std::string &path);
-  static std::unique_ptr<Sprite> getSpriteFromText(const std::string &text,
+  static std::unique_ptr<Sprite> getSpriteFromTextFast(const std::string &text,
                                                    Font &font,
                                                    SDL_Color &color);
   static std::unique_ptr<Font> loadFont(const std::string &path, int size);

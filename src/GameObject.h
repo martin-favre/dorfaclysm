@@ -13,6 +13,8 @@ class GameObject {
  public:
   GameObject(GAMEOBJECT_ID id);
   virtual ~GameObject();
+  GameObject(const GameObject&) = delete;
+  GameObject& operator=(const GameObject&) = delete;
 
   /*-------------------------------------------------------
   Get/Set if the gameobject is enabled.
@@ -26,9 +28,6 @@ class GameObject {
   ---------------------------------------------------------
   @return pointer to the component that was just added.
   ---------------------------------------------------------*/
-  template <typename componentType>
-  componentType& addComponent();
-
   template <typename componentType>
   componentType& addComponent(std::unique_ptr<componentType>&& newComponent);
 
@@ -45,7 +44,9 @@ class GameObject {
 
   int getRenderDepth() const;
   const Vector2D& getPosition() const;
+  void setPosition(const Vector2D& pos);
   const Vector2D& getScale() const;
+  void setScale(const Vector2D& newScale);
   double getRotation() const;
 
   /*-------------------------------------------------------
@@ -57,6 +58,7 @@ class GameObject {
   void destroy();
   GAMEOBJECT_ID id() const;
   std::string& name();
+
 
  private:
   friend class Engine;
