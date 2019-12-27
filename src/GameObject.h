@@ -23,13 +23,13 @@ class GameObject {
   ---------------------------------------------------------*/
   bool& enabled();
 
-  /*-------------------------------------------------------
-  Add component of type.
-  ---------------------------------------------------------
-  @return pointer to the component that was just added.
-  ---------------------------------------------------------*/
-  template <typename componentType>
-  componentType& addComponent(std::unique_ptr<componentType>&& newComponent);
+  template <typename T, class... Args>
+  T& addComponent(Args&&... args) {
+    auto newComp = std::make_unique<T>(*this, std::forward<Args>(args)...);
+    auto newCompPtr = newComp.get();
+    mComponents.emplace_back(std::move(newComp));
+    return *newCompPtr;
+  }
 
   /*-------------------------------------------------------
   Gets pointer to component of type.
@@ -59,7 +59,6 @@ class GameObject {
   GAMEOBJECT_ID id() const;
   std::string& name();
 
-
  private:
   friend class Engine;
   /*-------------------------------------------------------
@@ -75,7 +74,7 @@ class GameObject {
   /*-------------------------------------------------------
   Runs all components' renders.
   ---------------------------------------------------------*/
-  void render();
+  virtual void render();
 
   /*-------------------------------------------------------
   Runs all components' update.
@@ -92,18 +91,19 @@ class GameObject {
   std::vector<std::unique_ptr<Component>> mComponents;
 };
 
-template <typename componentType>
-componentType& GameObject::addComponent(
-    std::unique_ptr<componentType>&& newComponent) {
-  componentType* ptr = newComponent.get();
-  mComponents.push_back(std::move(newComponent));
-  return *ptr;
-}
+// template <typename componentType>
+// componentType& GameObject::addComponent(
+//     std::unique_ptr<componentType>&& newComponent) {
+//   componentType* ptr = newComponent.get();
+//   mComponents.push_back(std::move(newComponent));
+//   return *ptr;
+// }
 
 template <class componentType>
 componentType* GameObject::getComponent() {
   for (const auto& item : mComponents) {
-    auto casted = std::dynamic_pointer_cast<componentType>(item);
+    auto raw = item.get();
+    auto casted = dynamic_cast<componentType*>(raw);
     if (casted) {
       return casted;
     }

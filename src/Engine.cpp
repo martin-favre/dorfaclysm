@@ -115,8 +115,7 @@ void Engine::clearAllGameObjects() {
   mGameobjectsToRemove.clear();
 
   GameObject& g = Engine::addGameObject<GameObject>();
-  auto cmp = std::make_unique<Debug_CloseGameComponent>(g);
-  g.addComponent<Debug_CloseGameComponent>(std::move(cmp));
+  g.addComponent<Debug_CloseGameComponent>();
   g.name() = "Debug_CloseGameComponent";
 }
 

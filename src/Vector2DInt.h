@@ -2,17 +2,18 @@
 #include <cinttypes>
 #include <cmath>
 #include <ostream>
+
 #include "Helpers.h"
 #include "Vector2D.h"
 /*-------------------------------------------------------
         Contains 2D vector of integers
 ---------------------------------------------------------*/
 
-
 class Vector2DInt {
  public:
   Vector2DInt() = default;
   constexpr Vector2DInt(int x_, int y_) : x(x_), y(y_) {}
+  constexpr Vector2DInt(uint x_, uint y_) : x(x_), y(y_) {}
 
   /*-------------------------------------------------------
   Values are rounded.

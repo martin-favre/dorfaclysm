@@ -61,6 +61,7 @@
 			"bit": "cpp"
 		},
 		"cmakeExplorer.buildDir": "build",
-		"catch2TestExplorer.executables":"testBin/*"
+		"catch2TestExplorer.executables": "testBin/*",
+		"editor.tabSize": 2
 	}
 }

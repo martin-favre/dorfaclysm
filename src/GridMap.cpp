@@ -2,7 +2,6 @@
 
 #include "Helpers.h"
 #include "Logging.h"
-#include "Vector2DInt.h"
 
 GridMap GridMap::mActiveMap;
 
@@ -22,8 +21,11 @@ GridMap& GridMap::generateActiveMap(
   } else {
     Logging::log(std::string(__func__) + ": generator not set");
   }
+  mActiveMap.mSize = size;
   return mActiveMap;
 }
+
+const Vector2DInt& GridMap::getSize() const { return mSize; }
 
 bool GridMap::isPosInMap(const Vector2DInt& pos) const {
   if (pos.x < 0) return false;

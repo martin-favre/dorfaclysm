@@ -21,8 +21,9 @@ class GraphicsManager {
   static void teardown();
   static void prepareRendering();
   static void renderTexture(const Sprite&, const Vector2D& pos,
-                            const Vector2D& scale, const double angle,
-                            bool centered, const SDL_RendererFlip flip);
+                            const Vector2D& scale = {1, 1},
+                            const double angle = 0, bool centered = false,
+                            const SDL_RendererFlip flip = SDL_FLIP_NONE);
   static void drawCircle(const Vector2D& pos, int radius);
   static void drawPoint(const Vector2D& pos);
   static void drawLine(const Vector2D& from, const Vector2D& to);
@@ -37,8 +38,8 @@ class GraphicsManager {
   @param surf - The surface to convert to a texture.
   @return - pointer to the created texture.
   ---------------------------------------------------------*/
-  static unsigned int getScreenHeight() { return mScreenHeight; }
-  static unsigned int getScreenWidth() { return mScreenWidth; }
+  static inline unsigned int getScreenHeight() { return mScreenHeight; }
+  static inline unsigned int getScreenWidth() { return mScreenWidth; }
   friend class SpriteLoader;
 
  private:

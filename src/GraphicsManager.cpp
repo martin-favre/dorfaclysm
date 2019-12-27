@@ -3,6 +3,7 @@
 #include "Helpers.h"
 #include "Logging.h"
 #include "SpriteLoader.h"
+#include "Vector2DInt.h"
 /* Parameters */
 
 bool GraphicsManager::mInitialized = false;
@@ -88,13 +89,13 @@ void GraphicsManager::renderTexture(const Sprite& sprite, const Vector2D& pos,
                                     const SDL_RendererFlip flip) {
   SDL_Texture* texture = sprite.getSdlTexture();
   ASSERT(texture != nullptr, "Trying to render null texture");
-  int width = 0;
-  int height = 0;
-  SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+
+  const SDL_Rect& spriteDimensions = sprite.getRect().getSdlRect();
+
   double posx = 0;
   double posy = 0;
-  double scalex = sprite.getRect().getSdlRect().h * scale.x;
-  double scaley = sprite.getRect().getSdlRect().w * scale.y;
+  const double scalex = round(spriteDimensions.w * scale.x);
+  const double scaley = round(spriteDimensions.h * scale.y);
   if (centered) {
     posx = round(pos.x - scalex / 2);
     posy = round(pos.y - scaley / 2);
@@ -102,8 +103,8 @@ void GraphicsManager::renderTexture(const Sprite& sprite, const Vector2D& pos,
     posx = round(pos.x);
     posy = round(pos.y);
   }
-  SDL_Rect dstrect = {int(round(posx)), int(round(posy)), int(round(scalex)),
-                      int(round(scaley))};
+  const SDL_Rect dstrect = {static_cast<int>(posx), static_cast<int>(posy),
+                            static_cast<int>(scalex), static_cast<int>(scaley)};
   SDL_RenderCopyEx(
       GraphicsManager::mMainRenderer,  // SDL_Renderer*          renderer
       texture,                         // SDL_Texture*           texture

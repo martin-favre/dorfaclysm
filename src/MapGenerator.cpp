@@ -13,7 +13,7 @@ void MapGenerator::generate(GridMap& gridMap, const Vector2DInt& size) {
         newTile.mType = Tile::dirt;
       }
 
-      gridMap.setTile(pos, Tile{});
+      gridMap.setTile(pos, newTile);
     }
   }
 }

@@ -1,6 +1,10 @@
-☐ Implement Dorf Job Structure
-    ☐ Add job Walk
+☐ Figure out a way to render the map
+☐ Be able to scroll around in the map
+☐ Be able to zoom in/out of the map
 
 ☐ Generate basic map (so you can see the tiles)
 
 ☐ Find sprite for Dorf
+
+☐ Implement Dorf Job Structure
+    ☐ Add job Walk

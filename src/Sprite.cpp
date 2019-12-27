@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 
 #include "Helpers.h"
+#include "Vector2DInt.h"
 
 Sprite::Sprite(SDL_Texture *newText, const Rect &area, bool isFont)
     : mTexture(newText), mRect(area), mIsFont(isFont) {}
