@@ -1,10 +1,11 @@
-☐ Figure out a way to render the map
-☐ Be able to scroll around in the map
-☐ Be able to zoom in/out of the map
+✔ Figure out a way to render the map @done(19-12-27 21:10)
+✔ Be able to scroll around in the map @done(19-12-27 21:09)
+✔ Generate basic map (so you can see the tiles) @done(19-12-27 21:10)
 
-☐ Generate basic map (so you can see the tiles)
 
 ☐ Find sprite for Dorf
 
 ☐ Implement Dorf Job Structure
     ☐ Add job Walk
+
+☐ Be able to zoom in/out of the map

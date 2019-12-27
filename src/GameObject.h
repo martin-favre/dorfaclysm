@@ -91,14 +91,6 @@ class GameObject {
   std::vector<std::unique_ptr<Component>> mComponents;
 };
 
-// template <typename componentType>
-// componentType& GameObject::addComponent(
-//     std::unique_ptr<componentType>&& newComponent) {
-//   componentType* ptr = newComponent.get();
-//   mComponents.push_back(std::move(newComponent));
-//   return *ptr;
-// }
-
 template <class componentType>
 componentType* GameObject::getComponent() {
   for (const auto& item : mComponents) {

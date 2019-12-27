@@ -5,7 +5,7 @@
 #include "GraphicsManager.h"
 #include "SpriteLoader.h"
 #include "Vector2DInt.h"
-
+#include "Camera.h"
 // Probably gonna use this eventually
 // Vector2DInt getTextSize(const std::string& text, Font& font) {
 //   int w = 0;
@@ -36,6 +36,13 @@ void TextComponent::setColor(const SDL_Color& color) { mColor = color; }
 
 void TextComponent::render() {
   if (mSprite->getSdlTexture() == nullptr) return;
-  GraphicsManager::renderTexture(*mSprite, owner().getPosition(),
-                                 owner().getScale(), mAngle, mCentered, mFlip);
+  const auto& cameraPos = Camera::get().getPosition();
+  const GameObject& gObj = owner(); 
+  Vector2D pos{gObj.getPosition()};
+  if(mCameraAsReference)
+  {
+    pos += cameraPos;
+  }
+  GraphicsManager::renderTexture(*mSprite, pos,
+                                 gObj.getScale(), gObj.getRotation(), mCentered, mFlip);
 }

@@ -20,14 +20,14 @@ class TextComponent : public Component {
   void setText(const std::string&);
   void setColor(const SDL_Color& color);
   void render() final override;
-
+  void setCameraAsReference(bool useCamera) {mCameraAsReference = useCamera;}
  private:
   std::string mText;
   std::unique_ptr<Sprite> mSprite;
   std::string mFontSource;
   std::unique_ptr<Font> mFont;
-  double mAngle{0};
   bool mCentered{false};
+  bool mCameraAsReference{false};
   SDL_RendererFlip mFlip{SDL_FLIP_NONE};
   SDL_Color mColor{255, 255, 255, 255};
 };

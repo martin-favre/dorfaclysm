@@ -13,6 +13,7 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
+#include "CameraControllerComponent.h"
 void foo() {
   { GridMap::generateActiveMap({500, 500}, MapGenerator::generate); }
   // {
@@ -37,6 +38,10 @@ void foo() {
     gObj.addComponent<GridMapRenderer>();
     // auto comp = Component::create<GridMapRenderer>(gObj);
     // gObj.addComponent<GridMapRenderer>(std::move(comp));
+  }
+  {
+    GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.addComponent<CameraControllerComponent>();
   }
   {
     // GameObject& gObj = Engine::addGameObject<GameObject>();
