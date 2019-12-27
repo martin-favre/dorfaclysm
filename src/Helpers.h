@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+
 typedef unsigned int uint;
 
 /*-------------------------------------------------------
@@ -30,7 +31,6 @@ inline void ASSERT(bool condition, const std::string& message) {
   } while (false);
 #endif
 
-class Vector2DInt;
 namespace Helpers {
 /*-------------------------------------------------------
         Get random int.
@@ -61,8 +61,8 @@ std::string getFilenameFromPath(const std::string& path);
 @param v - floating point value
 @return closest integer.
 ---------------------------------------------------------*/
-int roundToInt(float v);
-int roundToInt(double v);
+template <typename T>
+constexpr int roundToInt(T v) { return int(v + 0.5); }
 
 /*-------------------------------------------------------
 Takes a vector and add the second argument to all elements.
@@ -84,13 +84,17 @@ void addToAll(std::vector<T, Allocator>& vec, const T& to_add) {
 @param b - the other position
 @return - distance between the two positions
 ---------------------------------------------------------*/
-
-double getSquaredPositionBetweenPositions(const Vector2DInt& a,
-                                          const Vector2DInt& b);
+template <typename T>
+constexpr double getSquaredPositionBetweenPositions(const T& a,
+                                                    const T& b) {
+  const double xdiff = b.x - a.x;
+  const double ydiff = b.y - a.y;
+  return xdiff * xdiff + ydiff * ydiff;
+}
 
 /*-------------------------------------------------------
 Parameters
 ---------------------------------------------------------*/
-const double MATH_PI = 3.14159265358979323846264338327950288;
-const double TO_RAD = MATH_PI / 180;
+constexpr double MATH_PI = 3.14159265358979323846264338327950288;
+constexpr double TO_RAD = MATH_PI / 180;
 }  // namespace Helpers

@@ -5,9 +5,6 @@
 #include <queue>
 #include <set>
 #include <vector>
-#ifdef __GNUC__
-#include <execinfo.h>
-#endif
 
 #include <memory>
 

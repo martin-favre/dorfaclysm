@@ -4,12 +4,14 @@
 #include "Engine.h"
 #include "Font.h"
 #include "GridMap.h"
+#include "MapGenerator.h"
 #include "Paths.h"
 #include "Sprite.h"
+#include "SpriteComponent.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
-#include "SpriteComponent.h"
-#include "MapGenerator.h"
+#include "SpriteLoader.h"
+
 
 void foo() {
   // {
@@ -18,17 +20,17 @@ void foo() {
   //       std::make_unique<TextComponent>(gObj, Paths::UBUNTU_FONT);
   //   text->setText("Hello");
   //   text->setFontSize(24);
-  //   gObj.setPosition(Vector2D(10, 10)); 
+  //   gObj.setPosition(Vector2D(10, 10));
   //   gObj.setScale(Vector2D(5,2.5));
   //   gObj.addComponent(std::move(text));
   // }
-  {
-    GridMap::generateActiveMap({500, 500}, MapGenerator::generate);
-    
+  { 
+    GridMap::generateActiveMap({500, 500}, MapGenerator::generate); 
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
-    auto sprite = std::make_unique<SpriteComponent>(gObj, Paths::GRASS_TILE, Rect{64,64, 64, 64});
+    // auto sprite = std::make_unique<SpriteComponent>(gObj, SpriteLoader::loadSprite(Paths::GRASS_TILE, {64, 64, 64, 64}));
+    auto sprite = std::make_unique<SpriteComponent>(gObj, SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {1,1}, Paths::SIZE_OF_GRASS_TILE));
     gObj.addComponent(std::move(sprite));
     gObj.setPosition(Vector2D(200, 200));
   }

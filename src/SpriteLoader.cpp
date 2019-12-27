@@ -5,7 +5,7 @@
 #include "Helpers.h"
 #include "Logging.h"
 #include "Rect.h"
-
+#include "Vector2DInt.h"
 std::map<std::string, SDL_Texture *> SpriteLoader::mTextures;
 std::map<std::pair<std::string, int>, TTF_Font *> SpriteLoader::mFonts;
 
@@ -72,3 +72,8 @@ std::unique_ptr<Sprite> SpriteLoader::loadSprite(const std::string &path,
   }
   return std::make_unique<Sprite>(mTextures[path], area);
 }
+
+std::unique_ptr<Sprite> SpriteLoader::loadSpriteByIndex(const std::string &path, const Vector2DInt& indx, const Vector2DInt& sizePerSprite) {
+  Rect area{indx.x*sizePerSprite.x, indx.y*sizePerSprite.y, sizePerSprite.x, sizePerSprite.y};
+  return loadSprite(path, area);
+  }

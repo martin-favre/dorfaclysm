@@ -9,19 +9,8 @@
 #include "SpriteLoader.h"
 #include "Vector2D.h"
 
-SpriteComponent::SpriteComponent(GameObject &owner, const std::string &path)
-    : Component(owner), mSprite(SpriteLoader::loadSprite(path)) {}
-SpriteComponent::SpriteComponent(GameObject &owner, const std::string &path,
-                                 const Rect &area)
-    : Component(owner), mSprite(SpriteLoader::loadSprite(path, area)) {}
-void SpriteComponent::loadSpriteFromImage(const std::string &path) {
-  mSprite = SpriteLoader::loadSprite(path);
-}
-
-void SpriteComponent::loadSpriteFromImage(const std::string &path,
-                                          const Rect &area) {
-  mSprite = SpriteLoader::loadSprite(path, area);
-}
+SpriteComponent::SpriteComponent(GameObject &owner, std::unique_ptr<Sprite> && sprite)
+    : Component(owner), mSprite(std::move(sprite)) {}
 
 void SpriteComponent::render() {
   if (mSprite) {

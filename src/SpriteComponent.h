@@ -11,8 +11,7 @@ class Sprite;
 class GameObject;
 class SpriteComponent : public Component {
  public:
-  SpriteComponent(GameObject &owner, const std::string &path);
-  SpriteComponent(GameObject &owner, const std::string &path, const Rect &area);
+  SpriteComponent(GameObject &owner, std::unique_ptr<Sprite> && sprite);
   void loadSpriteFromImage(const std::string &path);
   void loadSpriteFromImage(const std::string &path, const Rect &area);
   void render() override;

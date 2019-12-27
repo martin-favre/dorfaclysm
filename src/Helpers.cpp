@@ -13,17 +13,6 @@ int randomInt(int min, int max) {
   return uni(random_int_rng);
 }
 
-int roundToInt(float v) { return int(v + 0.5); }
-
-int roundToInt(double v) { return int(v + 0.5); }
-
-double getSquaredPositionBetweenPositions(const Vector2DInt& a,
-                                          const Vector2DInt& b) {
-  const double xdiff = b.x - a.x;
-  const double ydiff = b.y - a.y;
-  return xdiff * xdiff + ydiff * ydiff;
-}
-
 std::string getFilenameFromPath(const std::string& path) {
   std::size_t found = path.find_last_of("/\\");
   if (found == std::string::npos) {

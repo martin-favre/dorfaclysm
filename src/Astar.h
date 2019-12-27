@@ -6,8 +6,6 @@ class TileInfo;
 class GridMap;
 class Astar {
  public:
-  Astar() = default;
-
   /*------------------------------------
   Get path in the grid from a position, to a position.
   --------------------------------------

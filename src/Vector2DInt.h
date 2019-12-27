@@ -2,30 +2,27 @@
 #include <cinttypes>
 #include <cmath>
 #include <ostream>
+#include "Helpers.h"
+#include "Vector2D.h"
 /*-------------------------------------------------------
         Contains 2D vector of integers
 ---------------------------------------------------------*/
 
-class Vector2D;
+
 class Vector2DInt {
  public:
-  Vector2DInt();
-  Vector2DInt(int x_, int y_);
+  Vector2DInt() = default;
+  constexpr Vector2DInt(int x_, int y_) : x(x_), y(y_) {}
 
   /*-------------------------------------------------------
   Values are rounded.
   ---------------------------------------------------------*/
-  Vector2DInt(float x_, float y_);
-
-  /*-------------------------------------------------------
-  Values are rounded.
-  ---------------------------------------------------------*/
-  Vector2DInt(double x_, double y_);
-
-  /*-------------------------------------------------------
-  Values are rounded.
-  ---------------------------------------------------------*/
-  Vector2DInt(const Vector2D& vec);
+  constexpr Vector2DInt(float x_, float y_)
+      : x(Helpers::roundToInt(x_)), y(Helpers::roundToInt(y_)) {}
+  constexpr Vector2DInt(double x_, double y_)
+      : x(Helpers::roundToInt(x_)), y(Helpers::roundToInt(y_)) {}
+  constexpr Vector2DInt(const Vector2D& vec)
+      : x(Helpers::roundToInt(vec.x)), y(Helpers::roundToInt(vec.y)) {}
 
   /*-------------------------------------------------------
           Note: designed for creating an unique value for usage in a map,
