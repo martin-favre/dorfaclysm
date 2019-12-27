@@ -3,5 +3,5 @@
 class Logging {
  public:
   static void log(const std::string& text);
-  static void log(const std::stringstream& text);
+  static void log(const std::ostream& text);
 };

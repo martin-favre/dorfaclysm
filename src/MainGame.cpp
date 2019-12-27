@@ -9,6 +9,7 @@
 #include "TextComponent.h"
 #include "Vector2DInt.h"
 #include "SpriteComponent.h"
+#include "MapGenerator.h"
 
 void foo() {
   // {
@@ -22,6 +23,10 @@ void foo() {
   //   gObj.addComponent(std::move(text));
   // }
   {
+    GridMap::generateActiveMap({500, 500}, MapGenerator::generate);
+    
+  }
+  {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     auto sprite = std::make_unique<SpriteComponent>(gObj, Paths::GRASS_TILE, Rect{64,64, 64, 64});
     gObj.addComponent(std::move(sprite));
@@ -30,7 +35,6 @@ void foo() {
 }
 
 void MainGame::run() {
-  GridMap map(Vector2DInt(100, 100));
   Engine::initialize();
   Engine::registerScene("scene1", foo);
   Engine::loadScene("scene1");

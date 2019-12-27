@@ -1,6 +1,7 @@
 #pragma once
 #include <cinttypes>
 #include <cmath>
+#include <ostream>
 /*-------------------------------------------------------
         Contains 2D vector of integers
 ---------------------------------------------------------*/
@@ -39,4 +40,5 @@ class Vector2DInt {
   Vector2DInt& operator+=(const Vector2DInt& other);
   int x = 0;
   int y = 0;
+  friend std::ostream& operator<<(std::ostream& os, const Vector2DInt& vec);
 };

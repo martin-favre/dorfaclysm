@@ -2,9 +2,8 @@
 #pragma once
 class Tile {
  public:
-  virtual ~Tile() = default;
+  enum TileType { notSet, grass, dirt};
   bool isOpen() const;
-
- protected:
   bool mOpen{true};
+  TileType mType{notSet};
 };

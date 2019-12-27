@@ -1,18 +1,28 @@
 #include "GridMap.h"
 
 #include "Helpers.h"
+#include "Logging.h"
 #include "Vector2DInt.h"
 
-GridMap::GridMap(const Vector2DInt& mapSize) {
-  ASSERT(mapSize.x > 0, "Must have size > 0");
-  ASSERT(mapSize.y > 0, "Must have size > 0");
-  for (int y = 0; y < mapSize.y; ++y) {
-    std::vector<Tile> row;
-    for (int x = 0; x < mapSize.x; ++x) {
-      row.emplace_back();
-    }
-    mTiles.push_back(row);
+GridMap GridMap::mActiveMap;
+
+GridMap& GridMap::generateActiveMap(
+    const Vector2DInt& size,
+    std::function<void(GridMap&, const Vector2DInt&)> generator) {
+  Logging::log(std::stringstream() << "Generating map of size " << size);
+
+  ASSERT(size.x > 0, "Size needs to be > 0");
+  ASSERT(size.y > 0, "Size needs to be > 0");
+  size_t sizeX = size.x;
+  size_t sizeY = size.y;
+  mActiveMap.mTiles = {sizeY, std::vector<Tile>(sizeX)};
+
+  if (generator) {
+    generator(mActiveMap, size);
+  } else {
+    Logging::log(std::string(__func__) + ": generator not set");
   }
+  return mActiveMap;
 }
 
 bool GridMap::isPosInMap(const Vector2DInt& pos) const {
@@ -38,3 +48,5 @@ bool GridMap::isTileFree(const Vector2DInt& pos) const {
   if (!isPosInMap(pos)) return false;
   return getTile(pos)->isOpen();
 }
+
+GridMap& GridMap::getActiveMap() { return mActiveMap; }

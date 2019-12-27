@@ -35,3 +35,8 @@ Vector2DInt& Vector2DInt::operator+=(const Vector2DInt& other) {
   y += other.y;
   return *this;
 }
+
+std::ostream& operator<<(std::ostream& os, const Vector2DInt& dt) {
+  os << "(" << dt.x << "," << dt.y << ")";
+  return os;
+}

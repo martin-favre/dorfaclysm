@@ -83,7 +83,8 @@ class Snek {
 int main() {
   GraphicsManager::initialize();
   const Vector2DInt mapSize(150, 80);
-  GridMap map(mapSize);
+  GridMap::generateActiveMap(mapSize, nullptr);
+  GridMap& map = GridMap::getActiveMap();
   std::unique_ptr<Snek> snek = std::make_unique<Snek>();
   Vector2DInt targetPos;
   while (true) {
@@ -108,7 +109,7 @@ int main() {
     GraphicsManager::executeRendering();
     SDL_Delay(0);
     if (!success) {
-      map = GridMap(mapSize);
+      GridMap::generateActiveMap(mapSize, nullptr);
       snek = std::make_unique<Snek>();
     }
   }
