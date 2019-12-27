@@ -41,7 +41,7 @@ class GraphicsManager {
   static inline unsigned int getScreenHeight() { return mScreenHeight; }
   static inline unsigned int getScreenWidth() { return mScreenWidth; }
   friend class SpriteLoader;
-
+  friend class GridMapRenderer;
  private:
   GraphicsManager();
   static bool mInitialized;
