@@ -1,15 +1,15 @@
 #include "GridMapRenderer.h"
+
 #include "Camera.h"
 #include "GraphicsManager.h"
 #include "Helpers.h"
+#include "Logging.h"
 #include "Paths.h"
 #include "SpriteLoader.h"
 #include "Tile.h"
 #include "Vector2DInt.h"
-#include "Logging.h"
 
-Sprite& GridMapRenderer::getSpriteFromTile(const Tile& tile)
-{
+Sprite& GridMapRenderer::getSpriteFromTile(const Tile& tile) {
   switch (tile.mType) {
     case Tile::grass:
       return *mGrassSprite;
@@ -21,14 +21,9 @@ Sprite& GridMapRenderer::getSpriteFromTile(const Tile& tile)
       return *mGrassSprite;
       break;
   }
-
 }
 
-void GridMapRenderer::setup()
-{
-  prepareViewedArea();
-}
-
+void GridMapRenderer::setup() { prepareViewedArea(); }
 
 /**
  * Rendering the whole map, sprite for sprite, is performance expensive.
@@ -36,10 +31,8 @@ void GridMapRenderer::setup()
  * Generating a texture for the whole map is memory expensive.
  * So generate just the current screen.
  */
-void GridMapRenderer::prepareViewedArea()
-{
+void GridMapRenderer::prepareViewedArea() {
   Vector2DInt cameraPos = Camera::get().getPosition();
-  Logging::log(std::stringstream() << "Updating render area at " << cameraPos);
   Vector2DInt cameraScale{1, 1};
   Vector2DInt tileSize{GridMap::tileRenderSize};
   const Vector2DInt mapSize{mActiveGridMap.getSize()};
@@ -50,48 +43,49 @@ void GridMapRenderer::prepareViewedArea()
 
   int numberOfTilesToRenderX = screenSize.x / tileSize.x + 1;
   int numberOfTilesToRenderY = screenSize.y / tileSize.y + 1;
-  
+
   SDL_Renderer* renderer = GraphicsManager::mMainRenderer;
 
-  if(mActiveTexture == nullptr)
-  {
-    mActiveTexture = SDL_CreateTexture(renderer,
-                                GraphicsManager::mMainSurface->format->format,
-                                SDL_TEXTUREACCESS_TARGET,
-                                screenSize.x,
-                                screenSize.y);
-    ASSERT(mActiveTexture, "could not create texture " + std::string(SDL_GetError()));
+  if (mActiveTexture == nullptr) {
+    mActiveTexture = SDL_CreateTexture(
+        renderer, GraphicsManager::mMainSurface->format->format,
+        SDL_TEXTUREACCESS_TARGET, screenSize.x, screenSize.y);
+    ASSERT(mActiveTexture,
+           "could not create texture " + std::string(SDL_GetError()));
   }
   {
-    int success = SDL_SetRenderTarget(GraphicsManager::mMainRenderer,
-                          mActiveTexture);
-    ASSERT(success != 0, "Could not change render target " + std::string(SDL_GetError()));
+    int success =
+        SDL_SetRenderTarget(GraphicsManager::mMainRenderer, mActiveTexture);
+    ASSERT(success != 0,
+           "Could not change render target " + std::string(SDL_GetError()));
   }
-  
+
   Vector2DInt cameraTilePos = Camera::renderPosToTilePos(cameraPos);
   int endRenderX = cameraTilePos.x + numberOfTilesToRenderX;
-  if(endRenderX >= mapSize.x) endRenderX = mapSize.x -1;
+  if (endRenderX >= mapSize.x) endRenderX = mapSize.x - 1;
 
   int endRenderY = cameraTilePos.y + numberOfTilesToRenderY;
-  if(endRenderY >= mapSize.y) endRenderY = mapSize.y -1;
-  std::cout << cameraTilePos << std::endl;
+  if (endRenderY >= mapSize.y) endRenderY = mapSize.y - 1;
   for (int x = 0; x < numberOfTilesToRenderX; ++x) {
     for (int y = 0; y < numberOfTilesToRenderY; ++y) {
-      const Tile* tile = mActiveGridMap.getTile({x + cameraTilePos.x, y + cameraTilePos.y});
-      if(tile == nullptr) continue;
+      const Tile* tile =
+          mActiveGridMap.getTile({x + cameraTilePos.x, y + cameraTilePos.y});
+      if (tile == nullptr) continue;
       Sprite& sprite = getSpriteFromTile(*tile);
-      SDL_Texture * text = sprite.getSdlTexture();
+      SDL_Texture* text = sprite.getSdlTexture();
       int renderPosX = GridMap::tileRenderSize.x * x;
       int renderPosY = GridMap::tileRenderSize.y * y;
-      SDL_Rect dstRect{renderPosX, renderPosY, GridMap::tileRenderSize.x, GridMap::tileRenderSize.y};
-      int success = SDL_RenderCopy(renderer, text, &sprite.getRect().getSdlRect(), &dstRect);
+      SDL_Rect dstRect{renderPosX, renderPosY, GridMap::tileRenderSize.x,
+                       GridMap::tileRenderSize.y};
+      int success = SDL_RenderCopy(renderer, text,
+                                   &sprite.getRect().getSdlRect(), &dstRect);
       ASSERT(success != 0, "Could not render " + std::string(SDL_GetError()));
     }
   }
   {
-    int success = SDL_SetRenderTarget(GraphicsManager::mMainRenderer,
-                          NULL);
-    ASSERT(success != 0, "Could not restore render target " + std::string(SDL_GetError()));
+    int success = SDL_SetRenderTarget(GraphicsManager::mMainRenderer, NULL);
+    ASSERT(success != 0,
+           "Could not restore render target " + std::string(SDL_GetError()));
   }
 }
 
@@ -99,24 +93,19 @@ GridMapRenderer::GridMapRenderer(GameObject& g)
     : Component(g),
       mActiveGridMap(GridMap::getActiveMap()),
       mGrassSprite(SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {2, 1},
-                                                  Paths::SIZE_OF_GRASS_TILE)),
+                                                   Paths::SIZE_OF_GRASS_TILE)),
       mDirtSprite(SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {0, 2},
-                                                 Paths::SIZE_OF_GRASS_TILE)) {}
+                                                  Paths::SIZE_OF_GRASS_TILE)) {}
 
-
-
-void GridMapRenderer::update()
-{
+void GridMapRenderer::update() {
   Vector2DInt cameraPos{Camera::get().getPosition()};
-  if(mPreviousCameraPosition != cameraPos)
-  {
+  if (mPreviousCameraPosition != cameraPos) {
     prepareViewedArea();
     mPreviousCameraPosition = cameraPos;
   }
 }
 void GridMapRenderer::render() {
-  if(mActiveTexture)
-  {
-    GraphicsManager::renderTexture(mActiveTexture, {0,0});
+  if (mActiveTexture) {
+    GraphicsManager::renderTexture(mActiveTexture, {0, 0});
   }
 }

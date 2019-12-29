@@ -42,9 +42,16 @@ class GameObject {
   template <class componentType>
   componentType* getComponent();
 
+  /*-------------------------------------------------------
+  Larger renderDepth is closer to the camera
+  Can only be changed in scene creation
+  Change will otherwise not have an effect
+  ---------------------------------------------------------*/
   int getRenderDepth() const;
+  void setRenderDepth(int depth);
   const Vector2D& getPosition() const;
   void setPosition(const Vector2D& pos);
+  void move(const Vector2D& pos);
   const Vector2D& getScale() const;
   void setScale(const Vector2D& newScale);
   double getRotation() const;

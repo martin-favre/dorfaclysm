@@ -2,9 +2,25 @@
 ✔ Be able to scroll around in the map @done(19-12-27 21:09)
 ✔ Generate basic map (so you can see the tiles) @done(19-12-27 21:10)
 
-☐ Find sprite for Dorf
+☐ Be able to zoom in/out of the map
+
+☐ Add mineable walls
 
 ☐ Implement Dorf Job Structure
-    ☐ Add job Walk
+    ✔ Add job Walk @done(19-12-29 18:14)
+    ☐ Add job mine
 
-☐ Be able to zoom in/out of the map
+
+☐ Find sprite for Dorf
+
+☐ Idea: Instead of letting each gameobject do their own rendering, it could be done in GridMapRenderer, might save some performance
+    Only render what's on the screen. 
+    re-render only things that have changed.
+    The pre-rendered texture will be reused. 
+    Can take a copy of what's on the screen and render it async (maybe?)
+
+☐ Idea: Make Astar async
+    Possibly without locking GridMap.
+    Then you basically generate up an estimate (I ought to go here)
+    Then with each step you make sure it's still a valid path
+

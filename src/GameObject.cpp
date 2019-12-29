@@ -35,7 +35,10 @@ void GameObject::render() {
 
 void GameObject::setPosition(const Vector2D& pos) { mPosition = pos; }
 
+void GameObject::move(const Vector2D& pos) { mPosition += pos; }
+
 int GameObject::getRenderDepth() const { return mRenderDepth; }
+void GameObject::setRenderDepth(int depth) { mRenderDepth = depth; }
 
 const Vector2D& GameObject::getPosition() const { return mPosition; }
 

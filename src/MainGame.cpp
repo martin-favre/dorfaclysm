@@ -1,6 +1,8 @@
 #include "MainGame.h"
 
+#include "CameraControllerComponent.h"
 #include "Component.h"
+#include "DorfController.h"
 #include "Engine.h"
 #include "Font.h"
 #include "FpsCounter.h"
@@ -13,7 +15,7 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
-#include "CameraControllerComponent.h"
+
 void foo() {
   { GridMap::generateActiveMap({500, 500}, MapGenerator::generate); }
   // {
@@ -32,25 +34,22 @@ void foo() {
     gObj.setPosition({20, 20});
     gObj.setScale({2, 2});
     gObj.addComponent<FpsCounter>();
+    gObj.setRenderDepth(100);
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<GridMapRenderer>();
-    // auto comp = Component::create<GridMapRenderer>(gObj);
-    // gObj.addComponent<GridMapRenderer>(std::move(comp));
+    gObj.setRenderDepth(-100);
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<CameraControllerComponent>();
   }
   {
-    // GameObject& gObj = Engine::addGameObject<GameObject>();
-    // auto sprite = std::make_unique<SpriteComponent>(gObj,
-    // SpriteLoader::loadSprite(Paths::GRASS_TILE, {64, 64, 64, 64})); auto
-    // sprite = std::make_unique<SpriteComponent>(gObj,
-    // SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {1,1},
-    // Paths::SIZE_OF_GRASS_TILE)); gObj.addComponent(std::move(sprite));
-    // gObj.setPosition(Vector2D(200, 200));
+    GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.addComponent<DorfController>();
+    gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
+        Paths::GRASS_TILE, {2, 2}, Paths::SIZE_OF_GRASS_TILE));
   }
 }
 

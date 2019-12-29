@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include "GraphicsManager.h"
+#include "GridMap.h"
 #include "Rect.h"
 #include "Sprite.h"
 #include "SpriteLoader.h"
@@ -16,13 +17,15 @@ SpriteComponent::SpriteComponent(GameObject& owner,
 void SpriteComponent::render() {
   if (mSprite) {
     const auto& camPos = Camera::get().getPosition();
-    Vector2D pos {owner().getPosition()};
-    if (mCameraAsReference)
-    {
+    Vector2D pos{owner().getPosition()};
+    if (mCameraAsReference) {
       pos += camPos;
     }
-    GraphicsManager::renderTexture(*mSprite, pos,
-                                   owner().getScale(), owner().getRotation(),
-                                   mCentered, mFlip);
+    if (mScaleToTileGrid) {
+      pos.x *= GridMap::tileRenderSize.x;
+      pos.y *= GridMap::tileRenderSize.y;
+    }
+    GraphicsManager::renderTexture(*mSprite, pos, owner().getScale(),
+                                   owner().getRotation(), mCentered, mFlip);
   }
 }

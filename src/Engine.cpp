@@ -93,17 +93,16 @@ void Engine::replaceScene() {
 }
 
 void Engine::updateGameObjects() {
-  for (auto go = Engine::mGameobjects.begin(); go != Engine::mGameobjects.end();
-       ++go) {
-    (*go)->updateComponents();
+  for (auto& go : mGameobjects) {
+    go->updateComponents();
   }
 }
 
 bool debug_render_colliders = true;
 
 void Engine::renderGameObjects() {
-  for (auto go = mGameobjects.begin(); go != mGameobjects.end(); ++go) {
-    (*go)->render();
+  for (auto& go : mGameobjects) {
+    go->render();
   }
 
   GraphicsManager::executeRendering();
@@ -129,9 +128,9 @@ void Engine::putGameObjectsIntoWorld() {
     // store away a ptr because we have to run setups afterwards
     added_items.emplace_back(new_item.get());
     size_t indx = 0;
-    /* Does insert sort based on z - position
+    /* Does insert sort based on renderdepth
        to decide render order.
-       large z = rendered later = "on top" / "closer to camera"
+       large renderdepth = rendered later = "on top" / "closer to camera"
     */
     for (; indx != mGameobjects.size(); ++indx) {
       if (new_item->getRenderDepth() <= mGameobjects[indx]->getRenderDepth()) {
@@ -163,7 +162,7 @@ void Engine::removeGameObjectFromWorld() {
 }
 
 void Engine::runSetups(std::vector<GameObject*>& gameobjects) {
-  for (auto go = gameobjects.begin(); go != gameobjects.end(); ++go) {
-    (*go)->setup();
+  for (auto& go : gameobjects) {
+    go->setup();
   }
 }
