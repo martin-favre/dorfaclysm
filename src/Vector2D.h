@@ -9,6 +9,7 @@ class Vector2D {
   Vector2D(double x, double y = 0);
   Vector2D(const Vector2DInt& vec);
   Vector2D& operator+=(const Vector2D&);
+  Vector2D& operator-=(const Vector2D&);
   bool operator==(const Vector2D&) const;
   Vector2D operator-(const Vector2D& other) const;
   Vector2D operator+(const Vector2D& other) const;

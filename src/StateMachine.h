@@ -5,6 +5,11 @@ class StateMachine;
 class State {
  public:
   virtual void onEntry(){};
+
+  /*
+    returns ptr to next state when done.
+    returns nullptr if not yet done.
+  */
   virtual std::unique_ptr<State> onDuring() = 0;
   virtual void onExit(){};
   bool machineTerminated() { return mMachineTerminated; }
@@ -24,15 +29,21 @@ class StateMachine {
     mActiveState->onEntry();
   }
 
-  bool update() {
-    ASSERT(mActiveState != nullptr, "Received null first state");
-    std::unique_ptr<State> nextState = mActiveState->onDuring();
-    if (nextState != nullptr) {
-      mActiveState->onExit();
-      mActiveState = std::move(nextState);
-      mActiveState->onEntry();
-    }
+  bool isTerminated() {
+    ASSERT(mActiveState != nullptr, "mActiveState is null");
     return mActiveState->machineTerminated();
+  }
+
+  void update() {
+    ASSERT(mActiveState != nullptr, "Received null first state");
+    if (!mActiveState->machineTerminated()) {
+      std::unique_ptr<State> nextState = mActiveState->onDuring();
+      if (nextState != nullptr) {
+        mActiveState->onExit();
+        mActiveState = std::move(nextState);
+        mActiveState->onEntry();
+      }
+    }
   }
 
  private:

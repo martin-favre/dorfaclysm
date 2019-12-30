@@ -20,7 +20,7 @@ class GraphicsManager {
   static void initialize();
   static void teardown();
   static void prepareRendering();
-  static void renderTexture(const Sprite&, const Vector2D& pos,
+  static void renderTexture(const Sprite&, const Vector2DInt& pos,
                             const Vector2D& scale = {1, 1},
                             const double angle = 0, bool centered = false,
                             const SDL_RendererFlip flip = SDL_FLIP_NONE);
@@ -42,6 +42,7 @@ class GraphicsManager {
   static inline unsigned int getScreenWidth() { return mScreenWidth; }
   friend class SpriteLoader;
   friend class GridMapRenderer;
+
  private:
   GraphicsManager();
   static bool mInitialized;

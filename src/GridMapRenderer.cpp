@@ -9,20 +9,6 @@
 #include "Tile.h"
 #include "Vector2DInt.h"
 
-Sprite& GridMapRenderer::getSpriteFromTile(const Tile& tile) {
-  switch (tile.mType) {
-    case Tile::grass:
-      return *mGrassSprite;
-      break;
-    case Tile::dirt:
-      return *mDirtSprite;
-      break;
-    default:
-      return *mGrassSprite;
-      break;
-  }
-}
-
 void GridMapRenderer::setup() { prepareViewedArea(); }
 
 /**
@@ -56,7 +42,7 @@ void GridMapRenderer::prepareViewedArea() {
   {
     int success =
         SDL_SetRenderTarget(GraphicsManager::mMainRenderer, mActiveTexture);
-    ASSERT(success != 0,
+    ASSERT(success == 0,
            "Could not change render target " + std::string(SDL_GetError()));
   }
 
@@ -68,10 +54,9 @@ void GridMapRenderer::prepareViewedArea() {
   if (endRenderY >= mapSize.y) endRenderY = mapSize.y - 1;
   for (int x = 0; x < numberOfTilesToRenderX; ++x) {
     for (int y = 0; y < numberOfTilesToRenderY; ++y) {
-      const Tile* tile =
-          mActiveGridMap.getTile({x + cameraTilePos.x, y + cameraTilePos.y});
-      if (tile == nullptr) continue;
-      Sprite& sprite = getSpriteFromTile(*tile);
+      Vector2DInt pos{x + cameraTilePos.x, y + cameraTilePos.y};
+      if (!mActiveGridMap.isPosInMap(pos)) continue;
+      const Sprite& sprite = mActiveGridMap.getPosSprite(pos);
       SDL_Texture* text = sprite.getSdlTexture();
       int renderPosX = GridMap::tileRenderSize.x * x;
       int renderPosY = GridMap::tileRenderSize.y * y;
@@ -79,23 +64,18 @@ void GridMapRenderer::prepareViewedArea() {
                        GridMap::tileRenderSize.y};
       int success = SDL_RenderCopy(renderer, text,
                                    &sprite.getRect().getSdlRect(), &dstRect);
-      ASSERT(success != 0, "Could not render " + std::string(SDL_GetError()));
+      ASSERT(success == 0, "Could not render " + std::string(SDL_GetError()));
     }
   }
   {
     int success = SDL_SetRenderTarget(GraphicsManager::mMainRenderer, NULL);
-    ASSERT(success != 0,
+    ASSERT(success == 0,
            "Could not restore render target " + std::string(SDL_GetError()));
   }
 }
 
 GridMapRenderer::GridMapRenderer(GameObject& g)
-    : Component(g),
-      mActiveGridMap(GridMap::getActiveMap()),
-      mGrassSprite(SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {2, 1},
-                                                   Paths::SIZE_OF_GRASS_TILE)),
-      mDirtSprite(SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {0, 2},
-                                                  Paths::SIZE_OF_GRASS_TILE)) {}
+    : Component(g), mActiveGridMap(GridMap::getActiveMap()) {}
 
 void GridMapRenderer::update() {
   Vector2DInt cameraPos{Camera::get().getPosition()};

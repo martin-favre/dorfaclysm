@@ -17,13 +17,13 @@ SpriteComponent::SpriteComponent(GameObject& owner,
 void SpriteComponent::render() {
   if (mSprite) {
     const auto& camPos = Camera::get().getPosition();
-    Vector2D pos{owner().getPosition()};
-    if (mCameraAsReference) {
-      pos += camPos;
-    }
+    Vector2DInt pos{owner().getPosition()};
     if (mScaleToTileGrid) {
       pos.x *= GridMap::tileRenderSize.x;
       pos.y *= GridMap::tileRenderSize.y;
+    }
+    if (mCameraAsReference) {
+      pos -= camPos;
     }
     GraphicsManager::renderTexture(*mSprite, pos, owner().getScale(),
                                    owner().getRotation(), mCentered, mFlip);

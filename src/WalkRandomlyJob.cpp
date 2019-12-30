@@ -34,8 +34,8 @@ class WaitingState : public State {
 
 WalkingState::WalkingState(GameObject& user) : mUser(user) {}
 void WalkingState::onEntry() {
-  int x = Helpers::randomInt(0, 20);
-  int y = Helpers::randomInt(0, 20);
+  int x = Helpers::randomInt(0, 50);
+  int y = Helpers::randomInt(0, 50);
   mWalker.generateNewPath(mUser.getPosition(), {x, y});
 }
 std::unique_ptr<State> WalkingState::onDuring() {
@@ -66,4 +66,7 @@ WalkRandomlyJob::WalkRandomlyJob(GameObject& user)
     : mDorf(user),
       mStateMachine(std::move(std::make_unique<WalkingState>(user))) {}
 
-bool WalkRandomlyJob::work() { return mStateMachine.update(); }
+bool WalkRandomlyJob::work() {
+  mStateMachine.update();
+  return mStateMachine.isTerminated();
+}

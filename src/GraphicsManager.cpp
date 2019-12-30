@@ -83,7 +83,8 @@ void GraphicsManager::prepareRendering() {
   SDL_RenderClear(GraphicsManager::mMainRenderer);
 }
 
-void GraphicsManager::renderTexture(const Sprite& sprite, const Vector2D& pos,
+void GraphicsManager::renderTexture(const Sprite& sprite,
+                                    const Vector2DInt& pos,
                                     const Vector2D& scale, const double angle,
                                     bool centered,
                                     const SDL_RendererFlip flip) {
@@ -94,14 +95,14 @@ void GraphicsManager::renderTexture(const Sprite& sprite, const Vector2D& pos,
 
   double posx = 0;
   double posy = 0;
-  const double scalex = round(spriteDimensions.w * scale.x);
-  const double scaley = round(spriteDimensions.h * scale.y);
+  const double scalex = spriteDimensions.w * scale.x;
+  const double scaley = spriteDimensions.h * scale.y;
   if (centered) {
     posx = round(pos.x - scalex / 2);
     posy = round(pos.y - scaley / 2);
   } else {
-    posx = round(pos.x);
-    posy = round(pos.y);
+    posx = pos.x;
+    posy = pos.y;
   }
   const SDL_Rect dstrect = {static_cast<int>(posx), static_cast<int>(posy),
                             static_cast<int>(scalex), static_cast<int>(scaley)};

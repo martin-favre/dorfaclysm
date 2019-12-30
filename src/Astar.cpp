@@ -103,7 +103,7 @@ bool Astar::getPath(const Vector2DInt& start, const Vector2DInt& finish,
     Logging::log("Could not find path, the target position outside map");
     return false;
   }
-  if (!map.isTileFree(finish)) {
+  if (!map.isPosFree(finish)) {
     Logging::log("Could not find path, the target position was occupied");
     return false;
   }
@@ -152,7 +152,7 @@ bool Astar::getPath(const Vector2DInt& start, const Vector2DInt& finish,
         then it's a valid step
         */
         const bool valid_step =
-            map.isPosInMap(new_pos) && map.isTileFree(new_pos);
+            map.isPosInMap(new_pos) && map.isPosFree(new_pos);
         if (valid_step) {
           AStarNode* next_node =
               new AStarNode(new_pos, current_node->getLevel(),

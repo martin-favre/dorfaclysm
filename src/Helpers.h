@@ -1,10 +1,10 @@
 #pragma once
+#include <cassert>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
-
 typedef unsigned int uint;
 
 /*-------------------------------------------------------
@@ -16,19 +16,29 @@ Outside namespace for convenience.
 ---------------------------------------------------------*/
 
 //#define ASSERT(condition, message) do {} while (false)
+
+#ifdef VSCODE  // vscode can't handle macros, so just hide in the editor
+inline void ASSERT(bool condition, const std::string& message) {
+  (void)condition;
+  (void)message;
+}
+#else
 #ifndef DEBUG
 inline void ASSERT(bool condition, const std::string& message) {
   (void)condition;
   (void)message;
 }
 #else
-#define ASSERT(condition, message)                                \
-  do {                                                            \
-    if (!(condition)) {                                           \
-      throw std::runtime_error(message + "\n file: " + __file__ + \
-                               "\nline:" + __line__ + "\n\n");    \
-    }                                                             \
+#define ASSERT(condition, message)                              \
+  do {                                                          \
+    if (!(condition)) {                                         \
+      std::cout << (std::string(message) +                      \
+                    "\n file: " + std::string(__FILE__) + ":" + \
+                    std::to_string(__LINE__) + "\n\n");         \
+      assert(false);                                            \
+    }                                                           \
   } while (false);
+#endif
 #endif
 
 namespace Helpers {
@@ -62,7 +72,9 @@ std::string getFilenameFromPath(const std::string& path);
 @return closest integer.
 ---------------------------------------------------------*/
 template <typename T>
-constexpr int roundToInt(T v) { return int(v + 0.5); }
+constexpr int roundToInt(T v) {
+  return int(v + 0.5);
+}
 
 /*-------------------------------------------------------
 Takes a vector and add the second argument to all elements.
@@ -85,8 +97,7 @@ void addToAll(std::vector<T, Allocator>& vec, const T& to_add) {
 @return - distance between the two positions
 ---------------------------------------------------------*/
 template <typename T>
-constexpr double getSquaredPositionBetweenPositions(const T& a,
-                                                    const T& b) {
+constexpr double getSquaredPositionBetweenPositions(const T& a, const T& b) {
   const double xdiff = b.x - a.x;
   const double ydiff = b.y - a.y;
   return xdiff * xdiff + ydiff * ydiff;

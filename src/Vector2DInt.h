@@ -34,8 +34,11 @@ class Vector2DInt {
 
   bool operator!=(const Vector2DInt& other) const;
   bool operator==(const Vector2DInt& other) const;
-  Vector2DInt operator*(const int& val);
+  Vector2DInt operator*(const int& val) const;
+  Vector2DInt operator-(const Vector2DInt& val) const;
+
   Vector2DInt& operator+=(const Vector2DInt& other);
+  Vector2DInt& operator-=(const Vector2DInt& other);
   int x = 0;
   int y = 0;
   friend std::ostream& operator<<(std::ostream& os, const Vector2DInt& vec);

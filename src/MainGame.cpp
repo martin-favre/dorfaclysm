@@ -17,7 +17,7 @@
 #include "Vector2DInt.h"
 
 void foo() {
-  { GridMap::generateActiveMap({500, 500}, MapGenerator::generate); }
+  { GridMap::generateActiveMap({100, 100}, MapGenerator::generate); }
   // {
   //   GameObject& gObj = Engine::addGameObject<GameObject>();
   //   std::unique_ptr<TextComponent> text =
@@ -46,10 +46,12 @@ void foo() {
     gObj.addComponent<CameraControllerComponent>();
   }
   {
-    GameObject& gObj = Engine::addGameObject<GameObject>();
-    gObj.addComponent<DorfController>();
-    gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
-        Paths::GRASS_TILE, {2, 2}, Paths::SIZE_OF_GRASS_TILE));
+    for (int i = 0; i < 100; ++i) {
+      GameObject& gObj = Engine::addGameObject<GameObject>();
+      gObj.addComponent<DorfController>();
+      gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
+          Paths::GRASS_TILE, {2, 2}, Paths::SIZE_OF_GRASS_TILE));
+    }
   }
 }
 

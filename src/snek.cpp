@@ -9,7 +9,7 @@
 #include "Helpers.h"
 #include "Tile.h"
 #include "Timer.h"
-
+/*
 class OpenTile : public Tile {
  public:
   OpenTile() { mOpen = true; }
@@ -96,7 +96,7 @@ int main() {
         int randY = Helpers::randomInt(0, mapSize.y - 1);
         targetPos = Vector2DInt(randX, randY);
       } while ((targetPos == snek->mSnekHead.mPos) ||
-               !map.getTile(targetPos)->isOpen());
+               !map.getTile(targetPos).isOpen());
     }
     GraphicsManager::setRenderDrawColor(SDL_Color{255, 0, 0, 255});
     GraphicsManager::drawRect(Rect{targetPos.x * snek->mSnekHead.mSize.x,
@@ -114,3 +114,4 @@ int main() {
     }
   }
 }
+*/

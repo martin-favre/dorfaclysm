@@ -14,7 +14,7 @@ void DorfWalker::walkUpdate(Vector2DInt& currentPosition) {
   if (!mPlannedPosititions.empty()) {
     if (mTimer.getElapsedMilliseconds() > mMsPerMovement) {
       Vector2DInt next = mPlannedPosititions.top();
-      if (GridMap::getActiveMap().isTileFree(next)) {
+      if (GridMap::getActiveMap().isPosFree(next)) {
         currentPosition = next;
         mPlannedPosititions.pop();
       }

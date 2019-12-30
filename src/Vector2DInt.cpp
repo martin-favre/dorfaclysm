@@ -2,7 +2,6 @@
 
 #include "Vector2D.h"
 
-
 bool Vector2DInt::operator<(const Vector2DInt& left) const {
   if (x != left.x) {
     return x < left.x;
@@ -18,12 +17,22 @@ bool Vector2DInt::operator!=(const Vector2DInt& other) const {
 bool Vector2DInt::operator==(const Vector2DInt& other) const {
   return (other.y == y) && (other.x == x);
 }
-Vector2DInt Vector2DInt::operator*(const int& val) {
+Vector2DInt Vector2DInt::operator*(const int& val) const {
   return Vector2DInt(x * val, y * val);
 }
+
+Vector2DInt Vector2DInt::operator-(const Vector2DInt& val) const {
+  return Vector2DInt{x - val.x, y - val.y};
+}
+
 Vector2DInt& Vector2DInt::operator+=(const Vector2DInt& other) {
   x += other.x;
   y += other.y;
+  return *this;
+}
+Vector2DInt& Vector2DInt::operator-=(const Vector2DInt& other) {
+  x -= other.x;
+  y -= other.y;
   return *this;
 }
 
