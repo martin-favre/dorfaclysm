@@ -5,16 +5,18 @@
 #include "SpriteLoader.h"
 class TileFloor {
  public:
-  TileFloor(const Sprite& sprite, bool canMoveOver = true)
-      : mSprite(sprite), mCanMoveOver(canMoveOver) {}
+  TileFloor(const Sprite& sprite, const std::string& name, bool canMoveOver = true)
+      : mSprite(sprite), mCanMoveOver(canMoveOver), mName(name) {}
   TileFloor(const TileFloor&) = default;
   TileFloor& operator=(const TileFloor&) = default;
   inline bool canMoveOver() const { return mCanMoveOver; }
-  const inline Sprite& getSprite() const { return mSprite; }
+  inline const Sprite& getSprite() const { return mSprite; }
+  inline const std::string& getName() const {return mName; } 
   int getMovementCost() const { return 0; }  // todo
  private:
   const Sprite& mSprite;
-  bool mCanMoveOver{true};
+  const bool mCanMoveOver{true};
+  const std::string mName;
 };
 
 TileFloor getGrassTileFloor();

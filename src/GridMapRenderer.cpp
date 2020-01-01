@@ -46,6 +46,8 @@ void GridMapRenderer::prepareViewedArea() {
            "Could not change render target " + std::string(SDL_GetError()));
   }
 
+  SDL_RenderClear(GraphicsManager::mMainRenderer);
+
   Vector2DInt cameraTilePos = Camera::renderPosToTilePos(cameraPos);
   int endRenderX = cameraTilePos.x + numberOfTilesToRenderX;
   if (endRenderX >= mapSize.x) endRenderX = mapSize.x - 1;

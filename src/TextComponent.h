@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <string>
-
+#include <vector>
 #include "Component.h"
 #include "Vector2D.h"
 
@@ -19,11 +19,12 @@ class TextComponent : public Component {
   std::string getText();
   void setText(const std::string&);
   void setColor(const SDL_Color& color);
-  void render() final override;
+  void render() override;
   void setCameraAsReference(bool useCamera) {mCameraAsReference = useCamera;}
  private:
   std::string mText;
-  std::unique_ptr<Sprite> mSprite;
+  std::vector<std::unique_ptr<Sprite>> mSprites;
+  // std::unique_ptr<Sprite> mSprite;
   std::string mFontSource;
   std::unique_ptr<Font> mFont;
   bool mCentered{false};

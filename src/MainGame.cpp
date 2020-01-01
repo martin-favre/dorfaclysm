@@ -15,7 +15,8 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
-
+#include "PlayerControllerComponent.h"
+#include "WorldItemComponent.h"
 void foo() {
   { GridMap::generateActiveMap({100, 100}, MapGenerator::generate); }
   // {
@@ -46,11 +47,19 @@ void foo() {
     gObj.addComponent<CameraControllerComponent>();
   }
   {
+    GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.setPosition({500, 0});
+    gObj.addComponent<PlayerControllerComponent>();
+    gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
+  }
+  {
     for (int i = 0; i < 100; ++i) {
       GameObject& gObj = Engine::addGameObject<GameObject>();
       gObj.addComponent<DorfController>();
+      gObj.addComponent<WorldItemComponent>("Dorf");
       gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
-          Paths::GRASS_TILE, {2, 2}, Paths::SIZE_OF_GRASS_TILE));
+          Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
+      gObj.setScale({2,2});
     }
   }
 }

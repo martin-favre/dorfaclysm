@@ -15,21 +15,21 @@ TileFloor getGrassTileFloor() {
     grassSprite = SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {2, 1},
                                                   Paths::SIZE_OF_GRASS_TILE);
   }
-  return TileFloor(*grassSprite);
+  return TileFloor(*grassSprite ,"Grass");
 }
 TileFloor getDirtTileFloor() {
   if (!dirtSprite) {
     dirtSprite = SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {0, 2},
                                                  Paths::SIZE_OF_GRASS_TILE);
   }
-  return TileFloor(*dirtSprite);
+  return TileFloor(*dirtSprite, "Dirt");
 }
 TileFloor getRockTileFloor() {
   if (!rockSprite) {
     rockSprite = SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {1, 6},
                                                  Paths::SIZE_OF_GRASS_TILE);
   }
-  return TileFloor(*rockSprite);
+  return TileFloor(*rockSprite, "Rock Floor");
 }
 
 TileFloor getOpenTileFloor() {
@@ -37,5 +37,5 @@ TileFloor getOpenTileFloor() {
     openSprite = SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {5, 5},
                                                  Paths::SIZE_OF_GRASS_TILE);
   }
-  return TileFloor(*openSprite);
+  return TileFloor(*openSprite, "Open Space");
 }

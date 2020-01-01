@@ -19,8 +19,11 @@ class GridMap {
   const Vector2DInt& getSize() const;
 
   const Sprite& getPosSprite(const Vector2DInt& pos) const;
-
+  const TileFloor& getTileFloor(const Vector2DInt& pos) const;
+  const Tile* getTile(const Vector2DInt& pos) const;
   std::vector<WorldItemComponent*>& getComponentsOnTile(const Vector2DInt& pos);
+  const std::vector<WorldItemComponent*>& getComponentsOnTile(
+      const Vector2DInt& pos) const;
   bool isComponentOnTile(const Vector2DInt& pos,
                          const WorldItemComponent& comp);
   void registerComponent(const Vector2DInt& pos, WorldItemComponent& component);
@@ -37,8 +40,6 @@ class GridMap {
   friend class MapGenerator;
 
  private:
-  const Tile* getTile(const Vector2DInt& pos) const;
-  const TileFloor& getTileFloor(const Vector2DInt& pos) const;
   GridMap() = default;
   std::vector<std::vector<TileFloor>> mTileFloors;
   std::vector<std::vector<std::unique_ptr<Tile>>> mTiles;

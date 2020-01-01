@@ -23,6 +23,9 @@ GridMap& GridMap::generateActiveMap(
     mActiveMap.mTiles.emplace_back(std::move(row));
   }
 
+    mActiveMap.mComponents = {
+        sizeY, std::vector<std::vector<WorldItemComponent*>>(sizeX)};
+
   if (generator) {
     generator(mActiveMap, size);
   } else {
@@ -83,6 +86,12 @@ bool GridMap::isComponentOnTile(const Vector2DInt& pos,
 
 std::vector<WorldItemComponent*>& GridMap::getComponentsOnTile(
     const Vector2DInt& pos) {
+  ASSERT(isPosInMap(pos), "Trying to register out of bounds");
+  return mComponents[pos.y][pos.x];
+}
+
+const std::vector<WorldItemComponent*>& GridMap::getComponentsOnTile(
+    const Vector2DInt& pos) const {
   ASSERT(isPosInMap(pos), "Trying to register out of bounds");
   return mComponents[pos.y][pos.x];
 }
