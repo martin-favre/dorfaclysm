@@ -54,7 +54,7 @@ void PlayerControllerComponent::handleClick()
   const Tile* tile = worldTile.getTile();
   if(tile)
   {
-    if(tile->isMineable())
+    if(tile->supportsJob(PlayerRequestedJob::mine))
     {
       JobPool::addJob(PlayerRequestedJob(PlayerRequestedJob::mine, mousePos));
     }

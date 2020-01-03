@@ -9,12 +9,16 @@
     ✔ Add job mine @done(20-01-03 14:09)
     ✔ Add job-pool @done(20-01-03 14:09)
 ✔ Refactoring: Tilefloor, replace using enums with children that just initializes their parent differently @done(20-01-03 15:05)
+✔ Multiple clicks on a tile will create multiple jobs, even if it's the same one @done(20-01-03 17:12)
 
 ☐ Add visual box when a wall is in the job pool
     Naive approach 
         2D-grid with booleans, same size as GridMap
         If the bool is set, render a brown see-through square
         Let GridMapRenderer render it
+
+☐ Refactor : Construct DorfJobs from PlayerRequestedJobs
+    Or even, let them be the same and just update them with more info once a Dorf takes it
 
 ☐ Make mined rocks drop items
 
