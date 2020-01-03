@@ -19,34 +19,15 @@ void GridMapRenderer::setup() { prepareViewedArea(); }
  */
 void GridMapRenderer::prepareViewedArea() {
   Vector2DInt cameraPos = Camera::get().getPosition();
-  Vector2DInt cameraScale{1, 1};
   Vector2DInt tileSize{GridMap::tileRenderSize};
   const Vector2DInt mapSize{mActiveGridMap.getSize()};
-  tileSize.x *= cameraScale.x;
-  tileSize.y *= cameraScale.y;
   Vector2DInt screenSize{GraphicsManager::getScreenWidth(),
                          GraphicsManager::getScreenHeight()};
 
-  int numberOfTilesToRenderX = screenSize.x / tileSize.x + 1;
-  int numberOfTilesToRenderY = screenSize.y / tileSize.y + 1;
+  const int numberOfTilesToRenderX = screenSize.x / tileSize.x + 1;
+  const int numberOfTilesToRenderY = screenSize.y / tileSize.y + 1;
 
   SDL_Renderer* renderer = GraphicsManager::mMainRenderer;
-
-  if (mActiveTexture == nullptr) {
-    mActiveTexture = SDL_CreateTexture(
-        renderer, GraphicsManager::mMainSurface->format->format,
-        SDL_TEXTUREACCESS_TARGET, screenSize.x, screenSize.y);
-    ASSERT(mActiveTexture,
-           "could not create texture " + std::string(SDL_GetError()));
-  }
-  {
-    int success =
-        SDL_SetRenderTarget(GraphicsManager::mMainRenderer, mActiveTexture);
-    ASSERT(success == 0,
-           "Could not change render target " + std::string(SDL_GetError()));
-  }
-
-  SDL_RenderClear(GraphicsManager::mMainRenderer);
 
   Vector2DInt cameraTilePos = Camera::renderPosToTilePos(cameraPos);
   int endRenderX = cameraTilePos.x + numberOfTilesToRenderX;
@@ -60,19 +41,14 @@ void GridMapRenderer::prepareViewedArea() {
       if (!mActiveGridMap.isPosInMap(pos)) continue;
       const Sprite& sprite = mActiveGridMap.getPosSprite(pos);
       SDL_Texture* text = sprite.getSdlTexture();
-      int renderPosX = GridMap::tileRenderSize.x * x;
-      int renderPosY = GridMap::tileRenderSize.y * y;
-      SDL_Rect dstRect{renderPosX, renderPosY, GridMap::tileRenderSize.x,
+      const int renderPosX = GridMap::tileRenderSize.x * x;
+      const int renderPosY = GridMap::tileRenderSize.y * y;
+      const SDL_Rect dstRect{renderPosX, renderPosY, GridMap::tileRenderSize.x,
                        GridMap::tileRenderSize.y};
       int success = SDL_RenderCopy(renderer, text,
                                    &sprite.getRect().getSdlRect(), &dstRect);
       ASSERT(success == 0, "Could not render " + std::string(SDL_GetError()));
     }
-  }
-  {
-    int success = SDL_SetRenderTarget(GraphicsManager::mMainRenderer, NULL);
-    ASSERT(success == 0,
-           "Could not restore render target " + std::string(SDL_GetError()));
   }
 }
 
@@ -83,7 +59,4 @@ void GridMapRenderer::update() {
   prepareViewedArea();
 }
 void GridMapRenderer::render() {
-  if (mActiveTexture) {
-    GraphicsManager::renderTexture(mActiveTexture, {0, 0});
-  }
 }

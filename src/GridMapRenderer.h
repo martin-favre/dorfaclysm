@@ -15,5 +15,4 @@ class GridMapRenderer : public Component {
  private:
   void prepareViewedArea();
   const GridMap& mActiveGridMap;
-  SDL_Texture* mActiveTexture{nullptr};
 };
