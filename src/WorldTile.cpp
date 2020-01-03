@@ -30,10 +30,13 @@ Tile* WorldTile::getTile() { return mTile.get(); }
 
 const Tile* WorldTile::getTile() const { return mTile.get(); }
 
-void WorldTile::removeTile()
-{
-  mTile.reset();
-}
+void WorldTile::removeTile() { mTile.reset(); }
 
-TileFloor& WorldTile::getFloor() { return mFloor; }
-const TileFloor& WorldTile::getFloor() const { return mFloor; }
+TileFloor& WorldTile::getFloor() {
+  ASSERT(mFloor.get(), "FloorTile is null!");
+  return *mFloor;
+}
+const TileFloor& WorldTile::getFloor() const {
+  ASSERT(mFloor.get(), "FloorTile is null!");
+  return *mFloor;
+}

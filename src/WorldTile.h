@@ -8,7 +8,7 @@ class WorldTile
 {
   public:
   WorldTile() = default;
-  WorldTile(const TileFloor& floor) : mFloor(floor){}
+  WorldTile(std::unique_ptr<TileFloor>&& floor) : mFloor(std::move(floor)){}
   bool hasComponent(const WorldItemComponent& comp) const;
   void registerComponent(WorldItemComponent& comp);
   void unregisterComponent(const WorldItemComponent& comp);
@@ -21,7 +21,7 @@ class WorldTile
   
   friend class MapGenerator;
   private:
-  TileFloor mFloor{TileFloor::grass};
+  std::unique_ptr<TileFloor> mFloor;
   std::unique_ptr<Tile> mTile;
   std::vector<WorldItemComponent*> mComponents;
 };
