@@ -1,3 +1,4 @@
+#pragma once
 #include "Component.h"
 #include "GameObject.h"
 #include "GridMap.h"
@@ -8,16 +9,16 @@ class WorldItemComponent : public Component {
       : Component(gObj), mName(name), mGridMap(GridMap::getActiveMap()) {}
 
   void moveFromTo(const Vector2DInt& oldPos, const Vector2DInt& newPos) {
-    mGridMap.unregisterComponent(oldPos, *this);
-    mGridMap.registerComponent(newPos, *this);
+    mGridMap.getWorldTile(oldPos).unregisterComponent(*this);
+    mGridMap.getWorldTile(newPos).registerComponent(*this);
   }
 
   void setup() override {
-    mGridMap.registerComponent(owner().getPosition(), *this);
+    mGridMap.getWorldTile(owner().getPosition()).registerComponent(*this);
   }
 
   void teardown() override {
-    mGridMap.unregisterComponent(owner().getPosition(), *this);
+    mGridMap.getWorldTile(owner().getPosition()).unregisterComponent(*this);
   }
 
   virtual bool isOpen() { return true; }

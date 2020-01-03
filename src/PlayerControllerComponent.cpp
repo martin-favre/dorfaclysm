@@ -4,12 +4,15 @@
 #include "InputManager.h"
 #include "GridMap.h"
 #include "WorldItemComponent.h"
+#include "WorldTile.h"
+#include "JobPool.h"
 
 void PlayerControllerComponent::setup()
 {
   mTextComponent = owner().getComponent<TextComponent>();
 }
-void PlayerControllerComponent::update()
+
+void PlayerControllerComponent::renderText()
 {
   if(mTextComponent)
   {
@@ -21,16 +24,17 @@ void PlayerControllerComponent::update()
     std::string outStr;
     if(gridMap.isPosInMap(mousePos))
     {
-      
-      const TileFloor& floor = gridMap.getTileFloor(mousePos);
+      const WorldTile& worldTile = gridMap.getWorldTile(mousePos);
+
+      const TileFloor& floor = worldTile.getFloor();
       outStr += floor.getName(); 
-      const Tile* tile = gridMap.getTile(mousePos);
+      const Tile* tile = worldTile.getTile();
       if(tile)
       {
         outStr += '\n' + tile->getName();
       }
 
-      const std::vector<WorldItemComponent*>& comps = gridMap.getComponentsOnTile(mousePos);
+      const std::vector<WorldItemComponent*>& comps = worldTile.getComponents();
       for(const auto& comp : comps)
       {
         ASSERT(comp, "Received null WorldItemComponent ptr");
@@ -38,5 +42,30 @@ void PlayerControllerComponent::update()
       }
       mTextComponent->setText(outStr);
     }  
+  }
+}
+
+void PlayerControllerComponent::handleClick()
+{
+  Vector2DInt mousePos = InputManager::getMousePosition();
+  mousePos += Camera::get().getPosition();
+  mousePos = Camera::renderPosToTilePos(mousePos);
+  const WorldTile& worldTile = GridMap::getActiveMap().getWorldTile(mousePos);
+  const Tile* tile = worldTile.getTile();
+  if(tile)
+  {
+    if(tile->isMineable())
+    {
+      JobPool::addJob(PlayerRequestedJob(PlayerRequestedJob::mine, mousePos));
+    }
+  }
+}
+
+void PlayerControllerComponent::update()
+{
+  renderText();
+  if(InputManager::getMouseDown(1))
+  {
+    handleClick();
   }
 }

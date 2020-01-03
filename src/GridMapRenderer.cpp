@@ -80,11 +80,7 @@ GridMapRenderer::GridMapRenderer(GameObject& g)
     : Component(g), mActiveGridMap(GridMap::getActiveMap()) {}
 
 void GridMapRenderer::update() {
-  Vector2DInt cameraPos{Camera::get().getPosition()};
-  if (mPreviousCameraPosition != cameraPos) {
-    prepareViewedArea();
-    mPreviousCameraPosition = cameraPos;
-  }
+  prepareViewedArea();
 }
 void GridMapRenderer::render() {
   if (mActiveTexture) {

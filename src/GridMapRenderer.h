@@ -15,6 +15,5 @@ class GridMapRenderer : public Component {
  private:
   void prepareViewedArea();
   const GridMap& mActiveGridMap;
-  Vector2DInt mPreviousCameraPosition;
   SDL_Texture* mActiveTexture{nullptr};
 };

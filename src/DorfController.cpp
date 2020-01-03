@@ -7,7 +7,8 @@
 #include "Logging.h"
 #include "WalkRandomlyJob.h"
 #include "WorldItemComponent.h"
-
+#include "JobPool.h"
+#include "MineJob.h"
 DorfController::DorfController(GameObject& gObj)
     : Component(gObj), mJob(std::make_unique<WalkRandomlyJob>(owner())) {}
 
@@ -17,7 +18,20 @@ void DorfController::setup() {
 }
 
 void DorfController::getNewJob() {
-  mJob = std::make_unique<WalkRandomlyJob>(owner());
+
+  auto& jobs = JobPool::getJobs();
+  if(jobs.size() > 0)
+  {
+    if(jobs[0].mType == PlayerRequestedJob::mine)
+    {
+      mJob = std::make_unique<MineJob>(owner(), jobs[0].mPos);
+    }
+    JobPool::removeJob(jobs[0]);
+  }
+  else
+  {
+    mJob = std::make_unique<WalkRandomlyJob>(owner());
+  }
 }
 
 void DorfController::update() {

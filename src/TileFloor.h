@@ -5,7 +5,9 @@
 #include "SpriteLoader.h"
 class TileFloor {
  public:
-  TileFloor(const Sprite& sprite, const std::string& name, bool canMoveOver = true)
+  enum TileFloorType{grass, dirt, rock, open};
+  TileFloor(TileFloorType type);
+  TileFloor(Sprite& sprite, const std::string& name, bool canMoveOver = true)
       : mSprite(sprite), mCanMoveOver(canMoveOver), mName(name) {}
   TileFloor(const TileFloor&) = default;
   TileFloor& operator=(const TileFloor&) = default;
@@ -14,12 +16,7 @@ class TileFloor {
   inline const std::string& getName() const {return mName; } 
   int getMovementCost() const { return 0; }  // todo
  private:
-  const Sprite& mSprite;
-  const bool mCanMoveOver{true};
-  const std::string mName;
+  Sprite& mSprite;
+  bool mCanMoveOver{true};
+  std::string mName;
 };
-
-TileFloor getGrassTileFloor();
-TileFloor getDirtTileFloor();
-TileFloor getRockTileFloor();
-TileFloor getOpenTileFloor();

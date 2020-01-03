@@ -13,8 +13,8 @@ class Astar {
   Parameter(out): std::stack<Vector2DInt> & path, will be populated with the
   path Not changed if no good path is found.
   ------------------------------------*/
-  bool getPath(const Vector2DInt& from, const Vector2DInt& to,
-               const GridMap& map, std::stack<Vector2DInt>& path);
+  bool getPath(const Vector2DInt& from, Vector2DInt to,
+               const GridMap& map, std::stack<Vector2DInt>& path, int retryDepth = 0);
 
  private:
 };

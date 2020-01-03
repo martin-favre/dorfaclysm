@@ -4,10 +4,11 @@
 #include <memory>
 #include <vector>
 
-#include "Tile.h"
-#include "TileFloor.h"
 #include "Vector2DInt.h"
+#include "WorldTile.h"
 
+class Tile;
+class TileFloor;
 class WorldItemComponent;
 class Vector2DInt;
 class GridMap {
@@ -18,17 +19,9 @@ class GridMap {
   bool isPosFree(const Vector2DInt& pos) const;
   const Vector2DInt& getSize() const;
 
+  WorldTile& getWorldTile(const Vector2DInt& pos);
+  const WorldTile& getWorldTile(const Vector2DInt& pos) const;
   const Sprite& getPosSprite(const Vector2DInt& pos) const;
-  const TileFloor& getTileFloor(const Vector2DInt& pos) const;
-  const Tile* getTile(const Vector2DInt& pos) const;
-  std::vector<WorldItemComponent*>& getComponentsOnTile(const Vector2DInt& pos);
-  const std::vector<WorldItemComponent*>& getComponentsOnTile(
-      const Vector2DInt& pos) const;
-  bool isComponentOnTile(const Vector2DInt& pos,
-                         const WorldItemComponent& comp);
-  void registerComponent(const Vector2DInt& pos, WorldItemComponent& component);
-  void unregisterComponent(const Vector2DInt& pos,
-                           WorldItemComponent& component);
 
   static GridMap& generateActiveMap(
       const Vector2DInt& size,
@@ -41,9 +34,7 @@ class GridMap {
 
  private:
   GridMap() = default;
-  std::vector<std::vector<TileFloor>> mTileFloors;
-  std::vector<std::vector<std::unique_ptr<Tile>>> mTiles;
-  std::vector<std::vector<std::vector<WorldItemComponent*>>> mComponents;
+  std::vector<std::vector<WorldTile>> mTiles;
   Vector2DInt mSize;
 
   static GridMap mActiveMap;

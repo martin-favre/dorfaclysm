@@ -93,8 +93,12 @@ class Compare {
   }
 };
 
-bool Astar::getPath(const Vector2DInt& start, const Vector2DInt& finish,
-                    const GridMap& map, std::stack<Vector2DInt>& path) {
+bool Astar::getPath(const Vector2DInt& start, Vector2DInt finish,
+                    const GridMap& map, std::stack<Vector2DInt>& path,
+                    int retryDepth) {
+  if (retryDepth > 1) {
+    return false;
+  }
   if (!map.isPosInMap(start)) {
     Logging::log("Could not find path, the start was outside map");
     return false;
@@ -104,6 +108,12 @@ bool Astar::getPath(const Vector2DInt& start, const Vector2DInt& finish,
     return false;
   }
   if (!map.isPosFree(finish)) {
+    bool success = false;
+    for (int dir = 0; dir < DIRECTIONS; ++dir) {
+      const Vector2DInt newPos(finish.x + DX[dir], finish.y + DY[dir]);
+      success = getPath(start, newPos, map, path, retryDepth + 1);
+      if(success) return success;
+    }
     Logging::log("Could not find path, the target position was occupied");
     return false;
   }

@@ -6,17 +6,20 @@
 #include "SpriteLoader.h"
 class Tile {
  public:
-  Tile(const std::string& name) : mName(name){}
+  Tile(const std::string& name, bool isMineable = false) : mName(name), mIsMineable(isMineable){}
   virtual bool isOpen() const { return false; }
   virtual const Sprite& getSprite() const = 0;
   inline const std::string& getName() const {return mName;}
+  inline bool isMineable()const{return mIsMineable;} 
+  private:
   const std::string mName;
+  const bool mIsMineable;
 };
 
 class RockTile : public Tile {
  public:
   RockTile()
-      : Tile("Rock Wall"), mSprite(SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {1, 2},
+      : Tile("Rock Wall", true), mSprite(SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {1, 2},
                                                 Paths::SIZE_OF_GRASS_TILE)) {}
   const Sprite& getSprite() const override { return *mSprite; }
 
