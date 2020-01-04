@@ -10,6 +10,7 @@
     ✔ Add job-pool @done(20-01-03 14:09)
 ✔ Refactoring: Tilefloor, replace using enums with children that just initializes their parent differently @done(20-01-03 15:05)
 ✔ Multiple clicks on a tile will create multiple jobs, even if it's the same one @done(20-01-03 17:12)
+✔ Center sprite for Dorf @done(20-01-04 13:44)
 
 ☐ Add visual box when a wall is in the job pool
     Naive approach 
@@ -28,11 +29,12 @@
 
 ☐ Be able to zoom in/out of the map
 
-☐ Center sprite for Dorf
-
 ☐ Need a way to handle "I want to be 1 square away away from this position" in pathfinding
     Naively just try all four squares around it?
     Make a wrapper in Astar for it?
+
+☐ Idea: Use Streaming texture for the GridMapRenderer
+    https://stackoverflow.com/questions/25214556/why-do-i-get-bad-performance-with-sdl2-and-sdl-rendercopy-inside-a-double-for-lo
 
 ☐ Idea: Instead of letting each gameobject do their own rendering, it could be done in GridMapRenderer, might save some performance
     Only render what's on the screen. 

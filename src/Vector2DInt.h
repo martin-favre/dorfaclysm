@@ -5,19 +5,15 @@
 
 #include "Helpers.h"
 #include "Vector2D.h"
+
 /*-------------------------------------------------------
         Contains 2D vector of integers
 ---------------------------------------------------------*/
-
 class Vector2DInt {
  public:
   Vector2DInt() = default;
   constexpr Vector2DInt(int x_, int y_) : x(x_), y(y_) {}
   constexpr Vector2DInt(uint x_, uint y_) : x(x_), y(y_) {}
-
-  /*-------------------------------------------------------
-  Values are rounded.
-  ---------------------------------------------------------*/
   constexpr Vector2DInt(float x_, float y_)
       : x(Helpers::roundToInt(x_)), y(Helpers::roundToInt(y_)) {}
   constexpr Vector2DInt(double x_, double y_)
