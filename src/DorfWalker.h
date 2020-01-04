@@ -7,6 +7,7 @@
 
 class DorfWalker {
  public:
+  DorfWalker(int msPerMovement = 500) : mMsPerMovement(msPerMovement){}
   Vector2DInt getNextPlannedPosition();
   void walkUpdate(Vector2DInt& currentPosition);
   bool isDone();
@@ -14,6 +15,6 @@ class DorfWalker {
 
  private:
   std::stack<Vector2DInt> mPlannedPosititions;
-  int mMsPerMovement{500};
+  int mMsPerMovement;
   Timer mTimer;
 };

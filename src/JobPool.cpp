@@ -17,6 +17,7 @@ void JobPool::addJob(const PlayerRequestedJob& job) {
     if (tile) {
       if (tile->supportsJob(job.mType)) {
         if (tile->getJob() != job.mType) {
+          tile->assignJob(job.mType);
           mJobs.emplace_back(job);
         }
       }
@@ -26,7 +27,7 @@ void JobPool::addJob(const PlayerRequestedJob& job) {
 
 const std::vector<PlayerRequestedJob>& JobPool::getJobs() { return mJobs; }
 
-void JobPool::removeJob(const PlayerRequestedJob& job) {
+void JobPool::claimJob(const PlayerRequestedJob& job) {
   auto iter =
       std::find_if(mJobs.begin(), mJobs.end(),
                    [&job](const PlayerRequestedJob& x) { return &x == &job; });

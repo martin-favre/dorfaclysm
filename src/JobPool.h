@@ -14,8 +14,7 @@ class JobPool {
  public:
   static void addJob(const PlayerRequestedJob& job);
   static const std::vector<PlayerRequestedJob>& getJobs();
-  static void removeJob(const PlayerRequestedJob& job);
-
+  static void claimJob(const PlayerRequestedJob& job);
  private:
   static std::vector<PlayerRequestedJob> mJobs;
 };

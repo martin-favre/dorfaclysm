@@ -11,7 +11,7 @@ class WalkingState : public State {
   std::unique_ptr<State> onDuring() override;
 
  private:
-  DorfWalker mWalker;
+  DorfWalker mWalker{200};
   GameObject& mUser;
   Vector2DInt mPos;
 };
@@ -39,6 +39,11 @@ void WalkingState::onEntry() {
   bool success = mWalker.generateNewPath(mUser.getPosition(), mPos);
   if(!success)
   {
+    Tile* tile = GridMap::getActiveMap().getWorldTile(mPos).getTile();
+    if(tile)
+    {
+      tile->unAssignJob();
+    }
     terminateMachine();
   }
 }

@@ -23,7 +23,7 @@ class Tile {
   virtual const Sprite& getSprite() const = 0;
   inline const std::string& getName() const { return mName; }
 
- private:
+ protected:
   PlayerRequestedJob::JobType mAssignedJob{PlayerRequestedJob::unset};
   const std::string mName;
 };
@@ -33,12 +33,21 @@ class RockTile : public Tile {
   RockTile()
       : Tile("Rock Wall"),
         mSprite(SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {1, 2},
-                                                Paths::SIZE_OF_GRASS_TILE)) {}
-  const Sprite& getSprite() const override { return *mSprite; }
+                                                Paths::SIZE_OF_GRASS_TILE)),
+        mBeingMinedSprite(SpriteLoader::loadSpriteByIndex(
+            Paths::BROWN_SQUARE, {0, 0}, Paths::SIZE_OF_BROWN_SQUARE)) {}
+  const Sprite& getSprite() const override {
+    if (mAssignedJob == PlayerRequestedJob::mine) {
+      return *mBeingMinedSprite;
+    } else {
+      return *mSprite;
+    }
+  }
   bool supportsJob(PlayerRequestedJob::JobType type) const override {
     return type == PlayerRequestedJob::JobType::mine;
   }
 
  private:
   std::unique_ptr<Sprite> mSprite;
+  std::unique_ptr<Sprite> mBeingMinedSprite;
 };

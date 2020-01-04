@@ -26,7 +26,7 @@ void DorfController::getNewJob() {
     {
       mJob = std::make_unique<MineJob>(owner(), jobs[0].mPos);
     }
-    JobPool::removeJob(jobs[0]);
+    JobPool::claimJob(jobs[0]);
   }
   else
   {
