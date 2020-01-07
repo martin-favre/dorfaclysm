@@ -9,19 +9,19 @@ class WorldItemComponent : public Component {
       : Component(gObj), mName(name), mGridMap(GridMap::getActiveMap()) {}
 
   void moveFromTo(const Vector2DInt& oldPos, const Vector2DInt& newPos) {
-    mGridMap.getWorldTile(oldPos).unregisterComponent(*this);
-    mGridMap.getWorldTile(newPos).registerComponent(*this);
+    (void)oldPos;
+    (void)newPos;
+    // mGridMap.getWorldTile(oldPos).unregisterComponent(*this);
+    // mGridMap.getWorldTile(newPos).registerComponent(*this);
   }
 
   void setup() override {
-    mGridMap.getWorldTile(owner().getPosition()).registerComponent(*this);
+    // mGridMap.getWorldTile(owner().getPosition()).registerComponent(*this);
   }
 
   void teardown() override {
-    mGridMap.getWorldTile(owner().getPosition()).unregisterComponent(*this);
+    // mGridMap.getWorldTile(owner().getPosition()).unregisterComponent(*this);
   }
-
-  virtual bool isOpen() { return true; }
 
   inline const std::string& getName() const {return mName;}
 

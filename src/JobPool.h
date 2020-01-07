@@ -2,11 +2,11 @@
 #include <vector>
 
 #include "Vector2DInt.h"
+enum JobType { jobTypeUnset, jobTypeMine };
 class PlayerRequestedJob {
  public:
-  enum JobType { unset, mine };
   PlayerRequestedJob(JobType type, const Vector2DInt& pos);
-  JobType mType{unset};
+  JobType mType{jobTypeUnset};
   Vector2DInt mPos;
 };
 

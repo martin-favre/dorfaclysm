@@ -6,7 +6,7 @@
 
 class MineJob : public IJob {
  public:
-  MineJob(GameObject& user, const Vector2DInt& targetPos);
+  MineJob(GameObject& user, const Vector3DInt& targetPos);
   bool work() override;
 
  private:

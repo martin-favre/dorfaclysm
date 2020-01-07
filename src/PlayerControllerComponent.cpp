@@ -11,7 +11,7 @@ void PlayerControllerComponent::setup()
 {
   mTextComponent = owner().getComponent<TextComponent>();
 }
-
+/*
 void PlayerControllerComponent::renderText()
 {
   if(mTextComponent)
@@ -44,7 +44,8 @@ void PlayerControllerComponent::renderText()
     }  
   }
 }
-
+*/
+/*
 void PlayerControllerComponent::handleClick()
 {
   Vector2DInt mousePos = InputManager::getMousePosition();
@@ -60,12 +61,12 @@ void PlayerControllerComponent::handleClick()
     }
   }
 }
-
+*/
 void PlayerControllerComponent::update()
 {
-  renderText();
+  // renderText();
   if(InputManager::getMouseDown(1))
   {
-    handleClick();
+    // handleClick();
   }
 }

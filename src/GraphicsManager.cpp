@@ -43,6 +43,10 @@ void GraphicsManager::initialize() {
   ASSERT(GraphicsManager::mMainRenderer != NULL,
          "Renderer could not be created! SDL Error: " +
              std::string(SDL_GetError()));
+  ok = SDL_SetRenderDrawBlendMode(GraphicsManager::mMainRenderer, SDL_BLENDMODE_BLEND);
+  ASSERT(ok >= 0,
+         "Could not SDL_SetRenderDrawBlendMode: " +
+             std::string(SDL_GetError()));
 
   GraphicsManager::mMainSurface =
       SDL_GetWindowSurface(GraphicsManager::mMainWindow);
@@ -51,7 +55,7 @@ void GraphicsManager::initialize() {
          "Surface could not be created! SDL Error: " +
              std::string(SDL_GetError()));
 
-  SDL_SetRenderDrawColor(GraphicsManager::mMainRenderer, 0x0, 0x0, 0x0, 0x0);
+  setRenderDrawColor(mDefaultDrawColor);
 
   int img_flags = IMG_INIT_PNG;
   ok = IMG_Init(img_flags) & img_flags;
@@ -79,7 +83,7 @@ void GraphicsManager::teardown() {
 }
 
 void GraphicsManager::prepareRendering() {
-  setRenderDrawColor(SDL_Color{0, 0, 0, 0});
+  setRenderDrawColor(mDefaultDrawColor);
   SDL_RenderClear(GraphicsManager::mMainRenderer);
 }
 

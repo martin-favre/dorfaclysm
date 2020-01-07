@@ -12,8 +12,11 @@ std::map<std::pair<std::string, int>, TTF_Font *> SpriteLoader::mFonts;
 SDL_Texture *SpriteLoader::convertSurfaceToTexture(SDL_Surface *newSurf) {
   SDL_Texture *out =
       SDL_CreateTextureFromSurface(GraphicsManager::mMainRenderer, newSurf);
+
   ASSERT(out,
          "Could not load texture, SDL_Error: " + std::string(SDL_GetError()));
+  int success = SDL_SetTextureBlendMode(out, SDL_BLENDMODE_BLEND);
+  ASSERT(success == 0, "Could not set SDL_SetTextureBlendMode: " + std::string(SDL_GetError()));
   return out;
 }
 

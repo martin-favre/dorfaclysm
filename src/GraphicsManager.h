@@ -42,6 +42,7 @@ class GraphicsManager {
   static inline unsigned int getScreenWidth() { return mScreenWidth; }
   friend class SpriteLoader;
   friend class GridMapRenderer;
+  static constexpr SDL_Color mDefaultDrawColor{0,0,0,0};
 
  private:
   GraphicsManager();

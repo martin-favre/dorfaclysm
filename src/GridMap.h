@@ -4,28 +4,25 @@
 #include <memory>
 #include <vector>
 
-#include "Vector2DInt.h"
-#include "WorldTile.h"
+// #include "Vector2DInt.h"
+#include "Vector3DInt.h"
+#include "Block.h"
 
-class Tile;
-class TileFloor;
-class WorldItemComponent;
-class Vector2DInt;
 class GridMap {
  public:
   GridMap(const GridMap&) = delete;
   GridMap& operator=(const GridMap&) = delete;
-  bool isPosInMap(const Vector2DInt& pos) const;
-  bool isPosFree(const Vector2DInt& pos) const;
-  const Vector2DInt& getSize() const;
+  bool isPosInMap(const Vector3DInt& pos) const;
+  bool isPosFree(const Vector3DInt& pos) const;
+  const Vector3DInt& getSize() const;
 
-  WorldTile& getWorldTile(const Vector2DInt& pos);
-  const WorldTile& getWorldTile(const Vector2DInt& pos) const;
-  const Sprite& getPosSprite(const Vector2DInt& pos) const;
+  void removeBlockAt(const Vector3DInt& pos);
+  Block& getBlockAt(const Vector3DInt& pos);
+  const Block& getBlockAt(const Vector3DInt& pos) const;
 
   static GridMap& generateActiveMap(
-      const Vector2DInt& size,
-      std::function<void(GridMap&, const Vector2DInt&)> generator);
+      const Vector3DInt& size,
+      std::function<void(GridMap&, const Vector3DInt&)> generator);
   static GridMap& getActiveMap();
   static constexpr Vector2DInt tileRenderSize{
       64, 64};  // How many pixels wide a tile is when rendered, before other
@@ -33,9 +30,11 @@ class GridMap {
   friend class MapGenerator;
 
  private:
+  bool isBlockValid(const Vector3DInt& pos) const;
   GridMap() = default;
-  std::vector<std::vector<WorldTile>> mTiles;
-  Vector2DInt mSize;
-
+  std::vector<std::vector<std::vector<std::unique_ptr<Block>>>> mBlocks;
+  std::vector<std::vector<std::vector<std::vector<std::unique_ptr<Component>>>>> mComponents;
+  
+  Vector3DInt mSize;
   static GridMap mActiveMap;
 };

@@ -36,13 +36,13 @@ WalkingState::WalkingState(GameObject& user) : mUser(user) {}
 void WalkingState::onEntry() {
   int x = Helpers::randomInt(0, 50);
   int y = Helpers::randomInt(0, 50);
-  mWalker.generateNewPath(mUser.getPosition(), {x, y});
+  mWalker.generateNewPath(mUser.getPosition(), {x, y, mUser.getPosition().z});
 }
 std::unique_ptr<State> WalkingState::onDuring() {
   if (mWalker.isDone()) {
     return std::make_unique<WaitingState>(mUser);
   } else {
-    Vector2DInt pos = mUser.getPosition();
+    Vector3DInt pos = mUser.getPosition();
     mWalker.walkUpdate(pos);
     mUser.setPosition(pos);
     return nullptr;

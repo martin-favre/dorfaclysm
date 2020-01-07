@@ -10,15 +10,22 @@
 #include "GridMapRenderer.h"
 #include "MapGenerator.h"
 #include "Paths.h"
+#include "PlayerControllerComponent.h"
+#include "ShowPositionComponent.h"
 #include "Sprite.h"
 #include "SpriteComponent.h"
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
-#include "PlayerControllerComponent.h"
 #include "WorldItemComponent.h"
+#include "Camera.h"
 void foo() {
-  { GridMap::generateActiveMap({100, 100}, MapGenerator::generate); }
+  int mapSize = 32;
+  {
+    GridMap::generateActiveMap({mapSize, mapSize, mapSize},
+                               MapGenerator::generate);
+  }
+  Camera::get().move({0,0, mapSize/2});
   // {
   //   GameObject& gObj = Engine::addGameObject<GameObject>();
   //   std::unique_ptr<TextComponent> text =
@@ -45,6 +52,14 @@ void foo() {
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<CameraControllerComponent>();
+    gObj.setPosition({0, 0, mapSize / 2});
+  }
+  {
+    GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.addComponent<ShowPositionComponent>();
+    gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
+    gObj.setScale({2, 2});
+    gObj.setPosition({20, 80});
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
@@ -53,13 +68,14 @@ void foo() {
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
   }
   {
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 1; ++i) {
       GameObject& gObj = Engine::addGameObject<GameObject>();
       gObj.addComponent<DorfController>();
       gObj.addComponent<WorldItemComponent>("Dorf");
       gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
           Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
-      gObj.setScale({2,2});
+      gObj.setScale({2, 2});
+      gObj.setPosition({0, 0, mapSize / 2});
     }
   }
 }

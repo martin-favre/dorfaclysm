@@ -6,26 +6,24 @@
 Camera Camera::mCamera;
 
 Camera& Camera::get() { return mCamera; }
-const Vector2DInt& Camera::getPosition() const { return mPosition; }
-void Camera::move(const Vector2DInt& movement) {
+const Vector3DInt& Camera::getPosition() const { return mPosition; }
+void Camera::move(const Vector3DInt& movement) {
   mPosition += movement;
 
-  if (mPosition.x < 0) {
-    mPosition.x = 0;
-  }
-  if (mPosition.y < 0) {
-    mPosition.y = 0;
-  }
+  if (mPosition.x < 0) mPosition.x = 0;
+  if (mPosition.y < 0) mPosition.y = 0;
+  if (mPosition.z < 0) mPosition.z = 0;
 
-  const Vector2DInt gridSize{GridMap::getActiveMap().getSize()};
+  const Vector3DInt gridSize{GridMap::getActiveMap().getSize()};
   const Vector2DInt gridRenderSize{gridSize.x * GridMap::tileRenderSize.x,
                                    gridSize.y * GridMap::tileRenderSize.y};
   const Vector2DInt tilesCameraCovers = {GraphicsManager::getScreenWidth(),
                                          GraphicsManager::getScreenHeight()};
 
   const Vector2DInt maxPos = gridRenderSize - tilesCameraCovers;
-  if (mPosition.x > maxPos.x) mPosition.x = maxPos.x;
-  if (mPosition.y > maxPos.y) mPosition.y = maxPos.y;
+  if (mPosition.x >= maxPos.x) mPosition.x = maxPos.x-1;
+  if (mPosition.y >= maxPos.y) mPosition.y = maxPos.y-1;
+  if (mPosition.z >= gridSize.z) mPosition.z = gridSize.z-1;
 }
 const Vector2D& Camera::getScale() const { return mScale; }
 void Camera::setScale(const Vector2D& scale) { mScale = scale; }

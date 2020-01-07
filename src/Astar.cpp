@@ -4,24 +4,15 @@
 #include <map>
 #include <queue>
 
+#include "Block.h"
+#include "DeltaPositions.h"
 #include "GridMap.h"
 #include "Helpers.h"
 #include "Logging.h"
-
 /*
         Implementation stolen/inspired from here:
         http://code.activestate.com/recipes/577457-a-star-shortest-path-algorithm/
 */
-
-#define DIRECTIONS 4  // number of possible directions to go at any position
-
-#if (DIRECTIONS == 4)
-constexpr int DX[DIRECTIONS] = {1, 0, -1, 0};
-constexpr int DY[DIRECTIONS] = {0, 1, 0, -1};
-#else
-constexpr int DX[DIRECTIONS] = {1, 1, 0, -1, -1, -1, 0, 1};
-constexpr int DY[DIRECTIONS] = {0, 1, 1, 1, 0, -1, -1, -1};
-#endif
 
 class AStarNode {
   /* Tuning parameters
@@ -29,47 +20,36 @@ class AStarNode {
           Increase estimation weight to punish the distance estimation.
   */
   static constexpr int level_weight = 40;
-#if (DIRECTIONS == 8)
-  static constexpr int diag_level_wight = 80;
-#endif
   static constexpr int estimation_weight = 10;
 
-  const Vector2DInt position;
+  const Vector3DInt position;
   // total distance already traveled to reach the node
   int level;
   // priority=level+remaining distance estimate
   int priority;  // smaller: higher priority
-  const int direction;
 
   const AStarNode* parent;
 
  public:
   std::string name;
-  AStarNode(const Vector2DInt& vec, int d, int p, int dir, AStarNode* par)
-      : position(vec), level(d), priority(p), direction(dir), parent(par) {}
+  AStarNode(const Vector3DInt& vec, int d, int p, AStarNode* par)
+      : position(vec), level(d), priority(p), parent(par) {}
   ~AStarNode() {}
-  const Vector2DInt& get_pos() const { return position; }
+  const Vector3DInt& get_pos() const { return position; }
   int getLevel() const { return level; }
   int getPriority() const { return priority; }
-  int getDir() const { return direction; }
   const AStarNode* get_parent() const { return parent; }
 
-  void updatePriority(const Vector2DInt& goal) {
+  void updatePriority(const Vector3DInt& goal) {
     priority = level + estimate(goal) * estimation_weight;
   }
 
-  void nextLevel(const int& direction) {
-    // give better priority to going straight instead of diagonally
-#if (DIRECTIONS == 4)
-    (void)direction;
+  void nextLevel() {
     level += level_weight;
-#else
-    level += (direction % 2 == 0 ? level_weight : diag_level_wight);
-#endif
   }
 
   // Estimation function for the remaining distance to the goal.
-  int estimate(const Vector2DInt& goal) const {
+  int estimate(const Vector3DInt& goal) const {
     // Squared Euclidean Distance
     const int d = Helpers::roundToInt(
         Helpers::getSquaredPositionBetweenPositions(goal, position));
@@ -93,12 +73,23 @@ class Compare {
   }
 };
 
-bool Astar::getPath(const Vector2DInt& start, Vector2DInt finish,
-                    const GridMap& map, std::stack<Vector2DInt>& path,
-                    int retryDepth) {
-  if (retryDepth > 1) {
-    return false;
+bool isStepValid(const GridMap& map, const Vector3DInt& newPos,
+                 const Vector3DInt& dir) {
+  if (!map.isPosInMap(newPos)) return false;
+  if (!map.isPosFree(newPos)) return false;
+  const Block& block = map.getBlockAt(newPos);
+  const BlockMovementType type = block.getMovementType();
+  if (dir.z > 0) {
+    if (type != movementUpBlock && type != movementUpAndDownBlock) return false;
+  } else if (dir.z < 0) {
+    if (type != movementDownBlock && type != movementUpAndDownBlock)
+      return false;
   }
+  return true;
+}
+
+bool Astar::getPath(const Vector3DInt& start, const Vector3DInt& finish,
+                    const GridMap& map, std::stack<Vector3DInt>& path) {
   if (!map.isPosInMap(start)) {
     Logging::log("Could not find path, the start was outside map");
     return false;
@@ -108,20 +99,20 @@ bool Astar::getPath(const Vector2DInt& start, Vector2DInt finish,
     return false;
   }
   if (!map.isPosFree(finish)) {
-    bool success = false;
-    for (int dir = 0; dir < DIRECTIONS; ++dir) {
-      const Vector2DInt newPos(finish.x + DX[dir], finish.y + DY[dir]);
-      success = getPath(start, newPos, map, path, retryDepth + 1);
-      if(success) return success;
-    }
+    // bool success = false;
+    // for (int dir = 0; dir < DIRECTIONS; ++dir) {
+    //   const Vector3DInt newPos(finish.x + DX[dir], finish.y + DY[dir]);
+    //   success = getPath(start, newPos, map, path, retryDepth + 1);
+    //   if(success) return success;
+    // }
     Logging::log("Could not find path, the target position was occupied");
     return false;
   }
   std::priority_queue<AStarNode*, std::vector<AStarNode*>, Compare> node_queue;
-  AStarNode* current_node = new AStarNode(start, 0, 0, 0, nullptr);
+  AStarNode* current_node = new AStarNode(start, 0, 0, nullptr);
   current_node->updatePriority(finish);
   node_queue.push(current_node);
-  std::map<Vector2DInt, int> map_weights;
+  std::map<Vector3DInt, int> map_weights;
   map_weights[start] = current_node->getPriority();
   int steps = 0;
   std::vector<AStarNode*> old_nodes;
@@ -137,7 +128,7 @@ bool Astar::getPath(const Vector2DInt& start, Vector2DInt finish,
     if (current_node->get_pos() == finish) {
       AStarNode const* curr = current_node;
       while (curr->get_parent() != nullptr) {
-        Vector2DInt pos = curr->get_pos();
+        Vector3DInt pos = curr->get_pos();
         path.push(pos);
         curr = curr->get_parent();
       }
@@ -152,31 +143,29 @@ bool Astar::getPath(const Vector2DInt& start, Vector2DInt finish,
       return true;
       /* Generate output path and cleanup*/
     } else {
-      for (int dir = 0; dir < DIRECTIONS; ++dir) {
-        const Vector2DInt current_pos = current_node->get_pos();
-        const Vector2DInt new_pos(current_pos.x + DX[dir],
-                                  current_pos.y + DY[dir]);
+      for (const Vector3DInt& delta : DELTA_POSITIONS) {
+        const Vector3DInt currentPos = current_node->get_pos();
+        const Vector3DInt newPos{currentPos + delta};
 
         /*if x and y are within boundaries and
         the tile is not impassable and
         then it's a valid step
         */
-        const bool valid_step =
-            map.isPosInMap(new_pos) && map.isPosFree(new_pos);
+        const bool valid_step = isStepValid(map, newPos, delta);
         if (valid_step) {
           AStarNode* next_node =
-              new AStarNode(new_pos, current_node->getLevel(),
-                            current_node->getPriority(), dir, current_node);
-          next_node->nextLevel(dir);
+              new AStarNode(newPos, current_node->getLevel(),
+                            current_node->getPriority(), current_node);
+          next_node->nextLevel();
           next_node->updatePriority(finish);
 
           /* if my priority is better, mark it down and continue */
-          if (map_weights.count(new_pos) == 0) {
-            map_weights[new_pos] = std::numeric_limits<int>::max();
+          if (map_weights.count(newPos) == 0) {
+            map_weights[newPos] = std::numeric_limits<int>::max();
           }
 
-          if (next_node->getPriority() < map_weights[new_pos]) {
-            map_weights[new_pos] = next_node->getPriority();
+          if (next_node->getPriority() < map_weights[newPos]) {
+            map_weights[newPos] = next_node->getPriority();
             node_queue.push(next_node);
           } else {
             delete next_node;

@@ -8,7 +8,7 @@ class PlayerControllerComponent : public Component
   void setup()override;
   void update()override;
   private:
-  void renderText();
-  void handleClick();
+  // void renderText();
+  // void handleClick();
   TextComponent* mTextComponent{nullptr};
 };

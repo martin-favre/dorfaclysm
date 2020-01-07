@@ -3,18 +3,18 @@
 #include <stack>
 
 #include "Timer.h"
-#include "Vector2DInt.h"
+#include "Vector3DInt.h"
 
 class DorfWalker {
  public:
   DorfWalker(int msPerMovement = 500) : mMsPerMovement(msPerMovement){}
-  Vector2DInt getNextPlannedPosition();
-  void walkUpdate(Vector2DInt& currentPosition);
+  Vector3DInt getNextPlannedPosition();
+  void walkUpdate(Vector3DInt& currentPosition);
   bool isDone();
-  bool generateNewPath(const Vector2DInt& from, const Vector2DInt& to);
+  bool generateNewPath(const Vector3DInt& from, const Vector3DInt& to);
 
  private:
-  std::stack<Vector2DInt> mPlannedPosititions;
+  std::stack<Vector3DInt> mPlannedPosititions;
   int mMsPerMovement;
   Timer mTimer;
 };

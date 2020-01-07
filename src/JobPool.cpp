@@ -12,14 +12,11 @@ PlayerRequestedJob::PlayerRequestedJob(JobType type, const Vector2DInt& pos)
 void JobPool::addJob(const PlayerRequestedJob& job) {
   GridMap& gridMap = GridMap::getActiveMap();
   if (gridMap.isPosInMap(job.mPos)) {
-    WorldTile& wTile = gridMap.getWorldTile(job.mPos);
-    Tile* tile = wTile.getTile();
-    if (tile) {
-      if (tile->supportsJob(job.mType)) {
-        if (tile->getJob() != job.mType) {
-          tile->assignJob(job.mType);
-          mJobs.emplace_back(job);
-        }
+    Block& block = gridMap.getBlockAt(job.mPos);
+    if (block.supportsJob(job.mType)) {
+      if (block.getJob() != job.mType) {
+        block.assignJob(job.mType);
+        mJobs.emplace_back(job);
       }
     }
   }

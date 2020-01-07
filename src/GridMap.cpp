@@ -1,71 +1,99 @@
 #include "GridMap.h"
-
+#include "AirBlock.h"
 #include "Helpers.h"
 #include "Logging.h"
 #include "Tile.h"
 #include "TileFloor.h"
 #include "WorldItemComponent.h"
+#include "GrassBlock.h"
 GridMap GridMap::mActiveMap;
 
-GridMap& GridMap::generateActiveMap(
-    const Vector2DInt& size,
-    std::function<void(GridMap&, const Vector2DInt&)> generator) {
-  Logging::log(std::stringstream() << "Generating map of size " << size);
+void initializeGrid(
+    std::vector<std::vector<std::vector<std::unique_ptr<Block>>>>& grid,
+    const Vector3DInt& size) {
+  // ech
+  for (int z = 0; z < size.z; ++z) {
+    grid.emplace_back();
+    for (int y = 0; y < size.y; ++y) {
+      grid[z].emplace_back();
+      for (int x = 0; x < size.x; ++x) {
+        grid[z][y].emplace_back();
+      }
+    }
+  }
+}
 
+void makeGridGrass(
+    std::vector<std::vector<std::vector<std::unique_ptr<Block>>>>& grid,
+    const Vector3DInt& size) {
+  for (int z = 0; z < size.z; ++z) {
+    for (int y = 0; y < size.y; ++y) {
+      for (int x = 0; x < size.x; ++x) {
+        grid[z][y][x] = std::make_unique<GrassBlock>();
+      }
+    }
+  }
+}
+
+
+GridMap& GridMap::generateActiveMap(
+    const Vector3DInt& size,
+    std::function<void(GridMap&, const Vector3DInt&)> generator) {
+  Logging::log(std::stringstream() << "Generating map of size " << size);
   ASSERT(size.x > 0, "Size needs to be > 0");
   ASSERT(size.y > 0, "Size needs to be > 0");
+  ASSERT(size.z > 0, "Size needs to be > 0");
 
+  initializeGrid(mActiveMap.mBlocks, size);
 
   if (generator) {
     generator(mActiveMap, size);
   } else {
+    makeGridGrass(mActiveMap.mBlocks, size);
     Logging::log(std::string(__func__) + ": generator not set");
   }
   mActiveMap.mSize = size;
   return mActiveMap;
 }
 
-const Vector2DInt& GridMap::getSize() const { return mSize; }
+const Vector3DInt& GridMap::getSize() const { return mSize; }
 
-bool GridMap::isPosInMap(const Vector2DInt& pos) const {
+bool GridMap::isPosInMap(const Vector3DInt& pos) const {
   if (pos.x < 0) return false;
   if (pos.y < 0) return false;
+  if (pos.z < 0) return false;
   if (pos.y >= mSize.y) return false;
   if (pos.x >= mSize.x) return false;
+  if (pos.z >= mSize.z) return false;
   return true;
 }
 
-WorldTile& GridMap::getWorldTile(const Vector2DInt& pos) {
+bool GridMap::isBlockValid(const Vector3DInt& pos) const {
+  return mBlocks[pos.z][pos.y][pos.x].get();
+}
+
+void GridMap::removeBlockAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-  return mTiles[pos.y][pos.x];
+  ASSERT(isBlockValid(pos), "Block ptr is null");
+  mBlocks[pos.z][pos.y][pos.x] = std::make_unique<AirBlock>();
 }
 
-const WorldTile& GridMap::getWorldTile(const Vector2DInt& pos) const {
+Block& GridMap::getBlockAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-  return mTiles[pos.y][pos.x];
+  ASSERT(isBlockValid(pos), "Block ptr is null");
+  return *mBlocks[pos.z][pos.y][pos.x];
 }
 
-const Sprite& GridMap::getPosSprite(const Vector2DInt& pos) const {
-  const WorldTile& worldTile = getWorldTile(pos); 
-  const Tile* tile = worldTile.getTile();
-  if (tile) {
-    return tile->getSprite();
-  } else {
-    return worldTile.getFloor().getSprite();
-  }
+const Block& GridMap::getBlockAt(const Vector3DInt& pos) const {
+  ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+  ASSERT(isBlockValid(pos), "Block ptr is null");
+  return *mBlocks[pos.z][pos.y][pos.x];
 }
 
-bool GridMap::isPosFree(const Vector2DInt& pos) const {
+bool GridMap::isPosFree(const Vector3DInt& pos) const {
   if (!isPosInMap(pos)) return false;
-  bool passable = true;
-  const WorldTile& worldTile = getWorldTile(pos);
-  
-  const Tile* tile = worldTile.getTile();
-  if (tile) {
-    passable &= tile->isOpen();
-  }
-  passable = passable && worldTile.getFloor().canMoveOver();
-  return passable;
+  const Block& block = getBlockAt(pos);
+  return block.isPassable();
 }
 
 GridMap& GridMap::getActiveMap() { return mActiveMap; }

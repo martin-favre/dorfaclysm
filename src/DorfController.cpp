@@ -22,7 +22,7 @@ void DorfController::getNewJob() {
   auto& jobs = JobPool::getJobs();
   if(jobs.size() > 0)
   {
-    if(jobs[0].mType == PlayerRequestedJob::mine)
+    if(jobs[0].mType == jobTypeMine)
     {
       mJob = std::make_unique<MineJob>(owner(), jobs[0].mPos);
     }

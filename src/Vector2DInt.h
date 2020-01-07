@@ -9,6 +9,7 @@
 /*-------------------------------------------------------
         Contains 2D vector of integers
 ---------------------------------------------------------*/
+class Vector3DInt;
 class Vector2DInt {
  public:
   Vector2DInt() = default;
@@ -20,7 +21,7 @@ class Vector2DInt {
       : x(Helpers::roundToInt(x_)), y(Helpers::roundToInt(y_)) {}
   constexpr Vector2DInt(const Vector2D& vec)
       : x(Helpers::roundToInt(vec.x)), y(Helpers::roundToInt(vec.y)) {}
-
+  constexpr Vector2DInt(const Vector3DInt& vec);
   /*-------------------------------------------------------
           Note: designed for creating an unique value for usage in a map,
           not checking if one is less than the other. Since that doesn't
@@ -39,3 +40,6 @@ class Vector2DInt {
   int y = 0;
   friend std::ostream& operator<<(std::ostream& os, const Vector2DInt& vec);
 };
+
+#include "Vector3DInt.h"
+constexpr Vector2DInt::Vector2DInt(const Vector3DInt& vec) : x(vec.x), y(vec.y){}

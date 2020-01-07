@@ -8,7 +8,7 @@ typedef unsigned long GAMEOBJECT_ID;
 
 #include "Component.h"
 #include "Vector2D.h"
-#include "Vector2DInt.h"
+#include "Vector3DInt.h"
 
 class GameObject {
  public:
@@ -50,8 +50,8 @@ class GameObject {
   ---------------------------------------------------------*/
   int getRenderDepth() const;
   void setRenderDepth(int depth);
-  const Vector2DInt& getPosition() const;
-  void setPosition(const Vector2DInt& pos);
+  const Vector3DInt& getPosition() const;
+  void setPosition(const Vector3DInt& pos);
   const Vector2D& getScale() const;
   void setScale(const Vector2D& newScale);
   double getRotation() const;
@@ -88,7 +88,7 @@ class GameObject {
   ---------------------------------------------------------*/
   void updateComponents();
 
-  Vector2DInt mPosition;
+  Vector3DInt mPosition;
   int mRenderDepth{0};
   Vector2D mScale{1, 1};
   double mRotation{0};

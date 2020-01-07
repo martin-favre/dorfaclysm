@@ -7,8 +7,8 @@ class Camera {
   Camera& operator=(const Camera&) = delete;
 
   static Camera& get();
-  const Vector2DInt& getPosition() const;
-  void move(const Vector2DInt& movement);
+  const Vector3DInt& getPosition() const;
+  void move(const Vector3DInt& movement);
   const Vector2D& getScale() const;
   void setScale(const Vector2D& scale);
 
@@ -20,6 +20,6 @@ class Camera {
  private:
   Camera() = default;
   static Camera mCamera;
-  Vector2DInt mPosition;
+  Vector3DInt mPosition;
   Vector2D mScale{1, 1};
 };
