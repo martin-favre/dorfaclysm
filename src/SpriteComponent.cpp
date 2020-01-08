@@ -16,7 +16,7 @@ SpriteComponent::SpriteComponent(GameObject& owner,
 
 void SpriteComponent::render() {
   if (mSprite) {
-    const Vector2DInt& camPos = Camera::get().getPosition();
+    const Vector3DInt& camPos = Camera::get().getPosition();
     Vector2DInt pos{owner().getPosition()};
     if (mScaleToTileGrid) {
       pos.x *= GridMap::tileRenderSize.x;

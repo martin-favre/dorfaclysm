@@ -43,10 +43,10 @@ void GraphicsManager::initialize() {
   ASSERT(GraphicsManager::mMainRenderer != NULL,
          "Renderer could not be created! SDL Error: " +
              std::string(SDL_GetError()));
-  ok = SDL_SetRenderDrawBlendMode(GraphicsManager::mMainRenderer, SDL_BLENDMODE_BLEND);
-  ASSERT(ok >= 0,
-         "Could not SDL_SetRenderDrawBlendMode: " +
-             std::string(SDL_GetError()));
+  ok = SDL_SetRenderDrawBlendMode(GraphicsManager::mMainRenderer,
+                                  SDL_BLENDMODE_BLEND);
+  ASSERT(ok >= 0, "Could not SDL_SetRenderDrawBlendMode: " +
+                      std::string(SDL_GetError()));
 
   GraphicsManager::mMainSurface =
       SDL_GetWindowSurface(GraphicsManager::mMainWindow);

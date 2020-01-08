@@ -6,17 +6,18 @@
 #include "Helpers.h"
 #include "Logging.h"
 #include "WalkRandomlyJob.h"
-#include "WorldItemComponent.h"
 #include "JobPool.h"
 #include "MineJob.h"
 DorfController::DorfController(GameObject& gObj)
     : Component(gObj), mJob(std::make_unique<WalkRandomlyJob>(owner())) {}
 
 void DorfController::setup() {
-  mWorldItemComp = owner().getComponent<WorldItemComponent>();
-  mPreviousPosition = owner().getPosition();
+  mWorldItem.setup(owner().getPosition());
 }
-
+void DorfController::teardown()
+{
+  mWorldItem.teardown();
+}
 void DorfController::getNewJob() {
 
   auto& jobs = JobPool::getJobs();
@@ -41,10 +42,6 @@ void DorfController::update() {
     getNewJob();
   }
 
-  if (owner().getPosition() != mPreviousPosition) {
-    if (mWorldItemComp) {
-      mWorldItemComp->moveFromTo(mPreviousPosition, owner().getPosition());
-      mPreviousPosition = owner().getPosition();
-    }
-  }
+  mWorldItem.update(owner().getPosition());
+
 }

@@ -3,11 +3,14 @@
 #include <functional>
 #include <memory>
 #include <vector>
-
-// #include "Vector2DInt.h"
 #include "Vector3DInt.h"
-#include "Block.h"
+class Block;
 
+
+/**
+ * Accessing map outside bounds will throw exception.
+ * Use isPosInMap.
+ */ 
 class GridMap {
  public:
   GridMap(const GridMap&) = delete;
@@ -19,6 +22,7 @@ class GridMap {
   void removeBlockAt(const Vector3DInt& pos);
   Block& getBlockAt(const Vector3DInt& pos);
   const Block& getBlockAt(const Vector3DInt& pos) const;
+  void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>&& newBlock);
 
   static GridMap& generateActiveMap(
       const Vector3DInt& size,
@@ -27,13 +31,11 @@ class GridMap {
   static constexpr Vector2DInt tileRenderSize{
       64, 64};  // How many pixels wide a tile is when rendered, before other
                 // modifiers
-  friend class MapGenerator;
 
  private:
   bool isBlockValid(const Vector3DInt& pos) const;
   GridMap() = default;
   std::vector<std::vector<std::vector<std::unique_ptr<Block>>>> mBlocks;
-  std::vector<std::vector<std::vector<std::vector<std::unique_ptr<Component>>>>> mComponents;
   
   Vector3DInt mSize;
   static GridMap mActiveMap;

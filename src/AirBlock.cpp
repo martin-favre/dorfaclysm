@@ -11,11 +11,7 @@ bool AirBlock::supportsJob(JobType type) const {
   (void)type;
   return false;
 }
-
-const std::vector<WorldItemComponent>& AirBlock::getComponents() const {
-  return mComponents;
-}
-
+bool AirBlock::supportsComponents() const { return true; }
 BlockMovementType AirBlock::getMovementType() const {
   return movementOnlyHorizontal;
 }

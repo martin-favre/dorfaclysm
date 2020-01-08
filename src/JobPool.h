@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
 
-#include "Vector2DInt.h"
+#include "Vector3DInt.h"
 enum JobType { jobTypeUnset, jobTypeMine };
 class PlayerRequestedJob {
  public:
-  PlayerRequestedJob(JobType type, const Vector2DInt& pos);
+  PlayerRequestedJob(JobType type, const Vector3DInt& pos);
   JobType mType{jobTypeUnset};
-  Vector2DInt mPos;
+  Vector3DInt mPos;
 };
 
 class JobPool {

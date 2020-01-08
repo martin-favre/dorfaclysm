@@ -3,10 +3,11 @@
 #include <algorithm>
 
 #include "GridMap.h"
+#include "Block.h"
 
 std::vector<PlayerRequestedJob> JobPool::mJobs;
 
-PlayerRequestedJob::PlayerRequestedJob(JobType type, const Vector2DInt& pos)
+PlayerRequestedJob::PlayerRequestedJob(JobType type, const Vector3DInt& pos)
     : mType(type), mPos(pos) {}
 
 void JobPool::addJob(const PlayerRequestedJob& job) {

@@ -6,14 +6,6 @@
 #include "GraphicsManager.h"
 #include "SpriteLoader.h"
 #include "Vector2DInt.h"
-// Probably gonna use this eventually
-// Vector2DInt getTextSize(const std::string& text, Font& font) {
-//   int w = 0;
-//   int h = 0;
-//   int success = TTF_SizeText(font.getSdlFont(), text.c_str(), &w, &h);
-//   ASSERT(success != -1, "TTF_SizeText failed " +
-//   std::string(TTF_GetError())); return Vector2DInt{w, h};
-// }
 
 TextComponent::TextComponent(GameObject& owner, const std::string& pathToFont,
                              int size)
@@ -29,7 +21,6 @@ std::string TextComponent::getText() { return mText; }
 
 void TextComponent::setText(const std::string& text) {
   mText = text;
-
   size_t lastLinebreak = 0;
   size_t indx = 0;
   mSprites.clear();
@@ -37,28 +28,13 @@ void TextComponent::setText(const std::string& text) {
   {
     indx = text.find("\n", lastLinebreak);
     std::string subString = text.substr(lastLinebreak, indx-lastLinebreak);
-    mSprites.emplace_back(std::move(SpriteLoader::getSpriteFromTextFast(subString, *mFont, mColor)));
+    if(subString != "")
+    {
+      mSprites.emplace_back(std::move(SpriteLoader::getSpriteFromTextFast(subString, *mFont, mColor)));
+    }
     lastLinebreak = indx+1;
 
   }
-
-  // for(; indx < text.length(); ++indx)
-  // {
-  //   if(text[indx] == '\n')
-  //   {
-  //     std::string subString = text.substr(lastLinebreak, text[indx-1]);
-  //     mSprites.emplace_back(std::move(SpriteLoader::getSpriteFromTextFast(text, *mFont, mColor)));
-  //     lastLinebreak = indx+1;
-  //   }
-  // }
-
-  // if(indx != text.length()-1)
-  // {
-  //   std::string subString = text.substr(lastLinebreak, text.length()-1);
-  //   mSprites.emplace_back(std::move(SpriteLoader::getSpriteFromTextFast(text, *mFont, mColor)));
-  // }
-
-  // mSprite = SpriteLoader::getSpriteFromTextFast(text, *mFont, mColor);
 }
 
 void TextComponent::setColor(const SDL_Color& color) { mColor = color; }
@@ -85,6 +61,4 @@ void TextComponent::render() {
       heightOffset += fontHeight;
     }
   }
-
-  // if (mSprite->getSdlTexture() == nullptr) return;
 }

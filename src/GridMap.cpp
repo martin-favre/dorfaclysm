@@ -2,9 +2,8 @@
 #include "AirBlock.h"
 #include "Helpers.h"
 #include "Logging.h"
-#include "Tile.h"
-#include "TileFloor.h"
-#include "WorldItemComponent.h"
+#include "Block.h"
+#include "WorldItem.h"
 #include "GrassBlock.h"
 GridMap GridMap::mActiveMap;
 
@@ -43,7 +42,7 @@ GridMap& GridMap::generateActiveMap(
   ASSERT(size.x > 0, "Size needs to be > 0");
   ASSERT(size.y > 0, "Size needs to be > 0");
   ASSERT(size.z > 0, "Size needs to be > 0");
-
+  mActiveMap.mSize = size;
   initializeGrid(mActiveMap.mBlocks, size);
 
   if (generator) {
@@ -52,7 +51,6 @@ GridMap& GridMap::generateActiveMap(
     makeGridGrass(mActiveMap.mBlocks, size);
     Logging::log(std::string(__func__) + ": generator not set");
   }
-  mActiveMap.mSize = size;
   return mActiveMap;
 }
 
@@ -88,6 +86,12 @@ const Block& GridMap::getBlockAt(const Vector3DInt& pos) const {
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
   ASSERT(isBlockValid(pos), "Block ptr is null");
   return *mBlocks[pos.z][pos.y][pos.x];
+}
+void GridMap::setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>&& newBlock)
+{
+  ASSERT(newBlock.get(), "Trying set a block to null ptr");
+  ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+  mBlocks[pos.z][pos.y][pos.x] = std::move(newBlock);
 }
 
 bool GridMap::isPosFree(const Vector3DInt& pos) const {

@@ -17,8 +17,11 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
-#include "WorldItemComponent.h"
+#include "WorldItem.h"
 #include "Camera.h"
+#include "AirDepthRenderer.h"
+#include "RenderDepths.h"
+
 void foo() {
   int mapSize = 32;
   {
@@ -42,12 +45,17 @@ void foo() {
     gObj.setPosition({20, 20});
     gObj.setScale({2, 2});
     gObj.addComponent<FpsCounter>();
-    gObj.setRenderDepth(100);
+    gObj.setRenderDepth(RenderDepth::GUI);
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<GridMapRenderer>();
-    gObj.setRenderDepth(-100);
+    gObj.setRenderDepth(RenderDepth::GridMap);
+  }
+  {
+    GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.addComponent<AirDepthRenderer>();
+    gObj.setRenderDepth(RenderDepth::AirDepth);
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
@@ -60,22 +68,26 @@ void foo() {
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
     gObj.setScale({2, 2});
     gObj.setPosition({20, 80});
+    gObj.setRenderDepth(RenderDepth::GUI);
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.setPosition({500, 0});
     gObj.addComponent<PlayerControllerComponent>();
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
+    gObj.setRenderDepth(RenderDepth::GUI);
+
   }
   {
-    for (int i = 0; i < 1; ++i) {
+    for (int i = 0; i < 20; ++i) {
       GameObject& gObj = Engine::addGameObject<GameObject>();
       gObj.addComponent<DorfController>();
-      gObj.addComponent<WorldItemComponent>("Dorf");
       gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
           Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
       gObj.setScale({2, 2});
-      gObj.setPosition({0, 0, mapSize / 2});
+      gObj.setPosition({0, 0, 1});
+      gObj.setRenderDepth(RenderDepth::Actors);
+
     }
   }
 }

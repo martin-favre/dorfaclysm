@@ -28,7 +28,7 @@ void Camera::move(const Vector3DInt& movement) {
 const Vector2D& Camera::getScale() const { return mScale; }
 void Camera::setScale(const Vector2D& scale) { mScale = scale; }
 
-Vector2DInt Camera::renderPosToTilePos(const Vector2DInt& renderPos) {
+Vector3DInt Camera::renderPosToTilePos(const Vector3DInt& renderPos) {
   /*
     with tilesize 64
     0 -> 0
@@ -38,7 +38,7 @@ Vector2DInt Camera::renderPosToTilePos(const Vector2DInt& renderPos) {
 
   const int x = round(renderPos.x / GridMap::tileRenderSize.x);
   const int y = round(renderPos.y / GridMap::tileRenderSize.y);
-  return Vector2DInt{x, y};
+  return Vector3DInt{x, y, renderPos.z};
 }
 
 template <class T>

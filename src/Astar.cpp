@@ -9,10 +9,20 @@
 #include "GridMap.h"
 #include "Helpers.h"
 #include "Logging.h"
+
 /*
         Implementation stolen/inspired from here:
         http://code.activestate.com/recipes/577457-a-star-shortest-path-algorithm/
 */
+
+class Vec3Hash {
+  public:
+  size_t operator()(const Vector3DInt& vec) const {
+    constexpr int random_prime_1 = 7919;
+    constexpr int random_prime_2 = 6599;
+    return (vec.x*random_prime_1 + vec.y)*random_prime_2 + vec.z;
+  }
+};
 
 class AStarNode {
   /* Tuning parameters
@@ -44,9 +54,7 @@ class AStarNode {
     priority = level + estimate(goal) * estimation_weight;
   }
 
-  void nextLevel() {
-    level += level_weight;
-  }
+  void nextLevel() { level += level_weight; }
 
   // Estimation function for the remaining distance to the goal.
   int estimate(const Vector3DInt& goal) const {
@@ -112,7 +120,8 @@ bool Astar::getPath(const Vector3DInt& start, const Vector3DInt& finish,
   AStarNode* current_node = new AStarNode(start, 0, 0, nullptr);
   current_node->updatePriority(finish);
   node_queue.push(current_node);
-  std::map<Vector3DInt, int> map_weights;
+
+  std::unordered_map<Vector3DInt, int, Vec3Hash> map_weights;
   map_weights[start] = current_node->getPriority();
   int steps = 0;
   std::vector<AStarNode*> old_nodes;

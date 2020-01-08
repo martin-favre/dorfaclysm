@@ -1,12 +1,12 @@
 #include "GridMapRenderer.h"
 
+#include "Block.h"
 #include "Camera.h"
 #include "GraphicsManager.h"
 #include "Helpers.h"
 #include "Logging.h"
 #include "Paths.h"
 #include "SpriteLoader.h"
-#include "Tile.h"
 #include "Vector2DInt.h"
 
 void GridMapRenderer::setup() { prepareViewedArea(); }
@@ -18,33 +18,21 @@ void GridMapRenderer::setup() { prepareViewedArea(); }
  * So generate just the current screen.
  */
 
-void renderSeeThroughSprite(const GridMap& gridmap, Vector3DInt pos,
-                                     SDL_Renderer* renderer,
-                                     const SDL_Rect& dstRect) {
+const Sprite* getSeeThroughSprite(const GridMap& gridmap, Vector3DInt pos) {
   /*
 
   */
-  int depth = 1;
+  int depth = 0;
   constexpr uint8_t maxDepth = 10;
   while (gridmap.getBlockAt(pos).isSeeThrough()) {
     pos += {0, 0, -1};
     ++depth;
-    if(depth >= maxDepth) break;
+    if (depth >= maxDepth) break;
   }
   if (depth < maxDepth) {
-    const Sprite* sprite = gridmap.getBlockAt(pos).getSprite();
-    int success = SDL_RenderCopy(renderer, sprite->getSdlTexture(),
-                                 &sprite->getRect().getSdlRect(), &dstRect);
-    ASSERT(success == 0,
-            "Could not render " + std::string(SDL_GetError()));
+    return gridmap.getBlockAt(pos).getSprite();
   }
-
-  uint8_t alpha = depth*255/maxDepth;
-  
-  GraphicsManager::setRenderDrawColor({0,0,255,alpha});
-  GraphicsManager::drawRect({dstRect});
-  GraphicsManager::setRenderDrawColor(GraphicsManager::mDefaultDrawColor);
-
+  return nullptr;
 }
 
 void GridMapRenderer::prepareViewedArea() {
@@ -59,7 +47,7 @@ void GridMapRenderer::prepareViewedArea() {
   const int numberOfTilesToRenderX = screenSize.x / tileSize.x + 1;
   const int numberOfTilesToRenderY = screenSize.y / tileSize.y + 1;
 
-  SDL_Renderer* renderer = GraphicsManager::mMainRenderer;
+  // SDL_Renderer* renderer = GraphicsManager::mMainRenderer;
 
   Vector2DInt cameraTilePos = Camera::renderPosToTilePos(cameraPos);
   int endRenderX = cameraTilePos.x + numberOfTilesToRenderX;
@@ -74,20 +62,17 @@ void GridMapRenderer::prepareViewedArea() {
       const Block& block = mActiveGridMap.getBlockAt(pos);
       const int renderPosX = GridMap::tileRenderSize.x * x;
       const int renderPosY = GridMap::tileRenderSize.y * y;
-      const SDL_Rect dstRect{renderPosX, renderPosY, GridMap::tileRenderSize.x,
-                             GridMap::tileRenderSize.y};
-
+      // const SDL_Rect dstRect{renderPosX, renderPosY,
+      // GridMap::tileRenderSize.x,
+      //                        GridMap::tileRenderSize.y};
+      const Sprite* sprite;
       if (block.isSeeThrough()) {
-        renderSeeThroughSprite(mActiveGridMap, pos, renderer, dstRect);
+        sprite = getSeeThroughSprite(mActiveGridMap, pos);
       } else {
-        if (block.getSprite()) {
-          const Sprite* sprite = block.getSprite();
-          SDL_Texture* text = sprite->getSdlTexture();
-          int success = SDL_RenderCopy(
-              renderer, text, &sprite->getRect().getSdlRect(), &dstRect);
-          ASSERT(success == 0,
-                 "Could not render " + std::string(SDL_GetError()));
-        }
+        sprite = block.getSprite();
+      }
+      if (sprite) {
+        GraphicsManager::renderTexture(*sprite, {renderPosX, renderPosY});
       }
     }
   }

@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "GridMap.h"
-#include "Tile.h"
+#include "Block.h"
 
 class WalkingState : public State {
  public:

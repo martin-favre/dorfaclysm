@@ -15,7 +15,7 @@ class Camera {
   template <class T>
   bool inCamera(const T& position);
 
-  static Vector2DInt renderPosToTilePos(const Vector2DInt& renderPos);
+  static Vector3DInt renderPosToTilePos(const Vector3DInt& renderPos);
 
  private:
   Camera() = default;

@@ -16,13 +16,13 @@ SDL_Texture *SpriteLoader::convertSurfaceToTexture(SDL_Surface *newSurf) {
   ASSERT(out,
          "Could not load texture, SDL_Error: " + std::string(SDL_GetError()));
   int success = SDL_SetTextureBlendMode(out, SDL_BLENDMODE_BLEND);
-  ASSERT(success == 0, "Could not set SDL_SetTextureBlendMode: " + std::string(SDL_GetError()));
+  ASSERT(success == 0, "Could not set SDL_SetTextureBlendMode: " +
+                           std::string(SDL_GetError()));
   return out;
 }
 
-std::unique_ptr<Sprite> SpriteLoader::getSpriteFromTextFast(const std::string &text,
-                                                        Font &font,
-                                                        SDL_Color &textColor) {
+std::unique_ptr<Sprite> SpriteLoader::getSpriteFromTextFast(
+    const std::string &text, Font &font, SDL_Color &textColor) {
   SDL_Surface *newSurf =
       TTF_RenderText_Solid(font.getSdlFont(), text.c_str(), textColor);
   SDL_Texture *newText = convertSurfaceToTexture(newSurf);
@@ -37,8 +37,7 @@ void SpriteLoader::teardown() {
   for (const auto &item : mTextures) {
     SDL_DestroyTexture(item.second);
   }
-  for(const auto& item : mFonts)
-  {
+  for (const auto &item : mFonts) {
     TTF_CloseFont(item.second);
   }
 }
@@ -76,7 +75,10 @@ std::unique_ptr<Sprite> SpriteLoader::loadSprite(const std::string &path,
   return std::make_unique<Sprite>(mTextures[path], area);
 }
 
-std::unique_ptr<Sprite> SpriteLoader::loadSpriteByIndex(const std::string &path, const Vector2DInt& indx, const Vector2DInt& sizePerSprite) {
-  Rect area{indx.x*sizePerSprite.x, indx.y*sizePerSprite.y, sizePerSprite.x, sizePerSprite.y};
+std::unique_ptr<Sprite> SpriteLoader::loadSpriteByIndex(
+    const std::string &path, const Vector2DInt &indx,
+    const Vector2DInt &sizePerSprite) {
+  Rect area{indx.x * sizePerSprite.x, indx.y * sizePerSprite.y, sizePerSprite.x,
+            sizePerSprite.y};
   return loadSprite(path, area);
-  }
+}

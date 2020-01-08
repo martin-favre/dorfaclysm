@@ -7,7 +7,6 @@
 #include "GraphicsManager.h"
 #include "GridMap.h"
 #include "Helpers.h"
-#include "Tile.h"
 #include "Timer.h"
 /*
 class OpenTile : public Tile {

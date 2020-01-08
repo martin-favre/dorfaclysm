@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include "Component.h"
-#include "Vector2D.h"
 
 class Font;
 class Sprite;
@@ -24,7 +23,6 @@ class TextComponent : public Component {
  private:
   std::string mText;
   std::vector<std::unique_ptr<Sprite>> mSprites;
-  // std::unique_ptr<Sprite> mSprite;
   std::string mFontSource;
   std::unique_ptr<Font> mFont;
   bool mCentered{false};

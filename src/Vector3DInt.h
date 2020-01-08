@@ -1,7 +1,10 @@
 #pragma once
 
+#include <hash_fun.h>
+
 #include <cinttypes>
 #include <cmath>
+#include <functional>
 #include <ostream>
 
 #include "Helpers.h"
@@ -13,6 +16,8 @@ class Vector2DInt;
 class Vector3DInt {
  public:
   Vector3DInt() = default;
+  Vector3DInt& operator=(const Vector3DInt& vec) = default;
+  Vector3DInt(const Vector3DInt& vec) = default;
   constexpr Vector3DInt(int x_, int y_, int z_ = 0) : x(x_), y(y_), z(z_) {}
   constexpr Vector3DInt(const Vector2DInt& vec);
   // constexpr Vector3DInt(uint x_, uint y_, uint z_) : x(x_), y(y_), z(z_) {}
@@ -43,6 +48,7 @@ class Vector3DInt {
   constexpr bool operator==(const Vector3DInt& other) const {
     return (other.y == y) && (other.x == x) && (other.z == z);
   }
+
   constexpr Vector3DInt operator*(int val) const {
     return Vector3DInt(x * val, y * val, z * val);
   }
