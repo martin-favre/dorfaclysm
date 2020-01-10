@@ -3,12 +3,14 @@
 class RockBlock : public Block {
  public:
   RockBlock();
-  virtual const Sprite* getSprite() const;
-  virtual bool isClickable() const;
-  virtual bool isPassable() const;
-  virtual const std::string& getName() const;
-  virtual bool supportsJob(JobType type) const;
-  virtual BlockMovementType getMovementType() const;
+  const Sprite* getSprite() const override;
+  bool isClickable() const override;
+  bool mayPassThrough() const override;
+  bool mayClimbUpFrom() const override;
+  bool mayWalkOnTop() const override;
+  bool isSeeThrough() const override;
+  const std::string& getName() const override;
+  bool supportsJob(JobType type) const override;
 
  private:
   static std::unique_ptr<Sprite> mSprite;

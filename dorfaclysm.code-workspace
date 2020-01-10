@@ -58,7 +58,8 @@
 			"stdexcept": "cpp",
 			"streambuf": "cpp",
 			"typeinfo": "cpp",
-			"bit": "cpp"
+			"bit": "cpp",
+			"list": "cpp"
 		},
 		"cmakeExplorer.buildDir": "build",
 		"catch2TestExplorer.executables": "testBin/*",

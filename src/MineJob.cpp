@@ -1,8 +1,8 @@
 #include "MineJob.h"
 
+#include "Block.h"
 #include "GameObject.h"
 #include "GridMap.h"
-#include "Block.h"
 
 class WalkingState : public State {
  public:
@@ -35,10 +35,11 @@ WalkingState::WalkingState(GameObject& user, const Vector3DInt& pos)
     : mUser(user), mPos(pos) {}
 
 void WalkingState::onEntry() {
-  bool success = mWalker.generateNewPath(mUser.getPosition(), mPos);
-  if(!success)
-  {
-    GridMap::getActiveMap().getBlockAt(mPos).unassignJob();
+  GridMap& map = GridMap::getActiveMap();
+  bool success = map.getClosestFreePositionTo(mPos, mPos);
+  success = success && mWalker.generateNewPath(mUser.getPosition(), mPos);
+  if (!success) {
+    map.getBlockAt(mPos).unassignJob();
     terminateMachine();
   }
 }

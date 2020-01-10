@@ -8,41 +8,48 @@
 namespace {
 class WalkingState;
 class WaitingState;
+class CalculatingPositionState;
 
 class WalkingState : public State {
  public:
-  WalkingState(GameObject& user);
+  WalkingState(GameObject& user, const Vector3DInt& targetPos);
   void onEntry() override;
   std::unique_ptr<State> onDuring() override;
 
  private:
   DorfWalker mWalker;
   GameObject& mUser;
+  Vector3DInt mTargetPos;
 };
 
 class WaitingState : public State {
  public:
-  WaitingState(GameObject& user);
+  WaitingState(int durationMs);
   void onEntry() override;
   std::unique_ptr<State> onDuring() override;
 
  private:
-  GameObject& mUser;
   Timer mTimer;
   int mWaitingTimeMs{3000};
 };
 
-WalkingState::WalkingState(GameObject& user) : mUser(user) {}
+class CalculatingPositionState : public State {
+ public:
+  CalculatingPositionState(GameObject& user);
+  std::unique_ptr<State> onDuring() override;
+
+ private:
+  GameObject& mUser;
+};
+
+WalkingState::WalkingState(GameObject& user, const Vector3DInt& targetPos)
+    : mUser(user), mTargetPos(targetPos) {}
 void WalkingState::onEntry() {
-  int x = Helpers::randomInt(0, 50);
-  int y = Helpers::randomInt(0, 50);
-  x = 50;
-  y = 50;
-  mWalker.generateNewPath(mUser.getPosition(), {x, y, mUser.getPosition().z});
+  mWalker.generateNewPath(mUser.getPosition(), mTargetPos);
 }
 std::unique_ptr<State> WalkingState::onDuring() {
   if (mWalker.isDone()) {
-    return std::make_unique<WaitingState>(mUser);
+    return std::make_unique<WaitingState>(3000);
   } else {
     Vector3DInt pos = mUser.getPosition();
     mWalker.walkUpdate(pos);
@@ -51,7 +58,7 @@ std::unique_ptr<State> WalkingState::onDuring() {
   }
 }
 
-WaitingState::WaitingState(GameObject& user) : mUser(user) {}
+WaitingState::WaitingState(int durationMs) : mWaitingTimeMs(durationMs) {}
 void WaitingState::onEntry() { mTimer.start(); }
 
 std::unique_ptr<State> WaitingState::onDuring() {
@@ -62,11 +69,30 @@ std::unique_ptr<State> WaitingState::onDuring() {
   return nullptr;
 }
 
+CalculatingPositionState::CalculatingPositionState(GameObject& user)
+    : mUser(user) {}
+
+std::unique_ptr<State> CalculatingPositionState::onDuring() {
+  int x = Helpers::randomInt(-10, 10);
+  int y = Helpers::randomInt(-10, 10);
+  int z = Helpers::randomInt(-10, 10);
+  Vector3DInt newPos = mUser.getPosition() + Vector3DInt{x, y, z};
+  const GridMap& map = GridMap::getActiveMap();
+  if (map.isPosInMap(newPos) && map.isPosFree(newPos)) {
+    bool success = map.getLowestPassablePositionFrom(newPos, newPos);
+    if (success) {
+      return std::make_unique<WalkingState>(mUser, newPos);
+    }
+  }
+  return std::make_unique<WaitingState>(200);
+}
+
 }  // namespace
 
 WalkRandomlyJob::WalkRandomlyJob(GameObject& user)
     : mDorf(user),
-      mStateMachine(std::move(std::make_unique<WalkingState>(user))) {}
+      mStateMachine(
+          std::move(std::make_unique<CalculatingPositionState>(user))) {}
 
 bool WalkRandomlyJob::work() {
   mStateMachine.update();

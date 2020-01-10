@@ -1,6 +1,6 @@
 #pragma once
-#include "GridMap.h"
 #include "Block.h"
+#include "GridMap.h"
 
 class WorldItem {
  public:
@@ -8,33 +8,28 @@ class WorldItem {
       : mName(name), mGridMap(GridMap::getActiveMap()) {}
 
   void moveFromTo(const Vector3DInt& oldPos, const Vector3DInt& newPos) {
-    (void)oldPos;
-    (void)newPos;
-    mGridMap.getBlockAt(oldPos).unregisterComponent(*this);
-    mGridMap.getBlockAt(newPos).registerComponent(*this);
+    mGridMap.unregisterWorldItemAt(oldPos, this);
+    mGridMap.registerWorldItemAt(newPos, this);
+    mOldPos = newPos;
   }
-  
-  void update(const Vector3DInt ownerPos)
-  {
-    if(ownerPos != oldPos)
-    {
-      moveFromTo(oldPos, ownerPos);
+
+  void update(const Vector3DInt ownerPos) {
+    if (ownerPos != mOldPos) {
+      moveFromTo(mOldPos, ownerPos);
     }
   }
 
   void setup(const Vector3DInt ownerPos) {
-    mGridMap.getBlockAt(ownerPos).registerComponent(*this);
-    oldPos = ownerPos;
+    mGridMap.registerWorldItemAt(ownerPos, this);
+    mOldPos = ownerPos;
   }
 
-  void teardown() {
-    mGridMap.getBlockAt(oldPos).unregisterComponent(*this);
-  }
+  void teardown() { mGridMap.unregisterWorldItemAt(mOldPos, this); }
 
-  inline const std::string& getName() const {return mName;}
+  inline const std::string& getName() const { return mName; }
 
  private:
-  Vector3DInt oldPos;
+  Vector3DInt mOldPos;
   const std::string mName;
   GridMap& mGridMap;
 };

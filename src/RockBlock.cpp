@@ -13,9 +13,9 @@ RockBlock::RockBlock() {
 }
 const Sprite* RockBlock::getSprite() const { return mSprite.get(); }
 bool RockBlock::isClickable() const { return true; }
-bool RockBlock::isPassable() const { return false; }
+bool RockBlock::mayPassThrough() const { return false; }
+bool RockBlock::mayClimbUpFrom() const { return false; }
+bool RockBlock::mayWalkOnTop() const { return true; }
 const std::string& RockBlock::getName() const { return mName; }
+bool RockBlock::isSeeThrough() const { return false; }
 bool RockBlock::supportsJob(JobType type) const { return type == jobTypeMine; }
-BlockMovementType RockBlock::getMovementType() const {
-  return movementOnlyHorizontal;
-}

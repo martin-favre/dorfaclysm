@@ -1,8 +1,11 @@
 #include "MainGame.h"
 
+#include "AirDepthRenderer.h"
+#include "Camera.h"
 #include "CameraControllerComponent.h"
 #include "Component.h"
 #include "DorfController.h"
+#include "DrawLineComponent.h"
 #include "Engine.h"
 #include "Font.h"
 #include "FpsCounter.h"
@@ -11,6 +14,7 @@
 #include "MapGenerator.h"
 #include "Paths.h"
 #include "PlayerControllerComponent.h"
+#include "RenderDepths.h"
 #include "ShowPositionComponent.h"
 #include "Sprite.h"
 #include "SpriteComponent.h"
@@ -18,17 +22,14 @@
 #include "TextComponent.h"
 #include "Vector2DInt.h"
 #include "WorldItem.h"
-#include "Camera.h"
-#include "AirDepthRenderer.h"
-#include "RenderDepths.h"
 
 void foo() {
-  int mapSize = 32;
+  int mapSize = 64;
   {
     GridMap::generateActiveMap({mapSize, mapSize, mapSize},
                                MapGenerator::generate);
   }
-  Camera::get().move({0,0, mapSize/2});
+  Camera::get().move({0, 0, mapSize / 4});
   // {
   //   GameObject& gObj = Engine::addGameObject<GameObject>();
   //   std::unique_ptr<TextComponent> text =
@@ -76,19 +77,24 @@ void foo() {
     gObj.addComponent<PlayerControllerComponent>();
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
     gObj.setRenderDepth(RenderDepth::GUI);
-
   }
   {
-    for (int i = 0; i < 20; ++i) {
-      GameObject& gObj = Engine::addGameObject<GameObject>();
-      gObj.addComponent<DorfController>();
-      gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
-          Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
-      gObj.setScale({2, 2});
-      gObj.setPosition({0, 0, 1});
-      gObj.setRenderDepth(RenderDepth::Actors);
+      // for (int i = 0; i < 20; ++i) {
+      //   GameObject& gObj = Engine::addGameObject<GameObject>();
+      //   gObj.addComponent<DorfController>();
+      //   gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
+      //       Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
+      //   gObj.setScale({2, 2});
+      //   gObj.setPosition({0, 0, 1});
+      //   gObj.setRenderDepth(RenderDepth::Actors);
 
-    }
+      // }
+  } {
+    GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.addComponent<DrawLineComponent>();
+    gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
+    gObj.setPosition({20, 200});
+    gObj.setRenderDepth(RenderDepth::GUI);
   }
 }
 

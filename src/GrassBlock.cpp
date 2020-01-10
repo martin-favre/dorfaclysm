@@ -13,10 +13,9 @@ GrassBlock::GrassBlock() {
 }
 const Sprite* GrassBlock::getSprite() const { return mSprite.get(); }
 bool GrassBlock::isClickable() const { return true; }
-bool GrassBlock::isPassable() const { return false; }
-bool GrassBlock::isSeeThrough() const {return false;}
+bool GrassBlock::mayPassThrough() const { return false; }
+bool GrassBlock::mayClimbUpFrom() const { return false; }
+bool GrassBlock::mayWalkOnTop() const { return true; }
+bool GrassBlock::isSeeThrough() const { return false; }
 const std::string& GrassBlock::getName() const { return mName; }
 bool GrassBlock::supportsJob(JobType type) const { return type == jobTypeMine; }
-BlockMovementType GrassBlock::getMovementType() const {
-  return movementOnlyHorizontal;
-}

@@ -23,7 +23,7 @@ const Sprite* getSeeThroughSprite(const GridMap& gridmap, Vector3DInt pos) {
 
   */
   int depth = 0;
-  constexpr uint8_t maxDepth = 10;
+  constexpr uint8_t maxDepth = 20;
   while (gridmap.getBlockAt(pos).isSeeThrough()) {
     pos += {0, 0, -1};
     ++depth;

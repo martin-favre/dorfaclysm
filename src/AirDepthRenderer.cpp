@@ -7,16 +7,15 @@
 
 void renderAirAt(Vector3DInt pos, const GridMap& gridmap, const Rect& dstRect) {
   int depth = 0;
-  constexpr uint8_t maxDepth = 10;
+  constexpr uint8_t maxDepth = 20;
   while (gridmap.getBlockAt(pos).isSeeThrough()) {
     pos += {0, 0, -1};
     ++depth;
     if (depth >= maxDepth) break;
   }
-  if(depth == 0) return;
+  if (depth == 0) return;
   uint8_t alpha = depth * SDL_ALPHA_OPAQUE / maxDepth;
   GraphicsManager::setRenderDrawColor({0, 0, 255, alpha});
-  std::cout << (int)alpha << std::endl;
   GraphicsManager::drawRect(dstRect);
   GraphicsManager::setRenderDrawColor(GraphicsManager::mDefaultDrawColor);
 }

@@ -14,12 +14,12 @@ StairUpDownBlock::StairUpDownBlock() {
 
 const Sprite* StairUpDownBlock::getSprite() const { return mSprite.get(); }
 bool StairUpDownBlock::isClickable() const { return true; }
-bool StairUpDownBlock::isPassable() const { return true; }
+bool StairUpDownBlock::mayPassThrough() const { return true; }
+bool StairUpDownBlock::mayClimbUpFrom() const { return true; }
+bool StairUpDownBlock::mayWalkOnTop() const { return true; }
+bool StairUpDownBlock::isSeeThrough() const { return false; }
 const std::string& StairUpDownBlock::getName() const { return mName; }
 bool StairUpDownBlock::supportsJob(JobType type) const {
   (void)type;
   return false;
-}
-BlockMovementType StairUpDownBlock::getMovementType() const {
-  return movementUpAndDownBlock;
 }
