@@ -36,8 +36,9 @@ WalkingState::WalkingState(GameObject& user, const Vector3DInt& pos)
 
 void WalkingState::onEntry() {
   GridMap& map = GridMap::getActiveMap();
-  bool success = map.getClosestFreePositionTo(mPos, mPos);
-  success = success && mWalker.generateNewPath(mUser.getPosition(), mPos);
+  Vector3DInt movePos;
+  bool success = map.getClosestFreePositionTo(mPos, movePos);
+  success = success && mWalker.generateNewPath(mUser.getPosition(), movePos);
   if (!success) {
     map.getBlockAt(mPos).unassignJob();
     terminateMachine();

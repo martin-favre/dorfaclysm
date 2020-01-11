@@ -115,7 +115,7 @@ bool GridMap::isBlockValid(const Vector3DInt& pos) const {
 void GridMap::removeBlockAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
   ASSERT(isBlockValid(pos), "Block ptr is null");
-  mBlocks[pos.z][pos.y][pos.x] = std::make_unique<AirBlock>(getBlockAt(pos));
+  mBlocks[pos.z][pos.y][pos.x] = std::make_unique<AirBlock>();
 }
 
 Block& GridMap::getBlockAt(const Vector3DInt& pos) {

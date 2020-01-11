@@ -41,6 +41,11 @@ Vector3DInt Camera::renderPosToTilePos(const Vector3DInt& renderPos) {
   return Vector3DInt{x, y, renderPos.z};
 }
 
+Vector2DInt Camera::tilePosToRenderPos(const Vector2DInt& pos)
+{
+  return Vector2DInt{pos.x*GridMap::tileRenderSize.x, pos.y*GridMap::tileRenderSize.y};
+}
+
 template <class T>
 bool Camera::inCamera(const T& position) {
   if (position.x < mPosition.x) return false;

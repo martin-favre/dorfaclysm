@@ -59,7 +59,8 @@
 			"streambuf": "cpp",
 			"typeinfo": "cpp",
 			"bit": "cpp",
-			"list": "cpp"
+			"list": "cpp",
+			"execution": "cpp"
 		},
 		"cmakeExplorer.buildDir": "build",
 		"catch2TestExplorer.executables": "testBin/*",

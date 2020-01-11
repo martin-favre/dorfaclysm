@@ -12,26 +12,7 @@
 ✔ Multiple clicks on a tile will create multiple jobs, even if it's the same one @done(20-01-03 17:12)
 ✔ Center sprite for Dorf @done(20-01-04 13:44)
 ✔ Add visual box when a wall is in the job pool @done(20-01-04 14:05)
-
-☐ Go over to blocks instead of tiles
-    It will also introduce the z-level.
-    Floors will be whatever the underlying block is
-    If there is no underlying block it's a hole
-         
-    ## ###
-      a# 
-    ####
-    Dorf a can not climb up
-    Dorf b can climb up.
-    ##b   ##
-    ########
-
-    Each block will need it's own "getNeighbours" function which will return tiles you can go to from there
-    So a block with air above it, but ground above it will allow movement to tile above
-    a block with air under it will not allow movement to tile above.
-
-    This may later get changed into using stairs, as it may be more visually pleasing.
-    Or going up may have a larger astar weight and a slower movement through it.
+✔ Go over to blocks instead of tiles @done(20-01-11 14:00)
 
 ☐ Make mined rocks drop items
 

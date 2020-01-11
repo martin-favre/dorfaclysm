@@ -9,7 +9,7 @@
 #include "InputManager.h"
 #include "Rect.h"
 #include "TextComponent.h"
-
+#include "GameObject.h"
 class DrawLineComponent : public Component {
  public:
   DrawLineComponent(GameObject& gObj) : Component(gObj), mCam(Camera::get()) {}

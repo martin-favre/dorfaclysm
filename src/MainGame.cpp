@@ -22,6 +22,7 @@
 #include "TextComponent.h"
 #include "Vector2DInt.h"
 #include "WorldItem.h"
+#include "JobRenderer.h"
 
 void foo() {
   int mapSize = 64;
@@ -79,22 +80,27 @@ void foo() {
     gObj.setRenderDepth(RenderDepth::GUI);
   }
   {
-      // for (int i = 0; i < 20; ++i) {
-      //   GameObject& gObj = Engine::addGameObject<GameObject>();
-      //   gObj.addComponent<DorfController>();
-      //   gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
-      //       Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
-      //   gObj.setScale({2, 2});
-      //   gObj.setPosition({0, 0, 1});
-      //   gObj.setRenderDepth(RenderDepth::Actors);
+      for (int i = 0; i < 20; ++i) {
+        GameObject& gObj = Engine::addGameObject<GameObject>();
+        gObj.addComponent<DorfController>();
+        gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
+            Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
+        gObj.setScale({2, 2});
+        gObj.setPosition({0, 0, 1});
+        gObj.setRenderDepth(RenderDepth::Actors);
 
-      // }
+      }
   } {
+    // GameObject& gObj = Engine::addGameObject<GameObject>();
+    // gObj.addComponent<DrawLineComponent>();
+    // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
+    // gObj.setPosition({20, 200});
+    // gObj.setRenderDepth(RenderDepth::GUI);
+  }
+  {
     GameObject& gObj = Engine::addGameObject<GameObject>();
-    gObj.addComponent<DrawLineComponent>();
-    gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
-    gObj.setPosition({20, 200});
-    gObj.setRenderDepth(RenderDepth::GUI);
+    gObj.addComponent<JobRenderer>();
+    gObj.setRenderDepth(RenderDepth::JobIndication);
   }
 }
 

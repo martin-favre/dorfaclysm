@@ -6,6 +6,7 @@ namespace RenderDepth
   {
     GridMap,
     Actors,
+    JobIndication,
     AirDepth,
     GUI
   };

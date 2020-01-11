@@ -47,6 +47,8 @@ class GridMap {
       64, 64};  // How many pixels wide a tile is when rendered, before other
                 // modifiers
 
+  void doToEachBlockInScreen(std::function<void(const Vector3DInt&, Block&)> func);
+
  private:
   bool isBlockValid(const Vector3DInt& pos) const;
   GridMap() = default;

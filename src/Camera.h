@@ -16,7 +16,7 @@ class Camera {
   bool inCamera(const T& position);
 
   static Vector3DInt renderPosToTilePos(const Vector3DInt& renderPos);
-
+  static Vector2DInt tilePosToRenderPos(const Vector2DInt& pos);
  private:
   Camera() = default;
   static Camera mCamera;
