@@ -80,7 +80,7 @@ void foo() {
     gObj.setRenderDepth(RenderDepth::GUI);
   }
   {
-      for (int i = 0; i < 20; ++i) {
+      for (int i = 0; i < 50; ++i) {
         GameObject& gObj = Engine::addGameObject<GameObject>();
         gObj.addComponent<DorfController>();
         gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(

@@ -137,6 +137,7 @@ void GridMap::unregisterWorldItemAt(const Vector3DInt& pos,
   std::list<WorldItem*>& items = getWorldItemsAt(pos);
   const auto iter = std::find(items.begin(), items.end(), item);
   ASSERT(iter != items.end(), "Item not in list");
+  items.erase(iter);
 }
 
 GridMap& GridMap::getActiveMap() { return mActiveMap; }
