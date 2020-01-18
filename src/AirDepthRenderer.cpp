@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "GraphicsManager.h"
 #include "GridMapHelpers.h"
+#include "GridMap.h"
 
 void AirDepthRenderer::renderBlock(Vector3DInt pos) {
   int depth = 0;

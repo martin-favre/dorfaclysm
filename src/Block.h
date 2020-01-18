@@ -17,10 +17,14 @@ class Block {
   virtual bool supportsJob(JobType type) const = 0;
   virtual bool isSeeThrough() const = 0;
 
+  bool isExplored() const;
+  void setExplored();
+
   void assignJob(JobType type);
   void unassignJob();
   JobType getJob() const;
 
  private:
+  bool mExplored{false};
   JobType mAssignedJob{jobTypeUnset};
 };

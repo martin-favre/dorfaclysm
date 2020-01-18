@@ -4,10 +4,10 @@
 
 #include "Timer.h"
 #include "Vector3DInt.h"
-
+class GridMap;
 class DorfWalker {
  public:
-  DorfWalker(int msPerMovement = 500) : mMsPerMovement(msPerMovement){}
+  DorfWalker(int msPerMovement = 500);
   Vector3DInt getNextPlannedPosition();
   void walkUpdate(Vector3DInt& currentPosition);
   bool isDone();
@@ -16,5 +16,6 @@ class DorfWalker {
  private:
   std::stack<Vector3DInt> mPlannedPosititions;
   int mMsPerMovement;
+  const GridMap& mGridMap;
   Timer mTimer;
 };

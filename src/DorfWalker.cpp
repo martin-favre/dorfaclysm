@@ -2,6 +2,10 @@
 
 #include "Astar.h"
 #include "GridMap.h"
+
+DorfWalker::DorfWalker(int msPerMovement)
+    : mMsPerMovement(msPerMovement), mGridMap(GridMap::getActiveMap()) {}
+
 Vector3DInt DorfWalker::getNextPlannedPosition() {
   if (!mPlannedPosititions.empty()) {
     return mPlannedPosititions.top();
@@ -28,6 +32,5 @@ bool DorfWalker::isDone() { return mPlannedPosititions.empty(); }
 bool DorfWalker::generateNewPath(const Vector3DInt& from,
                                  const Vector3DInt& to) {
   mTimer.start();
-  return Astar().getPath(from, to, GridMap::getActiveMap(),
-                         mPlannedPosititions);
+  return Astar().getPath(from, to, mGridMap, mPlannedPosititions);
 }

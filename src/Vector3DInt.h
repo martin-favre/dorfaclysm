@@ -75,20 +75,14 @@ class Vector3DInt {
     return *this;
   }
 
+  constexpr int magnitude() const { return sqrt(x * x + y * y + z * z); }
+  constexpr int squared_magnitude() const { return x * x + y * y + z * z; }
   friend std::ostream& operator<<(std::ostream& os, const Vector3DInt& vec);
 
   int x{0};
   int y{0};
   int z{0};
 };
-
-constexpr int getSquaredPositionBetween(const Vector3DInt& a,
-                                        const Vector3DInt& b) {
-  const int xdiff = b.x - a.x;
-  const int ydiff = b.y - a.y;
-  const int zdiff = b.z - a.z;
-  return (xdiff * xdiff) + (ydiff * ydiff) + (zdiff * zdiff);
-}
 
 #include "Vector2DInt.h"
 

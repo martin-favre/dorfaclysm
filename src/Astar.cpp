@@ -61,7 +61,8 @@ class AStarNode {
     // Squared Euclidean Distance
     // const int d = Helpers::roundToInt(
     //     Helpers::getSquaredPositionBetweenPositions(goal, position));
-    const int d = getSquaredPositionBetween(goal, position);
+    const Vector3DInt diff = goal - position;
+    const int d = diff.squared_magnitude();
     // const int xd = goal.x - position.x;
     // const int yd = goal.y - position.y;
     // const int zd = goal.z - position.z;

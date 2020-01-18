@@ -6,6 +6,7 @@
 #include "Block.h"
 #include "DeltaPositions.h"
 #include "GrassBlock.h"
+#include "GridMapHelpers.h"
 #include "Helpers.h"
 #include "Logging.h"
 #include "WorldItem.h"
@@ -116,6 +117,7 @@ void GridMap::removeBlockAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
   ASSERT(isBlockValid(pos), "Block ptr is null");
   mBlocks[pos.z][pos.y][pos.x] = std::make_unique<AirBlock>();
+  GridMapHelpers::exploreMap(*this, pos);
 }
 
 Block& GridMap::getBlockAt(const Vector3DInt& pos) {
@@ -137,9 +139,7 @@ void GridMap::setBlockAt(const Vector3DInt& pos,
 }
 
 bool GridMap::isPosFree(const Vector3DInt& pos) const {
-  if (!isPosInMap(pos)) return false;
-  const Block& block = getBlockAt(pos);
-  return block.mayPassThrough();
+  return getBlockAt(pos).mayPassThrough();
 }
 
 std::list<WorldItem*>& GridMap::getWorldItemsAt(const Vector3DInt& pos) {

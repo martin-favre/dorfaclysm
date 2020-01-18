@@ -13,13 +13,13 @@ class WorldItem {
     mOldPos = newPos;
   }
 
-  void update(const Vector3DInt ownerPos) {
+  void update(const Vector3DInt& ownerPos) {
     if (ownerPos != mOldPos) {
       moveFromTo(mOldPos, ownerPos);
     }
   }
 
-  void setup(const Vector3DInt ownerPos) {
+  void setup(const Vector3DInt& ownerPos) {
     mGridMap.registerWorldItemAt(ownerPos, this);
     mOldPos = ownerPos;
   }

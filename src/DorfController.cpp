@@ -3,34 +3,29 @@
 #include "Astar.h"
 #include "GameObject.h"
 #include "GridMap.h"
+#include "GridMapHelpers.h"
 #include "Helpers.h"
-#include "Logging.h"
-#include "WalkRandomlyJob.h"
 #include "JobPool.h"
+#include "Logging.h"
 #include "MineJob.h"
+#include "WalkRandomlyJob.h"
 DorfController::DorfController(GameObject& gObj)
     : Component(gObj), mJob(std::make_unique<WalkRandomlyJob>(owner())) {}
 
 void DorfController::setup() {
-  mWorldItem.setup(owner().getPosition());
+  const Vector3DInt& pos = owner().getPosition();
+  mWorldItem.setup(pos);
+  GridMapHelpers::exploreMap(GridMap::getActiveMap(), pos);
 }
-void DorfController::teardown()
-{
-  mWorldItem.teardown();
-}
+void DorfController::teardown() { mWorldItem.teardown(); }
 void DorfController::getNewJob() {
-
   auto& jobs = JobPool::getJobs();
-  if(jobs.size() > 0)
-  {
-    if(jobs[0].mType == jobTypeMine)
-    {
+  if (jobs.size() > 0) {
+    if (jobs[0].mType == jobTypeMine) {
       mJob = std::make_unique<MineJob>(owner(), jobs[0].mPos);
     }
     JobPool::claimJob(jobs[0]);
-  }
-  else
-  {
+  } else {
     mJob = std::make_unique<WalkRandomlyJob>(owner());
   }
 }
@@ -43,5 +38,4 @@ void DorfController::update() {
   }
 
   mWorldItem.update(owner().getPosition());
-
 }

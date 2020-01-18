@@ -13,6 +13,14 @@
 ✔ Center sprite for Dorf @done(20-01-04 13:44)
 ✔ Add visual box when a wall is in the job pool @done(20-01-04 14:05)
 ✔ Go over to blocks instead of tiles @done(20-01-11 14:00)
+✔ Need a way to handle "I want to be 1 square away away from this position" in pathfinding @done(20-01-11 14:04)
+✔ Hide unexplored tiles @done(20-01-18 13:28)
+☐ Visualize when you are inside tile, and when you're above.
+    One sprite for inside (could also be generically rendered with lines/rects)
+    One sprite for above
+
+☐ Bug: WorldItem does not work at all
+    After a while all dorfs end up on the two same tiles or something.
 
 ☐ Make mined rocks drop items
 
@@ -27,31 +35,5 @@
     Quite messy
     If I move this to 3D I'll get this for free
 
-☐ Refactor : Construct DorfJobs from PlayerRequestedJobs
-    Or even, let them be the same and just update them with more info once a Dorf takes it
-
-☐ Need a way to handle "I want to be 1 square away away from this position" in pathfinding
-Naively just try all four squares around it?
-Make a wrapper in Astar for it?
-
 ☐ Idea: Use Streaming texture for the GridMapRenderer
 https://stackoverflow.com/questions/25214556/why-do-i-get-bad-performance-with-sdl2-and-sdl-rendercopy-inside-a-double-for-lo
-
-☐ Idea: Instead of letting each gameobject do their own rendering, it could be done in GridMapRenderer, might save some performance
-Only render what's on the screen. 
-re-render only things that have changed.
-The pre-rendered texture will be reused. 
-Can take a copy of what's on the screen and render it async (maybe?)
-
-☐ Idea: Make gridmap into pre-baked chunks
-Each chunk may be 16x16. 
-All exits are pre-cached.
-Astar will first be done across chunks to see if you can even get to your destination. 
-This will be done with normal Astar and just ask the chunks if I can move to the north/west/etc.
-If a wall gets chopped it will update that chunk.
-
-☐ Idea: Make Astar async
-Possibly without locking GridMap.
-Then you basically generate up an estimate (I ought to go here)
-Then with each step you make sure it's still a valid path
-
