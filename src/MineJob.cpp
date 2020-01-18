@@ -3,6 +3,7 @@
 #include "Block.h"
 #include "GameObject.h"
 #include "GridMap.h"
+#include "GridMapHelpers.h"
 
 class WalkingState : public State {
  public:
@@ -37,7 +38,7 @@ WalkingState::WalkingState(GameObject& user, const Vector3DInt& pos)
 void WalkingState::onEntry() {
   GridMap& map = GridMap::getActiveMap();
   Vector3DInt movePos;
-  bool success = map.getClosestFreePositionTo(mPos, movePos);
+  bool success = GridMapHelpers::getClosestFreePositionTo(map, mPos, movePos);
   success = success && mWalker.generateNewPath(mUser.getPosition(), movePos);
   if (!success) {
     map.getBlockAt(mPos).unassignJob();

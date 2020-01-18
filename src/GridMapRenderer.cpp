@@ -30,7 +30,7 @@ const Sprite* getSeeThroughSprite(const GridMap& gridmap, Vector3DInt pos) {
     if (depth >= maxDepth) break;
   }
   if (depth < maxDepth) {
-    return gridmap.getBlockAt(pos).getSprite();
+    return gridmap.getBlockAt(pos).getTopSprite();
   }
   return nullptr;
 }
@@ -63,14 +63,17 @@ void GridMapRenderer::prepareViewedArea() {
       if (!block.isExplored()) continue;
       const int renderPosX = GridMap::tileRenderSize.x * x;
       const int renderPosY = GridMap::tileRenderSize.y * y;
-      // const SDL_Rect dstRect{renderPosX, renderPosY,
-      // GridMap::tileRenderSize.x,
-      //                        GridMap::tileRenderSize.y};
-      const Sprite* sprite;
+
+      const Sprite* sprite{nullptr};
       if (block.isSeeThrough()) {
         sprite = getSeeThroughSprite(mActiveGridMap, pos);
       } else {
-        sprite = block.getSprite();
+        // sprite = block.getTopSprite();
+        GraphicsManager::setRenderDrawColor({158, 87, 0, SDL_ALPHA_OPAQUE});
+        GraphicsManager::drawRect({renderPosX, renderPosY,
+                                   GridMap::tileRenderSize.x,
+                                   GridMap::tileRenderSize.y});
+        GraphicsManager::setRenderDrawColor(GraphicsManager::mDefaultDrawColor);
       }
       if (sprite) {
         GraphicsManager::renderTexture(*sprite, {renderPosX, renderPosY});

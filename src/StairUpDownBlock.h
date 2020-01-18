@@ -3,7 +3,7 @@
 class StairUpDownBlock : public Block {
  public:
   StairUpDownBlock();
-  const Sprite* getSprite() const override;
+  const Sprite* getTopSprite() const override;
   bool isClickable() const override;
   bool mayPassThrough() const override;
   bool mayClimbUpFrom() const override;

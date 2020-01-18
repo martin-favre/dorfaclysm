@@ -7,6 +7,7 @@
 #include "InputManager.h"
 #include "JobPool.h"
 #include "WorldItem.h"
+#include "GridMapHelpers.h"
 void PlayerControllerComponent::setup() {
   mTextComponent = owner().getComponent<TextComponent>();
 }
@@ -44,6 +45,9 @@ void PlayerControllerComponent::handleClick() {
       JobPool::addJob(PlayerRequestedJob(jobTypeMine, mousePos));
       block.assignJob(jobTypeMine);
     }
+
+    GridMapHelpers::exploreMap(gridMap, mousePos);
+
   }
 }
 

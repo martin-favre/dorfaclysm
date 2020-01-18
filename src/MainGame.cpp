@@ -11,6 +11,7 @@
 #include "FpsCounter.h"
 #include "GridMap.h"
 #include "GridMapRenderer.h"
+#include "JobRenderer.h"
 #include "MapGenerator.h"
 #include "Paths.h"
 #include "PlayerControllerComponent.h"
@@ -22,7 +23,6 @@
 #include "TextComponent.h"
 #include "Vector2DInt.h"
 #include "WorldItem.h"
-#include "JobRenderer.h"
 
 void foo() {
   int mapSize = 64;
@@ -91,13 +91,12 @@ void foo() {
 
       }
   } {
-    // GameObject& gObj = Engine::addGameObject<GameObject>();
-    // gObj.addComponent<DrawLineComponent>();
-    // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
-    // gObj.setPosition({20, 200});
-    // gObj.setRenderDepth(RenderDepth::GUI);
-  }
-  {
+      // GameObject& gObj = Engine::addGameObject<GameObject>();
+      // gObj.addComponent<DrawLineComponent>();
+      // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
+      // gObj.setPosition({20, 200});
+      // gObj.setRenderDepth(RenderDepth::GUI);
+  } {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<JobRenderer>();
     gObj.setRenderDepth(RenderDepth::JobIndication);

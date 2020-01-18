@@ -11,7 +11,7 @@ RockBlock::RockBlock() {
                                               Paths::SIZE_OF_GRASS_TILE);
   }
 }
-const Sprite* RockBlock::getSprite() const { return mSprite.get(); }
+const Sprite* RockBlock::getTopSprite() const { return mSprite.get(); }
 bool RockBlock::isClickable() const { return true; }
 bool RockBlock::mayPassThrough() const { return false; }
 bool RockBlock::mayClimbUpFrom() const { return false; }

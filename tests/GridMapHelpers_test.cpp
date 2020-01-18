@@ -71,3 +71,50 @@ TEST(TestGridMap, getLowestPassablePositionFrom_TopOfWorld) {
   ASSERT_TRUE(rowIsExplored(2, map));
   ASSERT_TRUE(rowIsExplored(3, map));
 }
+
+
+TEST(TestGridMap, getClosestFreePositionToTest)
+{
+  std::function<void(GridMap&, const Vector3DInt&)> foo =
+      [](GridMap& map, const Vector3DInt& size) {
+        /*
+        ..###
+        ..###
+        ..###
+        .....
+        */
+        for(int x = 0; x < size.x; ++x)
+        {
+          for(int y = 0; y < size.y; ++y)
+          {
+            if(x > 1 && y < 3)
+            {
+              map.setBlockAt({x, y}, std::make_unique<UnPassableBlock>());
+            }
+            else
+            {
+              map.setBlockAt({x, y}, std::make_unique<PassableBlock>());
+            }
+          }
+        }
+      };
+  GridMap::generateActiveMap({5, 5, 1}, foo);
+  GridMap& map = GridMap::getActiveMap();
+  {
+    Vector3DInt out;
+    bool success = GridMapHelpers::getClosestFreePositionTo(map, {0,0}, out);
+    ASSERT_TRUE(success);
+    ASSERT_EQ(out, Vector3DInt(0,0));
+  }
+  {
+    Vector3DInt out;
+    bool success = GridMapHelpers::getClosestFreePositionTo(map, {2,0}, out);
+    ASSERT_TRUE(success);
+    ASSERT_EQ(out, Vector3DInt(1,0));
+  }
+  {
+    Vector3DInt out;
+    bool success = GridMapHelpers::getClosestFreePositionTo(map, {3,0}, out);
+    ASSERT_FALSE(success);
+  }
+}

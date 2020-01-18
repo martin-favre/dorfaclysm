@@ -2,7 +2,7 @@
 
 const std::string AirBlock::mName;
 
-const Sprite* AirBlock::getSprite() const { return nullptr; }
+const Sprite* AirBlock::getTopSprite() const { return nullptr; }
 bool AirBlock::isClickable() const { return false; }
 bool AirBlock::mayPassThrough() const { return true; }
 const std::string& AirBlock::getName() const { return mName; }

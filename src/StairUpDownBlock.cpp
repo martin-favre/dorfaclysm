@@ -7,12 +7,12 @@ const std::string StairUpDownBlock::mName{"Up/Down Stair"};
 
 StairUpDownBlock::StairUpDownBlock() {
   if (!mSprite.get()) {
-    mSprite = SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {2, 1},
+    mSprite = SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {7, 6},
                                               Paths::SIZE_OF_GRASS_TILE);
   }
 }
 
-const Sprite* StairUpDownBlock::getSprite() const { return mSprite.get(); }
+const Sprite* StairUpDownBlock::getTopSprite() const { return mSprite.get(); }
 bool StairUpDownBlock::isClickable() const { return true; }
 bool StairUpDownBlock::mayPassThrough() const { return true; }
 bool StairUpDownBlock::mayClimbUpFrom() const { return true; }

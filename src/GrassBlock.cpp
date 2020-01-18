@@ -11,7 +11,7 @@ GrassBlock::GrassBlock() {
                                               Paths::SIZE_OF_GRASS_TILE);
   }
 }
-const Sprite* GrassBlock::getSprite() const { return mSprite.get(); }
+const Sprite* GrassBlock::getTopSprite() const { return mSprite.get(); }
 bool GrassBlock::isClickable() const { return true; }
 bool GrassBlock::mayPassThrough() const { return false; }
 bool GrassBlock::mayClimbUpFrom() const { return false; }

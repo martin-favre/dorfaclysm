@@ -75,30 +75,6 @@ bool GridMap::getLowestPassablePositionFrom(Vector3DInt from, Vector3DInt& out,
   return true;
 }
 
-bool GridMap::getClosestFreePositionTo(const Vector3DInt pos, Vector3DInt& out,
-                                       int widthToSearch) const {
-  std::queue<std::pair<Vector3DInt, int>> testPositions;
-  testPositions.emplace(pos, 0);
-  while (!testPositions.empty()) {
-    const std::pair<Vector3DInt, int> current = testPositions.front();
-    testPositions.pop();
-    if (isPosFree(current.first)) {
-      out = current.first;
-      return true;
-    } else {
-      if (current.second <= widthToSearch) {
-        for (const Vector3DInt& delta : DELTA_POSITIONS_HORIZONTAL) {
-          Vector3DInt newPos = current.first + delta;
-          if (isPosInMap(newPos)) {
-            testPositions.emplace(newPos, current.second);
-          }
-        }
-      }
-    }
-  }
-  return false;
-}
-
 bool GridMap::isPosInMap(const Vector3DInt& pos) const {
   if (pos.x < 0) return false;
   if (pos.y < 0) return false;

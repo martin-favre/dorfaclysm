@@ -14,10 +14,12 @@ DorfController::DorfController(GameObject& gObj)
 
 void DorfController::setup() {
   const Vector3DInt& pos = owner().getPosition();
-  mWorldItem.setup(pos);
+  // mWorldItem.setup(pos);
   GridMapHelpers::exploreMap(GridMap::getActiveMap(), pos);
 }
-void DorfController::teardown() { mWorldItem.teardown(); }
+void DorfController::teardown() { 
+  // mWorldItem.teardown(); 
+  }
 void DorfController::getNewJob() {
   auto& jobs = JobPool::getJobs();
   if (jobs.size() > 0) {
@@ -37,5 +39,5 @@ void DorfController::update() {
     getNewJob();
   }
 
-  mWorldItem.update(owner().getPosition());
+  // mWorldItem.update(owner().getPosition());
 }

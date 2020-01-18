@@ -26,8 +26,6 @@ class GridMap {
    */
   bool getLowestPassablePositionFrom(Vector3DInt from, Vector3DInt& out,
                                      int maxDepth = -1) const;
-  bool getClosestFreePositionTo(const Vector3DInt pos, Vector3DInt& out,
-                                int widthToSearch = 1) const;
 
   void removeBlockAt(const Vector3DInt& pos);
   Block& getBlockAt(const Vector3DInt& pos);

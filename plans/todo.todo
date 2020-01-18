@@ -15,9 +15,8 @@
 ✔ Go over to blocks instead of tiles @done(20-01-11 14:00)
 ✔ Need a way to handle "I want to be 1 square away away from this position" in pathfinding @done(20-01-11 14:04)
 ✔ Hide unexplored tiles @done(20-01-18 13:28)
-☐ Visualize when you are inside tile, and when you're above.
-    One sprite for inside (could also be generically rendered with lines/rects)
-    One sprite for above
+✔ Bug: When assigning job to tile dorfs chooses wrong tile @done(20-01-18 14:51)
+✔ Visualize when you are inside tile, and when you're above. @done(20-01-18 14:51)
 
 ☐ Bug: WorldItem does not work at all
     After a while all dorfs end up on the two same tiles or something.

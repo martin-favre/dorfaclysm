@@ -5,7 +5,7 @@
 // for unit tests
 class DefaultBlock : public Block {
  public:
-  const Sprite* getSprite() const override { return nullptr; }
+  const Sprite* getTopSprite() const override { return nullptr; }
   bool isClickable() const override { return false; }
   bool mayPassThrough() const override { return false; }
   bool mayClimbUpFrom() const override { return false; }

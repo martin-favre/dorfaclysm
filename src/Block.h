@@ -8,7 +8,8 @@
 class WorldItem;
 class Block {
  public:
-  virtual const Sprite* getSprite() const = 0;
+  virtual const Sprite* getTopSprite() const = 0;
+  virtual const Sprite* getInsideSprite() const {return getTopSprite();}
   virtual bool isClickable() const = 0;
   virtual bool mayPassThrough() const = 0;
   virtual bool mayClimbUpFrom() const = 0;
