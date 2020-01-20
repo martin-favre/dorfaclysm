@@ -6,7 +6,6 @@
 class AirBlock : public Block {
  public:
   AirBlock() = default;
-  AirBlock(const Block& block) : Block(block) {}
   const Sprite* getTopSprite() const override;
   bool isClickable() const override;
   bool mayPassThrough() const override;

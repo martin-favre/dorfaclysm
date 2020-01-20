@@ -96,17 +96,6 @@ void GridMap::removeBlockAt(const Vector3DInt& pos) {
   GridMapHelpers::exploreMap(*this, pos);
 }
 
-Block& GridMap::getBlockAt(const Vector3DInt& pos) {
-  ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-  ASSERT(isBlockValid(pos), "Block ptr is null");
-  return *mBlocks[pos.z][pos.y][pos.x];
-}
-
-const Block& GridMap::getBlockAt(const Vector3DInt& pos) const {
-  ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-  ASSERT(isBlockValid(pos), "Block ptr is null");
-  return *mBlocks[pos.z][pos.y][pos.x];
-}
 void GridMap::setBlockAt(const Vector3DInt& pos,
                          std::unique_ptr<Block>&& newBlock) {
   ASSERT(newBlock.get(), "Trying set a block to null ptr");

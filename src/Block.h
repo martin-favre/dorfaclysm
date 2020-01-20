@@ -8,6 +8,9 @@
 class GridActor;
 class Block {
  public:
+  Block() = default;
+  Block(const Block&) = delete;
+  Block& operator=(const Block&) = delete;
   virtual const Sprite* getTopSprite() const = 0;
   virtual const Sprite* getInsideSprite() const {return getTopSprite();}
   virtual bool isClickable() const = 0;

@@ -28,9 +28,18 @@ class GridMap {
                                      int maxDepth = -1) const;
 
   void removeBlockAt(const Vector3DInt& pos);
-  Block& getBlockAt(const Vector3DInt& pos);
-  const Block& getBlockAt(const Vector3DInt& pos) const;
   void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>&& newBlock);
+  inline Block& getBlockAt(const Vector3DInt& pos) {
+  ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+  ASSERT(isBlockValid(pos), "Block ptr is null");
+  return *mBlocks[pos.z][pos.y][pos.x];
+  }
+
+  inline const Block& getBlockAt(const Vector3DInt& pos) const {
+  ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+  ASSERT(isBlockValid(pos), "Block ptr is null");
+  return *mBlocks[pos.z][pos.y][pos.x];
+  }
 
   std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos);
   const std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos) const;
