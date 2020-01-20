@@ -22,7 +22,7 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
-#include "WorldItem.h"
+#include "GridActor.h"
 
 void foo() {
   int mapSize = 64;

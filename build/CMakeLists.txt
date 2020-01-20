@@ -6,8 +6,14 @@ SET(GAME_NAME  Vidya)
 SET(LIB_NAME  Libya)
 PROJECT (Benis)
 
+#debug
 SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -DDEBUG -Werror -pedantic -g -Wall -Wextra")
 SET(GCC_COVERAGE_LINK_FLAGS "-std=c++17 -DDEBUG -Werror -pedantic -g -Wall -Wextra")
+
+#fast
+#SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -Ofast -flto -Werror -pedantic -g -Wall -Wextra")
+#SET(GCC_COVERAGE_LINK_FLAGS "-std=c++17 -Ofast -flto -Werror -pedantic -g -Wall -Wextra")
+
 ADD_DEFINITIONS(${GCC_COVERAGE_COMPILE_FLAGS})
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../out)

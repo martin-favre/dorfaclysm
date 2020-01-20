@@ -12,7 +12,7 @@ class Block;
  * Accessing map outside bounds will throw exception.
  * Use isPosInMap.
  */
-class WorldItem;
+class GridActor;
 class GridMap {
  public:
   GridMap(const GridMap&) = delete;
@@ -32,10 +32,10 @@ class GridMap {
   const Block& getBlockAt(const Vector3DInt& pos) const;
   void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>&& newBlock);
 
-  std::list<WorldItem*>& getWorldItemsAt(const Vector3DInt& pos);
-  const std::list<WorldItem*>& getWorldItemsAt(const Vector3DInt& pos) const;
-  void registerWorldItemAt(const Vector3DInt& pos, WorldItem* item);
-  void unregisterWorldItemAt(const Vector3DInt& pos, const WorldItem* item);
+  std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos);
+  const std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos) const;
+  void registerGridActorAt(const Vector3DInt& pos, GridActor* item);
+  void unregisterGridActorAt(const Vector3DInt& pos, const GridActor* item);
 
   static GridMap& generateActiveMap(
       const Vector3DInt& size,
@@ -50,7 +50,7 @@ class GridMap {
   bool isBlockValid(const Vector3DInt& pos) const;
   GridMap() = default;
   std::vector<std::vector<std::vector<std::unique_ptr<Block>>>> mBlocks;
-  std::vector<std::vector<std::vector<std::list<WorldItem*>>>> mWorldItems;
+  std::vector<std::vector<std::vector<std::list<GridActor*>>>> mGridActors;
   Vector3DInt mSize;
   static GridMap mActiveMap;
 };

@@ -5,7 +5,7 @@
 #include "JobPool.h"
 #include "Sprite.h"
 
-class WorldItem;
+class GridActor;
 class Block {
  public:
   virtual const Sprite* getTopSprite() const = 0;

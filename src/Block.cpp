@@ -1,6 +1,6 @@
 #include "Block.h"
 
-#include "WorldItem.h"
+#include "GridActor.h"
 void Block::assignJob(JobType type) { mAssignedJob = type; }
 
 void Block::unassignJob() { mAssignedJob = jobTypeUnset; }

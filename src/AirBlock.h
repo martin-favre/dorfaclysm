@@ -1,7 +1,7 @@
 #pragma once
 #include "Block.h"
 #include "GridMap.h"
-#include "WorldItem.h"
+#include "GridActor.h"
 
 class AirBlock : public Block {
  public:

@@ -5,7 +5,7 @@
 #include "Component.h"
 #include "IJob.h"
 #include "Vector3DInt.h"
-#include "WorldItem.h"
+#include "GridActor.h"
 
 class DorfController : public Component {
  public:
@@ -15,6 +15,6 @@ class DorfController : public Component {
   void teardown() override;
  private:
   void getNewJob();
-  WorldItem mWorldItem{"Dorf"};
+  GridActor mGridActor{"Dorf"};
   std::unique_ptr<IJob> mJob;
 };

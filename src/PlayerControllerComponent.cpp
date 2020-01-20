@@ -6,7 +6,7 @@
 #include "GridMap.h"
 #include "InputManager.h"
 #include "JobPool.h"
-#include "WorldItem.h"
+#include "GridActor.h"
 #include "GridMapHelpers.h"
 void PlayerControllerComponent::setup() {
   mTextComponent = owner().getComponent<TextComponent>();
@@ -23,9 +23,9 @@ void PlayerControllerComponent::renderText() {
     if (gridMap.isPosInMap(mousePos)) {
       const Block& block = gridMap.getBlockAt(mousePos);
       outStr += block.getName();
-      const std::list<WorldItem*>& comps = gridMap.getWorldItemsAt(mousePos);
+      const std::list<GridActor*>& comps = gridMap.getGridActorsAt(mousePos);
       for (const auto& comp : comps) {
-        ASSERT(comp, "Received null WorldItem ptr");
+        ASSERT(comp, "Received null GridActor ptr");
         outStr += '\n' + comp->getName();
       }
       mTextComponent->setText(outStr);

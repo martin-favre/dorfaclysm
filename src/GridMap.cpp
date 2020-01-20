@@ -9,7 +9,7 @@
 #include "GridMapHelpers.h"
 #include "Helpers.h"
 #include "Logging.h"
-#include "WorldItem.h"
+#include "GridActor.h"
 GridMap GridMap::mActiveMap;
 
 template <class T>
@@ -47,7 +47,7 @@ GridMap& GridMap::generateActiveMap(
   ASSERT(size.z > 0, "Size needs to be > 0");
   mActiveMap.mSize = size;
   initializeGrid(mActiveMap.mBlocks, size);
-  initializeGrid(mActiveMap.mWorldItems, size);
+  initializeGrid(mActiveMap.mGridActors, size);
   if (generator) {
     generator(mActiveMap, size);
   } else {
@@ -118,23 +118,23 @@ bool GridMap::isPosFree(const Vector3DInt& pos) const {
   return getBlockAt(pos).mayPassThrough();
 }
 
-std::list<WorldItem*>& GridMap::getWorldItemsAt(const Vector3DInt& pos) {
+std::list<GridActor*>& GridMap::getGridActorsAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to access out of bounds");
-  return mWorldItems[pos.z][pos.y][pos.x];
+  return mGridActors[pos.z][pos.y][pos.x];
 }
-const std::list<WorldItem*>& GridMap::getWorldItemsAt(
+const std::list<GridActor*>& GridMap::getGridActorsAt(
     const Vector3DInt& pos) const {
   ASSERT(isPosInMap(pos), "Trying to access out of bounds");
-  return mWorldItems[pos.z][pos.y][pos.x];
+  return mGridActors[pos.z][pos.y][pos.x];
 }
-void GridMap::registerWorldItemAt(const Vector3DInt& pos, WorldItem* item) {
-  std::list<WorldItem*>& items = getWorldItemsAt(pos);
+void GridMap::registerGridActorAt(const Vector3DInt& pos, GridActor* item) {
+  std::list<GridActor*>& items = getGridActorsAt(pos);
   items.emplace_back(item);
 }
-void GridMap::unregisterWorldItemAt(const Vector3DInt& pos,
-                                    const WorldItem* item) {
+void GridMap::unregisterGridActorAt(const Vector3DInt& pos,
+                                    const GridActor* item) {
   ASSERT(isPosInMap(pos), "Trying to access out of bounds");
-  std::list<WorldItem*>& items = getWorldItemsAt(pos);
+  std::list<GridActor*>& items = getGridActorsAt(pos);
   const auto iter = std::find(items.begin(), items.end(), item);
   ASSERT(iter != items.end(), "Item not in list");
   items.erase(iter);
