@@ -29,16 +29,23 @@ class GridMap {
 
   void removeBlockAt(const Vector3DInt& pos);
   void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>&& newBlock);
+ 
+  inline std::weak_ptr<Block> getBlockPtrAt(const Vector3DInt& pos) {
+    ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+    ASSERT(isBlockValid(pos), "Block ptr is null");
+    return mBlocks[pos.z][pos.y][pos.x];
+  }
+
   inline Block& getBlockAt(const Vector3DInt& pos) {
-  ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-  ASSERT(isBlockValid(pos), "Block ptr is null");
-  return *mBlocks[pos.z][pos.y][pos.x];
+    ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+    ASSERT(isBlockValid(pos), "Block ptr is null");
+    return *mBlocks[pos.z][pos.y][pos.x];
   }
 
   inline const Block& getBlockAt(const Vector3DInt& pos) const {
-  ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-  ASSERT(isBlockValid(pos), "Block ptr is null");
-  return *mBlocks[pos.z][pos.y][pos.x];
+    ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+    ASSERT(isBlockValid(pos), "Block ptr is null");
+    return *mBlocks[pos.z][pos.y][pos.x];
   }
 
   std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos);
@@ -54,11 +61,10 @@ class GridMap {
       64, 64};  // How many pixels wide a tile is when rendered, before other
                 // modifiers
 
-
  private:
   bool isBlockValid(const Vector3DInt& pos) const;
   GridMap() = default;
-  std::vector<std::vector<std::vector<std::unique_ptr<Block>>>> mBlocks;
+  std::vector<std::vector<std::vector<std::shared_ptr<Block>>>> mBlocks;
   std::vector<std::vector<std::vector<std::list<GridActor*>>>> mGridActors;
   Vector3DInt mSize;
   static GridMap mActiveMap;

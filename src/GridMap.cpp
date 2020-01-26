@@ -27,12 +27,12 @@ void initializeGrid(T& grid, const Vector3DInt& size) {
 }
 
 void makeGridGrass(
-    std::vector<std::vector<std::vector<std::unique_ptr<Block>>>>& grid,
+    std::vector<std::vector<std::vector<std::shared_ptr<Block>>>>& grid,
     const Vector3DInt& size) {
   for (int z = 0; z < size.z; ++z) {
     for (int y = 0; y < size.y; ++y) {
       for (int x = 0; x < size.x; ++x) {
-        grid[z][y][x] = std::make_unique<GrassBlock>();
+        grid[z][y][x] = std::make_shared<GrassBlock>();
       }
     }
   }
@@ -92,7 +92,7 @@ bool GridMap::isBlockValid(const Vector3DInt& pos) const {
 void GridMap::removeBlockAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
   ASSERT(isBlockValid(pos), "Block ptr is null");
-  mBlocks[pos.z][pos.y][pos.x] = std::make_unique<AirBlock>();
+  mBlocks[pos.z][pos.y][pos.x] = std::make_shared<AirBlock>();
   GridMapHelpers::exploreMap(*this, pos);
 }
 
