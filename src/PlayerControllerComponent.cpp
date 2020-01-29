@@ -3,11 +3,12 @@
 #include "Block.h"
 #include "Camera.h"
 #include "GameObject.h"
-#include "GridMap.h"
-#include "InputManager.h"
-#include "JobPool.h"
 #include "GridActor.h"
+#include "GridMap.h"
 #include "GridMapHelpers.h"
+#include "InputManager.h"
+#include "MiningRequestPool.h"
+#include "PlayerRequestType.h"
 void PlayerControllerComponent::setup() {
   mTextComponent = owner().getComponent<TextComponent>();
 }
@@ -40,14 +41,13 @@ void PlayerControllerComponent::handleClick() {
   GridMap& gridMap = GridMap::getActiveMap();
 
   if (gridMap.isPosInMap(mousePos)) {
-    Block& block = gridMap.getBlockAt(mousePos);
-    if (block.supportsJob(jobTypeMine)) {
-      JobPool::addJob(PlayerRequestedJob(jobTypeMine, mousePos));
-      block.assignJob(jobTypeMine);
+    std::weak_ptr<Block> block = gridMap.getBlockPtrAt(mousePos);
+    if (block.lock()->supportsJob(requestTypeMining)) {
+      MiningRequestPool::addRequest(
+          std::make_unique<MiningRequest>(block, mousePos));
     }
 
     GridMapHelpers::exploreMap(gridMap, mousePos);
-
   }
 }
 

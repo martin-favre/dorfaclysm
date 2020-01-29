@@ -5,7 +5,7 @@ class StateMachine;
 class State {
  public:
   virtual void onEntry(){};
-
+  virtual ~State() = default;
   /*
     returns ptr to next state when done.
     returns nullptr if not yet done.

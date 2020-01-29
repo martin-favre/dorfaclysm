@@ -18,4 +18,6 @@ bool GrassBlock::mayClimbUpFrom() const { return false; }
 bool GrassBlock::mayWalkOnTop() const { return true; }
 bool GrassBlock::isSeeThrough() const { return false; }
 const std::string& GrassBlock::getName() const { return mName; }
-bool GrassBlock::supportsJob(JobType type) const { return type == jobTypeMine; }
+bool GrassBlock::supportsJob(PlayerRequestType type) const {
+  return type == PlayerRequestType::requestTypeMining;
+}

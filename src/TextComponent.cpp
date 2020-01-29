@@ -24,31 +24,26 @@ void TextComponent::setText(const std::string& text) {
   size_t lastLinebreak = 0;
   size_t indx = 0;
   mSprites.clear();
-  while(indx != text.npos)
-  {
+  while (indx != text.npos) {
     indx = text.find("\n", lastLinebreak);
-    std::string subString = text.substr(lastLinebreak, indx-lastLinebreak);
-    if(subString != "")
-    {
-      mSprites.emplace_back(std::move(SpriteLoader::getSpriteFromTextFast(subString, *mFont, mColor)));
+    std::string subString = text.substr(lastLinebreak, indx - lastLinebreak);
+    if (subString != "") {
+      mSprites.emplace_back(
+          SpriteLoader::getSpriteFromTextFast(subString, *mFont, mColor));
     }
-    lastLinebreak = indx+1;
-
+    lastLinebreak = indx + 1;
   }
 }
 
 void TextComponent::setColor(const SDL_Color& color) { mColor = color; }
 
 void TextComponent::render() {
-
   ASSERT(mFont.get(), "Received null Font ptr");
   ASSERT(mFont->getSdlFont(), "Received null TTF_Font ptr");
   int fontHeight = TTF_FontHeight(mFont->getSdlFont());
   int heightOffset = 0;
-  for(const auto& sprite : mSprites)
-  {
-    if(sprite->getSdlTexture() != nullptr)
-    {
+  for (const auto& sprite : mSprites) {
+    if (sprite->getSdlTexture() != nullptr) {
       const auto& cameraPos = Camera::get().getPosition();
       const GameObject& gObj = owner();
       Vector2DInt pos{gObj.getPosition()};
@@ -57,7 +52,7 @@ void TextComponent::render() {
       }
       pos.y += heightOffset;
       GraphicsManager::renderTexture(*sprite, pos, gObj.getScale(),
-                                    gObj.getRotation(), mCentered, mFlip);
+                                     gObj.getRotation(), mCentered, mFlip);
       heightOffset += fontHeight;
     }
   }

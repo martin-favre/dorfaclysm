@@ -11,7 +11,7 @@ class DefaultBlock : public Block {
   bool mayClimbUpFrom() const override { return false; }
   bool mayWalkOnTop() const override { return false; }
   const std::string& getName() const override { return mName; }
-  bool supportsJob(JobType type) const override {
+  bool supportsJob(PlayerRequestType type) const override {
     (void)type;
     return false;
   };

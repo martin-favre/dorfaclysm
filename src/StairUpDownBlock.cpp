@@ -19,7 +19,7 @@ bool StairUpDownBlock::mayClimbUpFrom() const { return true; }
 bool StairUpDownBlock::mayWalkOnTop() const { return true; }
 bool StairUpDownBlock::isSeeThrough() const { return false; }
 const std::string& StairUpDownBlock::getName() const { return mName; }
-bool StairUpDownBlock::supportsJob(JobType type) const {
+bool StairUpDownBlock::supportsJob(PlayerRequestType type) const {
   (void)type;
   return false;
 }

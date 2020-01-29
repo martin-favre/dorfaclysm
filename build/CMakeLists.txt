@@ -7,14 +7,15 @@ SET(LIB_NAME  Libya)
 PROJECT (Benis)
 
 #debug
-SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -DDEBUG -Werror -pedantic -g -Wall -Wextra")
-SET(GCC_COVERAGE_LINK_FLAGS "-std=c++17 -DDEBUG -Werror -pedantic -g -Wall -Wextra")
+SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -DDEBUG -m64 -Werror -pedantic -g -Wall -Wextra")
+SET(GCC_COVERAGE_LINK_FLAGS "-std=c++17 -DDEBUG -m64 -Werror -pedantic -g -Wall -Wextra")
 
 #fast
-#SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -Ofast -flto -Werror -pedantic -g -Wall -Wextra")
-#SET(GCC_COVERAGE_LINK_FLAGS "-std=c++17 -Ofast -flto -Werror -pedantic -g -Wall -Wextra")
+#SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -m64 -Ofast -Werror -pedantic -g -Wall -Wextra")
+#SET(GCC_COVERAGE_LINK_FLAGS "-std=c++17 -m64 -Ofast -Werror -pedantic -g -Wall -Wextra")
 
 ADD_DEFINITIONS(${GCC_COVERAGE_COMPILE_FLAGS})
+ADD_DEFINITIONS(${GCC_COVERAGE_LINK_FLAGS})
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../out)
 SET(GAME_SRC_DIR ${PROJECT_BINARY_DIR}/../src/) 
@@ -37,29 +38,28 @@ add_library(${LIB_NAME} ${GAME_SRC_FILES})
 INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES(${LIB_NAME} stdc++ m dl pthread ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 
-#ADD_EXECUTABLE(${GAME_NAME} ${GAME_SRC_DIR}/snek.cpp)
 ADD_EXECUTABLE(${GAME_NAME} ${GAME_SRC_DIR}/main.cpp)
 TARGET_LINK_LIBRARIES(${GAME_NAME} PRIVATE ${LIB_NAME})
 
 
 #Prepare testing
-ENABLE_TESTING()
-FIND_PACKAGE(GTest REQUIRED)
-INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIRS})
-FILE(GLOB TEST_SRCS ${TEST_SRC_DIR}*.cpp)
+#ENABLE_TESTING()
+#FIND_PACKAGE(GTest REQUIRED)
+#INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIRS})
+#FILE(GLOB TEST_SRCS ${TEST_SRC_DIR}*.cpp)
 
-FOREACH(testSrc ${TEST_SRCS})
-        GET_FILENAME_COMPONENT(testName ${testSrc} NAME_WE)
+#FOREACH(testSrc ${TEST_SRCS})
+#        GET_FILENAME_COMPONENT(testName ${testSrc} NAME_WE)
+#
+#        ADD_EXECUTABLE(${testName} ${testSrc})
+#        TARGET_LINK_LIBRARIES(${testName} stdc++ gtest gtest_main pthread ${LIB_NAME})
+#        target_include_directories(${testName} PRIVATE ${GAME_SRC_DIR})
 
-        ADD_EXECUTABLE(${testName} ${testSrc})
-        TARGET_LINK_LIBRARIES(${testName} stdc++ gtest gtest_main pthread ${LIB_NAME})
-        target_include_directories(${testName} PRIVATE ${GAME_SRC_DIR})
+#        SET_TARGET_PROPERTIES(${testName} PROPERTIES 
+#            RUNTIME_OUTPUT_DIRECTORY  ${TEST_OUTPUT_DIR})
 
-        SET_TARGET_PROPERTIES(${testName} PROPERTIES 
-            RUNTIME_OUTPUT_DIRECTORY  ${TEST_OUTPUT_DIR})
-
-        ADD_TEST(NAME ${testName} 
-                 WORKING_DIRECTORY ${TEST_OUTPUT_DIR} 
-                 COMMAND ${TEST_OUTPUT_DIR}${testName} )
-ENDFOREACH(testSrc)
+#        ADD_TEST(NAME ${testName} 
+#                 WORKING_DIRECTORY ${TEST_OUTPUT_DIR} 
+#                 COMMAND ${TEST_OUTPUT_DIR}${testName} )
+#ENDFOREACH(testSrc)
     

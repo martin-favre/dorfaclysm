@@ -10,6 +10,5 @@ class WalkRandomlyJob : public IJob {
   bool work() override;
 
  private:
-  GameObject& mDorf;
   StateMachine mStateMachine;
 };

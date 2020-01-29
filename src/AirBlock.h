@@ -1,7 +1,7 @@
 #pragma once
 #include "Block.h"
-#include "GridMap.h"
 #include "GridActor.h"
+#include "GridMap.h"
 
 class AirBlock : public Block {
  public:
@@ -14,7 +14,7 @@ class AirBlock : public Block {
   bool isSeeThrough() const override;
   const std::string& getName() const override;
 
-  bool supportsJob(JobType type) const override;
+  bool supportsJob(PlayerRequestType type) const override;
 
  private:
   static const std::string mName;

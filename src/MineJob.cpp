@@ -7,47 +7,49 @@
 
 class WalkingState : public State {
  public:
-  WalkingState(GameObject& user, const Vector3DInt& pos);
+  WalkingState(GameObject& user, MiningRequest& request);
   void onEntry() override;
   std::unique_ptr<State> onDuring() override;
 
  private:
   DorfWalker mWalker{200};
   GameObject& mUser;
-  Vector3DInt mPos;
+  MiningRequest& mRequest;
 };
 
 class MiningState : public State {
  public:
-  MiningState(const Vector3DInt& pos) : mPos(pos) {}
+  MiningState(MiningRequest& request) : mRequest(request) {}
   std::unique_ptr<State> onDuring() override;
 
  private:
-  Vector3DInt mPos;
+  MiningRequest& mRequest;
 };
 
 std::unique_ptr<State> MiningState::onDuring() {
-  GridMap::getActiveMap().removeBlockAt(mPos);
+  if (mRequest.isValid()) {
+    GridMap::getActiveMap().removeBlockAt(mRequest.getPos());
+  }
   terminateMachine();
   return nullptr;
 }
 
-WalkingState::WalkingState(GameObject& user, const Vector3DInt& pos)
-    : mUser(user), mPos(pos) {}
+WalkingState::WalkingState(GameObject& user, MiningRequest& request)
+    : mUser(user), mRequest(request) {}
 
 void WalkingState::onEntry() {
   GridMap& map = GridMap::getActiveMap();
   Vector3DInt movePos;
-  bool success = GridMapHelpers::getClosestFreePositionTo(map, mPos, movePos);
+  bool success =
+      GridMapHelpers::getClosestFreePositionTo(map, mRequest.getPos(), movePos);
   success = success && mWalker.generateNewPath(mUser.getPosition(), movePos);
   if (!success) {
-    map.getBlockAt(mPos).unassignJob();
     terminateMachine();
   }
 }
 std::unique_ptr<State> WalkingState::onDuring() {
   if (mWalker.isDone()) {
-    return std::make_unique<MiningState>(mPos);
+    return std::make_unique<MiningState>(mRequest);
   } else {
     Vector3DInt pos = mUser.getPosition();
     mWalker.walkUpdate(pos);
@@ -56,10 +58,9 @@ std::unique_ptr<State> WalkingState::onDuring() {
   }
 }
 
-MineJob::MineJob(GameObject& user, const Vector3DInt& targetPos)
-    : mDorf(user),
-      mStateMachine(
-          std::move(std::make_unique<WalkingState>(user, targetPos))) {}
+MineJob::MineJob(GameObject& user, std::unique_ptr<MiningRequest>&& request)
+    : mRequest(std::move(request)),
+      mStateMachine(std::make_unique<WalkingState>(user, *mRequest)) {}
 
 bool MineJob::work() {
   mStateMachine.update();

@@ -11,7 +11,7 @@ class GrassBlock : public Block {
   bool mayWalkOnTop() const override;
   bool isSeeThrough() const override;
   const std::string& getName() const override;
-  bool supportsJob(JobType type) const override;
+  bool supportsJob(PlayerRequestType type) const override;
 
  private:
   static std::unique_ptr<Sprite> mSprite;

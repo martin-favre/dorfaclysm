@@ -90,9 +90,7 @@ std::unique_ptr<State> CalculatingPositionState::onDuring() {
 }  // namespace
 
 WalkRandomlyJob::WalkRandomlyJob(GameObject& user)
-    : mDorf(user),
-      mStateMachine(
-          std::move(std::make_unique<CalculatingPositionState>(user))) {}
+    : mStateMachine(std::make_unique<CalculatingPositionState>(user)) {}
 
 bool WalkRandomlyJob::work() {
   mStateMachine.update();

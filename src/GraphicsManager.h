@@ -42,13 +42,12 @@ class GraphicsManager {
   static inline unsigned int getScreenWidth() { return mScreenWidth; }
   friend class SpriteLoader;
   friend class GridMapRenderer;
-  static constexpr SDL_Color mDefaultDrawColor{0,0,0,0};
+  static constexpr SDL_Color mDefaultDrawColor{0, 0, 0, 0};
 
  private:
   GraphicsManager();
   static bool mInitialized;
   static SDL_Window* mMainWindow;
-  static SDL_Surface* mMainSurface;
   static SDL_Renderer* mMainRenderer;
   static SDL_Color mRenderDrawColor;
   static unsigned int mScreenWidth;

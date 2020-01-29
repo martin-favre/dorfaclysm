@@ -7,7 +7,6 @@
                 "/usr/include/**"
             ],
             "defines": [
-                "DEBUG",
                 "UNICODE",
                 "_UNICODE",
                 "VSCODE"

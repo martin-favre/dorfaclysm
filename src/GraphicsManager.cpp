@@ -8,7 +8,6 @@
 
 bool GraphicsManager::mInitialized = false;
 SDL_Window* GraphicsManager::mMainWindow = nullptr;
-SDL_Surface* GraphicsManager::mMainSurface = nullptr;
 SDL_Renderer* GraphicsManager::mMainRenderer = nullptr;
 unsigned int GraphicsManager::mScreenWidth = 1700;
 unsigned int GraphicsManager::mScreenHeight = 800;
@@ -27,6 +26,7 @@ void GraphicsManager::initialize() {
   {
     Logging::log("Warning: Linear texture filtering not enabled!");
   }
+
   GraphicsManager::mMainWindow = SDL_CreateWindow(
       GraphicsManager::mWindowName.c_str(), SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED, mScreenWidth, mScreenHeight,
@@ -48,13 +48,6 @@ void GraphicsManager::initialize() {
   ASSERT(ok >= 0, "Could not SDL_SetRenderDrawBlendMode: " +
                       std::string(SDL_GetError()));
 
-  GraphicsManager::mMainSurface =
-      SDL_GetWindowSurface(GraphicsManager::mMainWindow);
-
-  ASSERT(GraphicsManager::mMainSurface != NULL,
-         "Surface could not be created! SDL Error: " +
-             std::string(SDL_GetError()));
-
   setRenderDrawColor(mDefaultDrawColor);
 
   int img_flags = IMG_INIT_PNG;
@@ -73,7 +66,6 @@ void GraphicsManager::initialize() {
 void GraphicsManager::teardown() {
   SpriteLoader::teardown();
   SDL_DestroyRenderer(GraphicsManager::mMainRenderer);
-  SDL_FreeSurface(GraphicsManager::mMainSurface);
   SDL_DestroyWindow(GraphicsManager::mMainWindow);
   TTF_Quit();
   IMG_Quit();

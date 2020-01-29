@@ -1,3 +1,4 @@
 cd build    
 CC=clang CXX=clang cmake .
-make -j4
+nof_processors=$(grep -c ^processor /proc/cpuinfo)
+make -j$nof_processors

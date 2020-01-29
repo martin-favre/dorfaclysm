@@ -3,13 +3,13 @@
 #include "Block.h"
 #include "Camera.h"
 #include "GraphicsManager.h"
-#include "GridMapHelpers.h"
 #include "GridMap.h"
+#include "GridMapHelpers.h"
 
 void AirDepthRenderer::renderBlock(Vector3DInt pos) {
   int depth = 0;
-  constexpr uint8_t maxDepth = 10;
-  if(!mGridMap.getBlockAt(pos).isExplored()) return;
+  constexpr uint8_t maxDepth = 3;
+  if (!mGridMap.getBlockAt(pos).isExplored()) return;
   while (mGridMap.getBlockAt(pos).isSeeThrough()) {
     pos += {0, 0, -1};
     ++depth;
@@ -17,7 +17,7 @@ void AirDepthRenderer::renderBlock(Vector3DInt pos) {
   }
   if (depth == 0) return;
   uint8_t alpha = depth * SDL_ALPHA_OPAQUE / maxDepth;
-  GraphicsManager::setRenderDrawColor({0, 0, 255, alpha});
+  GraphicsManager::setRenderDrawColor({0, 0, 20, alpha});
   Vector3DInt renderPos = Camera::tilePosToRenderPos(pos);
   renderPos -= mCam.getPosition();
   const Rect dstRect{renderPos.x, renderPos.y, GridMap::tileRenderSize.x,
