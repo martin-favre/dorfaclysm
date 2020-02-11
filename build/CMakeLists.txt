@@ -43,23 +43,23 @@ TARGET_LINK_LIBRARIES(${GAME_NAME} PRIVATE ${LIB_NAME})
 
 
 #Prepare testing
-#ENABLE_TESTING()
-#FIND_PACKAGE(GTest REQUIRED)
-#INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIRS})
-#FILE(GLOB TEST_SRCS ${TEST_SRC_DIR}*.cpp)
+ENABLE_TESTING()
+FIND_PACKAGE(GTest REQUIRED)
+INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIRS})
+FILE(GLOB TEST_SRCS ${TEST_SRC_DIR}*.cpp)
 
-#FOREACH(testSrc ${TEST_SRCS})
-#        GET_FILENAME_COMPONENT(testName ${testSrc} NAME_WE)
-#
-#        ADD_EXECUTABLE(${testName} ${testSrc})
-#        TARGET_LINK_LIBRARIES(${testName} stdc++ gtest gtest_main pthread ${LIB_NAME})
-#        target_include_directories(${testName} PRIVATE ${GAME_SRC_DIR})
+FOREACH(testSrc ${TEST_SRCS})
+        GET_FILENAME_COMPONENT(testName ${testSrc} NAME_WE)
 
-#        SET_TARGET_PROPERTIES(${testName} PROPERTIES 
-#            RUNTIME_OUTPUT_DIRECTORY  ${TEST_OUTPUT_DIR})
+        ADD_EXECUTABLE(${testName} ${testSrc})
+        TARGET_LINK_LIBRARIES(${testName} stdc++ gtest gtest_main pthread ${LIB_NAME})
+        target_include_directories(${testName} PRIVATE ${GAME_SRC_DIR})
 
-#        ADD_TEST(NAME ${testName} 
-#                 WORKING_DIRECTORY ${TEST_OUTPUT_DIR} 
-#                 COMMAND ${TEST_OUTPUT_DIR}${testName} )
-#ENDFOREACH(testSrc)
+        SET_TARGET_PROPERTIES(${testName} PROPERTIES 
+            RUNTIME_OUTPUT_DIRECTORY  ${TEST_OUTPUT_DIR})
+
+        ADD_TEST(NAME ${testName} 
+                 WORKING_DIRECTORY ${TEST_OUTPUT_DIR} 
+                 COMMAND ${TEST_OUTPUT_DIR}${testName} )
+ENDFOREACH(testSrc)
     

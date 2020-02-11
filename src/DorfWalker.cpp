@@ -3,8 +3,10 @@
 #include "Astar.h"
 #include "GridMap.h"
 
-DorfWalker::DorfWalker(int msPerMovement)
-    : mMsPerMovement(msPerMovement), mGridMap(GridMap::getActiveMap()) {}
+DorfWalker::DorfWalker(GridActor& gridActor, int msPerMovement)
+    : mMsPerMovement(msPerMovement),
+      mGridActor(gridActor),
+      mGridMap(GridMap::getActiveMap()) {}
 
 Vector3DInt DorfWalker::getNextPlannedPosition() {
   if (!mPlannedPosititions.empty()) {
@@ -14,23 +16,63 @@ Vector3DInt DorfWalker::getNextPlannedPosition() {
   }
 }
 
-void DorfWalker::walkUpdate(Vector3DInt& currentPosition) {
+void DorfWalker::update() {
+  switch (mState) {
+    case calculatingPath:
+      calculateNewPath();
+      break;
+    case walking:
+      walk();
+      break;
+    default:
+      break;
+  }
+}
+
+void DorfWalker::walk() {
   if (!mPlannedPosititions.empty()) {
     if (mTimer.getElapsedMilliseconds() > mMsPerMovement) {
       Vector3DInt next = mPlannedPosititions.top();
       if (GridMap::getActiveMap().isPosFree(next)) {
-        currentPosition = next;
+        mGridActor.moveTo(next);
         mPlannedPosititions.pop();
+      } else {
+        mState = idle;
+        mFail = pathInterrupted;
+        std::stack<Vector3DInt> s;
+        mPlannedPosititions.swap(s);
       }
       mTimer.start();
     }
+  } else {
+    mState = idle;
   }
 }
 
-bool DorfWalker::isDone() { return mPlannedPosititions.empty(); }
+bool DorfWalker::isCalculating() const { return mState == calculatingPath; }
+bool DorfWalker::isWalking() const { return mState == walking; }
+bool DorfWalker::isIdle() const { return mState == idle; }
+bool DorfWalker::hasFailed() const { return mFail != noFailure; }
 
-bool DorfWalker::generateNewPath(const Vector3DInt& from,
-                                 const Vector3DInt& to) {
-  mTimer.start();
-  return Astar().getPath(from, to, mGridMap, mPlannedPosititions);
+void DorfWalker::startNewPath(const Vector3DInt& to) {
+  mAstar = std::make_unique<IncrementalAstar>(mGridActor.getCurrentPos(), to,
+                                              mGridMap);
+  mGoal = to;
+  mState = calculatingPath;
+  mFail = noFailure;
+}
+
+void DorfWalker::calculateNewPath() {
+  ASSERT(mAstar.get(), "Must call startNewPath first");
+  mAstar->calculatePath();
+  if (mAstar->isDone()) {
+    if (mAstar->foundPath()) {
+      mAstar->getPath(mPlannedPosititions);
+      mAstar.reset();
+      mState = walking;
+    } else {
+      mState = idle;
+      mFail = noPathFound;
+    }
+  }
 }

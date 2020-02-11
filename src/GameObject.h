@@ -65,6 +65,7 @@ class GameObject {
   void destroy();
   GAMEOBJECT_ID id() const;
   std::string& name();
+  const std::string& name() const;
 
  private:
   friend class Engine;

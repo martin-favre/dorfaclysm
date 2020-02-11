@@ -7,7 +7,7 @@
 
 class MineJob : public IJob {
  public:
-  MineJob(GameObject& user, std::unique_ptr<MiningRequest>&& request);
+  MineJob(GridActor& user, std::unique_ptr<MiningRequest>&& request);
   bool work() override;
 
  private:

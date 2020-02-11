@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Vector3DInt.h"
+#include "VisibleList.h"
 class Block;
 class MiningRequest {
  public:
@@ -10,16 +11,19 @@ class MiningRequest {
   Block &getBlock();
   bool isValid() const;
   const Vector3DInt &getPos() const;
-  bool operator==(const MiningRequest& other); 
+  bool operator==(const MiningRequest &other);
+
  private:
   const std::weak_ptr<Block> mTarget;
   const Vector3DInt mPos;
 };
 
-class MiningRequestPool {
+class MiningRequestPool : public VisibleList<MiningRequest> {
  public:
   static void addRequest(std::unique_ptr<MiningRequest> &&job);
   static const std::vector<std::unique_ptr<MiningRequest>> &getJobs();
+  static bool hasRequests();
+  static std::unique_ptr<MiningRequest> getClosestTo(const Vector3DInt &pos);
   static std::unique_ptr<MiningRequest> claimRequest(
       std::vector<std::unique_ptr<MiningRequest>>::const_iterator whichJob);
 

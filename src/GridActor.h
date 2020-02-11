@@ -1,35 +1,22 @@
 #pragma once
 #include "Block.h"
+#include "Component.h"
 #include "GridMap.h"
 
-class GridActor {
+class GridActor : public Component {
  public:
-  GridActor(const std::string& name)
-      : mName(name), mGridMap(GridMap::getActiveMap()) {}
+  GridActor(GameObject& gObj);
 
-  void moveFromTo(const Vector3DInt& oldPos, const Vector3DInt& newPos) {
-    mGridMap.unregisterGridActorAt(oldPos, this);
-    mGridMap.registerGridActorAt(newPos, this);
-    mOldPos = newPos;
-  }
+  const Vector3DInt& getCurrentPos() const;
 
-  void update(const Vector3DInt& ownerPos) {
-    if (ownerPos != mOldPos) {
-      moveFromTo(mOldPos, ownerPos);
-    }
-  }
+  void moveTo(const Vector3DInt& newPos);
 
-  void setup(const Vector3DInt& ownerPos) {
-    mGridMap.registerGridActorAt(ownerPos, this);
-    mOldPos = ownerPos;
-  }
+  void setup() override;
 
-  void teardown() { mGridMap.unregisterGridActorAt(mOldPos, this); }
+  void teardown() override;
 
-  inline const std::string& getName() const { return mName; }
+  const std::string& getName() const;
 
  private:
-  Vector3DInt mOldPos;
-  const std::string mName;
   GridMap& mGridMap;
 };

@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <functional>
+#include <limits>
+
 #include "Block.h"
 #include "GridMap.h"
 
@@ -36,6 +38,27 @@ void MiningRequestPool::addRequest(std::unique_ptr<MiningRequest> &&job) {
 const std::vector<std::unique_ptr<MiningRequest>>
     &MiningRequestPool::getJobs() {
   return mJobs;
+}
+
+bool MiningRequestPool::hasRequests() { return mJobs.size(); }
+
+std::unique_ptr<MiningRequest> MiningRequestPool::getClosestTo(
+    const Vector3DInt &pos)
+
+{
+  double smallestDistance = DBL_MAX;
+  std::vector<std::unique_ptr<MiningRequest>>::iterator smallestIndx;
+  for (auto it = mJobs.begin(); it != mJobs.end(); ++it) {
+    Vector3DInt diff = pos - (*it)->getPos();
+    double dist = diff.squared_magnitude();
+    if (dist < smallestDistance) {
+      smallestIndx = it;
+      smallestDistance = dist;
+    }
+  }
+  std::unique_ptr<MiningRequest> job = std::move(*smallestIndx);
+  mJobs.erase(smallestIndx);
+  return job;
 }
 
 std::unique_ptr<MiningRequest> MiningRequestPool::claimRequest(

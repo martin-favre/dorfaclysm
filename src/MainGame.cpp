@@ -9,6 +9,7 @@
 #include "Engine.h"
 #include "Font.h"
 #include "FpsCounter.h"
+#include "GridActor.h"
 #include "GridMap.h"
 #include "GridMapRenderer.h"
 #include "JobRenderer.h"
@@ -22,7 +23,6 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
-#include "GridActor.h"
 
 void foo() {
   int mapSize = 64;
@@ -80,17 +80,19 @@ void foo() {
     gObj.setRenderDepth(RenderDepth::GUI);
   }
   {
-      for (int i = 0; i < 50; ++i) {
-        GameObject& gObj = Engine::addGameObject<GameObject>();
-        gObj.addComponent<DorfController>();
-        gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
-            Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
-        gObj.setScale({2, 2});
-        gObj.setPosition({0, 0, 1});
-        gObj.setRenderDepth(RenderDepth::Actors);
-
-      }
-  } {
+    for (int i = 0; i < 50; ++i) {
+      GameObject& gObj = Engine::addGameObject<GameObject>();
+      gObj.addComponent<DorfController>();
+      gObj.addComponent<GridActor>();
+      gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
+          Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
+      gObj.setScale({2, 2});
+      gObj.setPosition({0, 0, 1});
+      gObj.setRenderDepth(RenderDepth::Actors);
+      gObj.name() = "Dorf";
+    }
+  }
+  {
       // GameObject& gObj = Engine::addGameObject<GameObject>();
       // gObj.addComponent<DrawLineComponent>();
       // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);

@@ -6,7 +6,7 @@
 
 class WalkRandomlyJob : public IJob {
  public:
-  WalkRandomlyJob(GameObject& user);
+  WalkRandomlyJob(GridActor& user);
   bool work() override;
 
  private:

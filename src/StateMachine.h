@@ -21,6 +21,13 @@ class State {
   bool mMachineTerminated{false};
 };
 
+template <class T, class... Args>
+inline std::unique_ptr<T> transitTo(Args&&... args) {
+  return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+inline std::unique_ptr<State> noTransition() { return nullptr; }
+
 class StateMachine {
  public:
   StateMachine(std::unique_ptr<State>&& initialState)

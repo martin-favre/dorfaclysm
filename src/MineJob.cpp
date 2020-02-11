@@ -1,20 +1,31 @@
 #include "MineJob.h"
 
 #include "Block.h"
-#include "GameObject.h"
+#include "GridActor.h"
 #include "GridMap.h"
 #include "GridMapHelpers.h"
+#include "MiningRequestPool.h"
 
 class WalkingState : public State {
  public:
-  WalkingState(GameObject& user, MiningRequest& request);
-  void onEntry() override;
+  WalkingState(GridActor& user, MiningRequest& request)
+      : mRequest(request), mWalker(user, 100) {}
+  void onEntry() override {
+    GridMap& map = GridMap::getActiveMap();
+    Vector3DInt movePos;
+    bool success = GridMapHelpers::getClosestFreePositionTo(
+        map, mRequest.getPos(), movePos);
+    if (success) {
+      mWalker.startNewPath(movePos);
+    } else {
+      terminateMachine();
+    }
+  }
   std::unique_ptr<State> onDuring() override;
 
  private:
-  DorfWalker mWalker{200};
-  GameObject& mUser;
   MiningRequest& mRequest;
+  DorfWalker mWalker;
 };
 
 class MiningState : public State {
@@ -31,34 +42,23 @@ std::unique_ptr<State> MiningState::onDuring() {
     GridMap::getActiveMap().removeBlockAt(mRequest.getPos());
   }
   terminateMachine();
-  return nullptr;
+  return noTransition();
 }
 
-WalkingState::WalkingState(GameObject& user, MiningRequest& request)
-    : mUser(user), mRequest(request) {}
-
-void WalkingState::onEntry() {
-  GridMap& map = GridMap::getActiveMap();
-  Vector3DInt movePos;
-  bool success =
-      GridMapHelpers::getClosestFreePositionTo(map, mRequest.getPos(), movePos);
-  success = success && mWalker.generateNewPath(mUser.getPosition(), movePos);
-  if (!success) {
-    terminateMachine();
-  }
-}
 std::unique_ptr<State> WalkingState::onDuring() {
-  if (mWalker.isDone()) {
-    return std::make_unique<MiningState>(mRequest);
-  } else {
-    Vector3DInt pos = mUser.getPosition();
-    mWalker.walkUpdate(pos);
-    mUser.setPosition(pos);
-    return nullptr;
+  mWalker.update();
+  if (mWalker.isIdle()) {
+    if (!mWalker.hasFailed()) {
+      return transitTo<MiningState>(mRequest);
+    } else {
+      terminateMachine();
+      return noTransition();
+    }
   }
+  return noTransition();
 }
 
-MineJob::MineJob(GameObject& user, std::unique_ptr<MiningRequest>&& request)
+MineJob::MineJob(GridActor& user, std::unique_ptr<MiningRequest>&& request)
     : mRequest(std::move(request)),
       mStateMachine(std::make_unique<WalkingState>(user, *mRequest)) {}
 

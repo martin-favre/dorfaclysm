@@ -49,3 +49,4 @@ void GameObject::destroy() { Engine::removeGameObject(this); }
 GAMEOBJECT_ID
 GameObject::id() const { return mId; }
 std::string& GameObject::name() { return mName; }
+const std::string& GameObject::name() const { return mName; }

@@ -1,5 +1,7 @@
 #include "DorfController.h"
 
+#include <memory>
+
 #include "Astar.h"
 #include "GameObject.h"
 #include "GridMap.h"
@@ -9,30 +11,34 @@
 #include "MineJob.h"
 #include "MiningRequestPool.h"
 #include "WalkRandomlyJob.h"
-DorfController::DorfController(GameObject& gObj)
-    : Component(gObj), mJob(std::make_unique<WalkRandomlyJob>(owner())) {}
+DorfController::DorfController(GameObject& gObj) : Component(gObj) {}
 
 void DorfController::setup() {
   const Vector3DInt& pos = owner().getPosition();
-  mGridActor.setup(pos);
+  mGridActor = owner().getComponent<GridActor>();
+  if (mGridActor) {
+    mJob = std::make_unique<WalkRandomlyJob>(*mGridActor);
+  }
   GridMapHelpers::exploreMap(GridMap::getActiveMap(), pos);
 }
-void DorfController::teardown() { mGridActor.teardown(); }
+
 void DorfController::getNewJob() {
-  auto& jobs = MiningRequestPool::getJobs();
-  if (jobs.size() > 0) {
-    mJob = std::make_unique<MineJob>(owner(), MiningRequestPool::claimRequest(jobs.begin()));
+  if (!mGridActor) return;
+  if (MiningRequestPool::hasRequests()) {
+    mJob = std::make_unique<MineJob>(
+        *mGridActor, MiningRequestPool::getClosestTo(owner().getPosition()));
   } else {
-    mJob = std::make_unique<WalkRandomlyJob>(owner());
+    mJob = std::make_unique<WalkRandomlyJob>(*mGridActor);
   }
 }
 
 void DorfController::update() {
-  ASSERT(mJob != nullptr, "job turned to nullptr");
-  bool done = mJob->work();
-  if (done) {
+  if (!mJob) {
     getNewJob();
+  } else {
+    bool done = mJob->work();
+    if (done) {
+      mJob.reset();
+    }
   }
-
-  mGridActor.update(owner().getPosition());
 }

@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/out/Vidya",
             // "program": "${workspaceFolder}/testBin/astar_test",
-            // "program": "${workspaceFolder}/testBin/GridMapHelpers_test",
+            // "program": "${workspaceFolder}/testBin/IncrementalAstar_test",
             
             "args": [],
             "stopAtEntry": false,
