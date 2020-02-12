@@ -17,7 +17,6 @@ class DorfWalker {
   Vector3DInt getNextPlannedPosition();
   void update();
   void startNewPath(const Vector3DInt& to);
-  // WalkerState getState() const;
   bool isCalculating() const;
   bool isWalking() const;
   bool isIdle() const;

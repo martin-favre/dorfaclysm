@@ -20,8 +20,7 @@
 ✔ Bug: WorldItem does not work at all @done(20-01-18 15:03)
 ✔ Rework jobsystem @done(20-02-02 14:03)
 ✔ Render jobs again @done(20-02-12 19:02)
-
-
+✔ Do not throw away jobs when they can't be completed @done(20-02-12 19:55)
 
 ☐ Make mined rocks drop items
     Items in world are contained in an itemcontainer
@@ -45,9 +44,6 @@
 
 ☐ Make block last more than one hit
 
-☐ Do not throw away jobs when they can't be completed
-    Certain jobs can be marked as cancelled.
-    Mining jobs have to filter out unreachable blocks somehow.
 
 ☐ Be able to zoom in/out of the map
     Quite messy

@@ -11,6 +11,5 @@ class MineJob : public IJob {
   bool work() override;
 
  private:
-  std::shared_ptr<MiningRequest> mRequest;
   StateMachine mStateMachine;
 };

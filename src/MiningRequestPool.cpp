@@ -5,6 +5,7 @@
 #include <limits>
 
 #include "Block.h"
+#include "DeltaPositions.h"
 #include "GridMap.h"
 
 std::vector<std::shared_ptr<MiningRequest>> MiningRequestPool::mRequests;
@@ -25,24 +26,45 @@ bool MiningRequest::operator==(const MiningRequest &other) {
   return same;
 }
 
+bool isValidRequest(const MiningRequest &req) {
+  const GridMap &map = GridMap::getActiveMap();
+  for (const auto &delta : DELTA_POSITIONS_HORIZONTAL) {
+    Vector3DInt pos = req.getPos() + delta;
+    if (map.isPosInMap(pos)) {
+      if (map.isPosFree(pos)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 void MiningRequestPool::addRequest(std::unique_ptr<MiningRequest> &&job) {
   ASSERT(job.get(), "Received null request");
-  // avoid duplicates
+  cleanHandedoutRequests();
   auto comper = [&job](std::shared_ptr<MiningRequest> &req) {
     return *job == *req;
   };
+
+  auto comperHandOut = [&job](std::weak_ptr<MiningRequest> &req) {
+    return *job == *req.lock();
+  };
+
   auto it = std::find_if(mRequests.begin(), mRequests.end(), comper);
+
   if (it == mRequests.end()) {
-    mRequests.emplace_back(std::move(job));
+    auto it = std::find_if(mHandedOutRequests.begin(), mHandedOutRequests.end(),
+                           comperHandOut);
+    if (it == mHandedOutRequests.end()) {
+      mRequests.emplace_back(std::move(job));
+    }
   }
 }
 
 bool MiningRequestPool::hasRequests() { return mRequests.size(); }
 
 std::shared_ptr<MiningRequest> MiningRequestPool::getClosestTo(
-    const Vector3DInt &pos)
-
-{
+    const Vector3DInt &pos) {
   double smallestDistance = DBL_MAX;
   std::vector<std::shared_ptr<MiningRequest>>::iterator smallestIndx;
   for (auto it = mRequests.begin(); it != mRequests.end(); ++it) {
@@ -66,6 +88,10 @@ const std::vector<std::shared_ptr<MiningRequest>>
 }
 const std::vector<std::weak_ptr<MiningRequest>>
     &MiningRequestPool::getClaimedRequests() {
+  cleanHandedoutRequests();
+  return mHandedOutRequests;
+}
+void MiningRequestPool::cleanHandedoutRequests() {
   for (auto it = mHandedOutRequests.begin(); it != mHandedOutRequests.end();) {
     if (it->expired()) {
       it = mHandedOutRequests.erase(it);
@@ -73,6 +99,18 @@ const std::vector<std::weak_ptr<MiningRequest>>
       ++it;
     }
   }
-
-  return mHandedOutRequests;
+}
+void MiningRequestPool::returnRequest(
+    std::shared_ptr<MiningRequest> &&request) {
+  cleanHandedoutRequests();
+  for (auto it = mHandedOutRequests.begin(); it != mHandedOutRequests.end();
+       ++it) {
+    {
+      if (*it->lock() == *request) {
+        mHandedOutRequests.erase(it);
+        break;
+      }
+    }
+  }
+  mRequests.emplace_back(std::move(request));
 }

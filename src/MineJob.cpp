@@ -8,38 +8,39 @@
 
 class WalkingState : public State {
  public:
-  WalkingState(GridActor& user, MiningRequest& request)
-      : mRequest(request), mWalker(user, 100) {}
+  WalkingState(GridActor& user, std::shared_ptr<MiningRequest>&& request)
+      : mRequest(std::move(request)), mWalker(user, 100) {}
   void onEntry() override {
     GridMap& map = GridMap::getActiveMap();
     Vector3DInt movePos;
     bool success = GridMapHelpers::getClosestFreePositionTo(
-        map, mRequest.getPos(), movePos);
+        map, mRequest->getPos(), movePos);
     if (success) {
       mWalker.startNewPath(movePos);
     } else {
+      MiningRequestPool::returnRequest(std::move(mRequest));
       terminateMachine();
     }
   }
   std::unique_ptr<State> onDuring() override;
 
  private:
-  MiningRequest& mRequest;
+  std::shared_ptr<MiningRequest> mRequest;
   DorfWalker mWalker;
 };
 
 class MiningState : public State {
  public:
-  MiningState(MiningRequest& request) : mRequest(request) {}
+  MiningState(std::shared_ptr<MiningRequest>&& request) : mRequest(request) {}
   std::unique_ptr<State> onDuring() override;
 
  private:
-  MiningRequest& mRequest;
+  std::shared_ptr<MiningRequest> mRequest;
 };
 
 std::unique_ptr<State> MiningState::onDuring() {
-  if (mRequest.isValid()) {
-    GridMap::getActiveMap().removeBlockAt(mRequest.getPos());
+  if (mRequest->isValid()) {
+    GridMap::getActiveMap().removeBlockAt(mRequest->getPos());
   }
   terminateMachine();
   return noTransition();
@@ -49,8 +50,11 @@ std::unique_ptr<State> WalkingState::onDuring() {
   mWalker.update();
   if (mWalker.isIdle()) {
     if (!mWalker.hasFailed()) {
-      return transitTo<MiningState>(mRequest);
+      return transitTo<MiningState>(std::move(mRequest));
     } else {
+      if (mWalker.getFailReason() == DorfWalker::noPathFound) {
+        MiningRequestPool::returnRequest(std::move(mRequest));
+      }
       terminateMachine();
       return noTransition();
     }
@@ -59,8 +63,8 @@ std::unique_ptr<State> WalkingState::onDuring() {
 }
 
 MineJob::MineJob(GridActor& user, std::shared_ptr<MiningRequest>&& request)
-    : mRequest(std::move(request)),
-      mStateMachine(std::make_unique<WalkingState>(user, *mRequest)) {}
+    : mStateMachine(std::make_unique<WalkingState>(
+          user, std::forward<std::shared_ptr<MiningRequest>>(request))) {}
 
 bool MineJob::work() {
   mStateMachine.update();

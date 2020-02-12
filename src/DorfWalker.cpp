@@ -62,6 +62,8 @@ void DorfWalker::startNewPath(const Vector3DInt& to) {
   mFail = noFailure;
 }
 
+DorfWalker::FailureReason DorfWalker::getFailReason() const { return mFail; }
+
 void DorfWalker::calculateNewPath() {
   ASSERT(mAstar.get(), "Must call startNewPath first");
   mAstar->calculatePath();
