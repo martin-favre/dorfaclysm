@@ -7,10 +7,10 @@
 
 class MineJob : public IJob {
  public:
-  MineJob(GridActor& user, std::unique_ptr<MiningRequest>&& request);
+  MineJob(GridActor& user, std::shared_ptr<MiningRequest>&& request);
   bool work() override;
 
  private:
-  std::unique_ptr<MiningRequest> mRequest;
+  std::shared_ptr<MiningRequest> mRequest;
   StateMachine mStateMachine;
 };

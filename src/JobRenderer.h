@@ -4,34 +4,35 @@
 #include "Component.h"
 #include "GraphicsManager.h"
 #include "GridMapHelpers.h"
+#include "MiningRequestPool.h"
 #include "SpriteLoader.h"
+
 class JobRenderer : public Component {
  public:
   JobRenderer(GameObject& gObj)
-      : Component(gObj)
-  //   mGridMap(GridMap::getActiveMap()),
-  //   mCam(Camera::get()),
-  //   mSprite(SpriteLoader::loadSprite(Paths::BROWN_SQUARE))
+      : Component(gObj),
+        mGridMap(GridMap::getActiveMap()),
+        mCam(Camera::get()),
+        mSprite(SpriteLoader::loadSprite(Paths::BROWN_SQUARE)) {}
 
-  {}
-
-  void renderJob(const Vector3DInt& tilePos) {
-    (void)tilePos;
-    // const Block& block = mGridMap.getBlockAt(tilePos);
-    // if (block.getJob() != jobTypeUnset) {
-    //   Vector3DInt renderPos = mCam.tilePosToRenderPos(tilePos);
-    //   renderPos-=mCam.getPosition();
-    //   GraphicsManager::renderTexture(*mSprite, renderPos);
-    // }
-  }
   void render() override {
-    // std::function<void(const Vector3DInt&)> foo =
-    //     [this](const Vector3DInt& pos) { this->renderJob(pos); };
-    // GridMapHelpers::doToEachBlockInScreen(mGridMap, mCam, foo);
+    for (const auto& req : MiningRequestPool::getRequests()) {
+      Vector3DInt pos = req->getPos();
+      pos = mCam.tilePosToRenderPos(pos);
+      pos -= mCam.getPosition();
+      GraphicsManager::renderTexture(*mSprite, pos);
+    }
+    for (const auto& req : MiningRequestPool::getClaimedRequests()) {
+      ASSERT(!req.expired(), "weak_ptr expired");
+      Vector3DInt pos = req.lock()->getPos();
+      pos = mCam.tilePosToRenderPos(pos);
+      pos -= mCam.getPosition();
+      GraphicsManager::renderTexture(*mSprite, pos);
+    }
   }
 
  private:
-  // const GridMap& mGridMap;
-  // const Camera& mCam;
-  // std::unique_ptr<Sprite> mSprite;
+  const GridMap& mGridMap;
+  const Camera& mCam;
+  std::unique_ptr<Sprite> mSprite;
 };

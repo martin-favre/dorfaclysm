@@ -21,12 +21,12 @@ class MiningRequest {
 class MiningRequestPool : public VisibleList<MiningRequest> {
  public:
   static void addRequest(std::unique_ptr<MiningRequest> &&job);
-  static const std::vector<std::unique_ptr<MiningRequest>> &getJobs();
   static bool hasRequests();
-  static std::unique_ptr<MiningRequest> getClosestTo(const Vector3DInt &pos);
-  static std::unique_ptr<MiningRequest> claimRequest(
-      std::vector<std::unique_ptr<MiningRequest>>::const_iterator whichJob);
+  static std::shared_ptr<MiningRequest> getClosestTo(const Vector3DInt &pos);
+  static const std::vector<std::shared_ptr<MiningRequest>>& getRequests();
+  static const std::vector<std::weak_ptr<MiningRequest>>& getClaimedRequests();
 
  private:
-  static std::vector<std::unique_ptr<MiningRequest>> mJobs;
+  static std::vector<std::shared_ptr<MiningRequest>> mRequests;
+  static std::vector<std::weak_ptr<MiningRequest>> mHandedOutRequests;
 };

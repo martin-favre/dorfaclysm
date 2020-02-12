@@ -19,6 +19,9 @@
 ✔ Visualize when you are inside tile, and when you're above. @done(20-01-18 14:51)
 ✔ Bug: WorldItem does not work at all @done(20-01-18 15:03)
 ✔ Rework jobsystem @done(20-02-02 14:03)
+✔ Render jobs again @done(20-02-12 19:02)
+
+
 
 ☐ Make mined rocks drop items
     Items in world are contained in an itemcontainer

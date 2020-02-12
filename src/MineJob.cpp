@@ -58,7 +58,7 @@ std::unique_ptr<State> WalkingState::onDuring() {
   return noTransition();
 }
 
-MineJob::MineJob(GridActor& user, std::unique_ptr<MiningRequest>&& request)
+MineJob::MineJob(GridActor& user, std::shared_ptr<MiningRequest>&& request)
     : mRequest(std::move(request)),
       mStateMachine(std::make_unique<WalkingState>(user, *mRequest)) {}
 
