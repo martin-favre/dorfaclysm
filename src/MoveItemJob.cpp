@@ -10,15 +10,13 @@
 #include "WalkingState.h"
 class FetchWalkingState : public WalkingState {
  public:
-  FetchWalkingState(GridActor& user, std::shared_ptr<MoveItemRequest>&& request)
-      : WalkingState(user, 100), mUser(user), mRequest(std::move(request)) {}
-  Vector3DInt getTargetPos() override {
-    Vector3DInt targetPos;
-    bool success = ItemPool::whereIsClosestItem(mUser.getCurrentPos(),
-                                                targetPos, mRequest->getType());
+  FetchWalkingState(GridActor& user, std::shared_ptr<MoveItemRequest> request)
+      : WalkingState(user, 100), mUser(user), mRequest(request) {
+    bool success = ItemPool::whereIsClosestItem(
+        mUser.getCurrentPos(), mTargetPos, mRequest->getType());
     if (!success) onPathFindFail();
-    return targetPos;
   }
+  Vector3DInt getTargetPos() override { return mTargetPos; }
 
   std::unique_ptr<State> onReachedTarget() override;
   void onPathFindFail() override {
@@ -29,15 +27,16 @@ class FetchWalkingState : public WalkingState {
  private:
   GridActor& mUser;
   std::shared_ptr<MoveItemRequest> mRequest;
+  Vector3DInt mTargetPos;
 };
 
 class PlaceWalkingState : public WalkingState {
  public:
-  PlaceWalkingState(GridActor& user, std::shared_ptr<MoveItemRequest>&& request,
+  PlaceWalkingState(GridActor& user, std::shared_ptr<MoveItemRequest> request,
                     std::unique_ptr<Item>&& item)
       : WalkingState(user, 100),
         mUser(user),
-        mRequest(std::move(request)),
+        mRequest(request),
         mItem(std::move(item)) {}
   Vector3DInt getTargetPos() override { return mRequest->getPos(); }
 
@@ -79,9 +78,8 @@ std::unique_ptr<State> PlaceWalkingState::onReachedTarget() {
 }
 
 MoveItemJob::MoveItemJob(GridActor& user,
-                         std::shared_ptr<MoveItemRequest>&& request)
-    : mStateMachine(
-          std::make_unique<FetchWalkingState>(user, std::move(request))) {}
+                         std::shared_ptr<MoveItemRequest> request)
+    : mStateMachine(std::make_unique<FetchWalkingState>(user, request)) {}
 bool MoveItemJob::work() {
   mStateMachine.update();
   return mStateMachine.isTerminated();

@@ -1,9 +1,10 @@
 
 #pragma once
-#include <memory>
 #include <algorithm>
-#include "Vector3DInt.h"
 #include <list>
+#include <memory>
+
+#include "Vector3DInt.h"
 template <class T>
 class GenericRequestPool {
  public:
@@ -51,6 +52,7 @@ class GenericRequestPool {
   }
   void returnRequest(std::shared_ptr<T> &&request) {
     cleanHandedoutRequests();
+    ASSERT(request, "Return nullptr");
     for (auto it = mHandedOutRequests.begin(); it != mHandedOutRequests.end();
          ++it) {
       {

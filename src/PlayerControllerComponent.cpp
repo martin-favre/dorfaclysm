@@ -1,6 +1,9 @@
 #include "PlayerControllerComponent.h"
 
 #include "Block.h"
+#include "BlockBuildComponent.h"
+#include "BlockBuildObject.h"
+#include "BlockBuildingRequestPool.h"
 #include "Camera.h"
 #include "GameObject.h"
 #include "GridActor.h"
@@ -8,8 +11,8 @@
 #include "GridMapHelpers.h"
 #include "InputManager.h"
 #include "MiningRequestPool.h"
-#include "BlockBuildingRequestPool.h"
 #include "PlayerRequestType.h"
+#include "RockBlockItem.h"
 
 void PlayerControllerComponent::setup() {
   mTextComponent = owner().getComponent<TextComponent>();
@@ -55,8 +58,14 @@ void PlayerControllerComponent::handleClick() {
   } else {
     std::weak_ptr<Block> block = gridMap.getBlockPtrAt(mousePos);
     if (block.lock()->supportsJob(requestTypePlacing)) {
-      BlockBuildingRequestPool::getInstance().addRequest(
-          std::make_unique<BlockBuildingRequest>(block, mousePos));
+      for (const auto& actor : gridMap.getGridActorsAt(mousePos)) {
+        // if we're not already building here
+        if (actor->owner().getComponent<BlockBuildComponent>() != nullptr)
+          return;
+      }
+      GameObject& gObj =
+          Engine::addGameObject<BlockBuildObject>(getItemType<RockBlockItem>());
+      gObj.setPosition(mousePos);
     }
   }
 }

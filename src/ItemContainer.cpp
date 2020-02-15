@@ -1,5 +1,6 @@
 #include "ItemContainer.h"
 
+#include "Engine.h"
 #include "GameObject.h"
 #include "ItemPool.h"
 
@@ -11,14 +12,14 @@ void ItemContainer::addItem(std::unique_ptr<Item>&& item) {
   mItems.emplace_back(std::move(item));
 }
 
-std::unique_ptr<Item> ItemContainer::getItem(ItemType type)
-{
-  for(auto it = mItems.begin(); it != mItems.end(); ++it)
-  {
-    if((*it)->isType(type))
-    {
+std::unique_ptr<Item> ItemContainer::getItem(ItemType type) {
+  for (auto it = mItems.begin(); it != mItems.end(); ++it) {
+    if ((*it)->isType(type)) {
       std::unique_ptr<Item> item = std::move(*it);
       mItems.erase(it);
+      if (mItems.size() == 0) {
+        Engine::removeGameObject(&owner());
+      }
       return item;
     }
   }

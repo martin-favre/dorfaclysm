@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+
 #include "Helpers.h"
 
 class StateMachine;
@@ -35,7 +36,9 @@ class StateMachine {
   StateMachine(std::unique_ptr<State>&& initialState)
       : mActiveState(std::move(initialState)) {
     ASSERT(mActiveState != nullptr, "Received null first state");
-    mActiveState->onEntry();
+    if (!mActiveState->machineTerminated()) {
+      mActiveState->onEntry();
+    }
   }
 
   bool isTerminated() {
@@ -50,7 +53,9 @@ class StateMachine {
       if (nextState != nullptr) {
         mActiveState->onExit();
         mActiveState = std::move(nextState);
-        mActiveState->onEntry();
+        if (!mActiveState->machineTerminated()) {
+          mActiveState->onEntry();
+        }
       }
     }
   }

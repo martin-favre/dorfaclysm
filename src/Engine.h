@@ -2,11 +2,10 @@
 
 #include <limits>
 #include <map>
+#include <memory>
 #include <queue>
 #include <set>
 #include <vector>
-
-#include <memory>
 
 #include "GameObject.h"
 #include "Logging.h"
@@ -32,8 +31,24 @@ class Engine {
   static void teardown();
   static void start();
   static void stop();
-  template <class gameObjectType>
-  static gameObjectType& addGameObject();
+
+  template <typename gameObjType, class... Args>
+  static gameObjType& addGameObject(Args&&... args) {
+    GAMEOBJECT_ID id = Engine::mLatestGameobjectId;
+    std::unique_ptr<gameObjType> newObject =
+        std::make_unique<gameObjType>(id, std::forward<Args>(args)...);
+    if (Engine::mLatestGameobjectId >=
+        std::numeric_limits<unsigned long>::max()) {
+      Logging::log("Warning, gameobject id overflow");
+    }
+    gameObjType* out = newObject.get();
+    Engine::mGameobjectsToAdd.push(std::move(newObject));
+    Engine::mLatestGameobjectId++;
+    Logging::log("Added gameobject id " + std::to_string(id) + " type " +
+                 typeid(gameObjType).name());
+    if (!mRunning) putGameObjectsIntoWorld();
+    return *out;
+  }
   static void removeGameObject(GameObject* gObj);
   static size_t getGameObjectCount();
   static void registerScene(const std::string& name, void (*scenecreator)());
@@ -63,20 +78,3 @@ class Engine {
   static std::queue<std::unique_ptr<GameObject>> mGameobjectsToAdd;
   static std::set<GameObject*> mGameobjectsToRemove;
 };
-
-template <class gameObjectType>
-gameObjectType& Engine::addGameObject() {
-  GAMEOBJECT_ID id = Engine::mLatestGameobjectId;
-  std::unique_ptr<gameObjectType> newObject = std::make_unique<gameObjectType>(id);
-  if (Engine::mLatestGameobjectId >=
-      std::numeric_limits<unsigned long>::max()) {
-    Logging::log("Warning, gameobject id overflow");
-  }
-  gameObjectType* out = newObject.get();
-  Engine::mGameobjectsToAdd.push(std::move(newObject));
-  Engine::mLatestGameobjectId++;
-  Logging::log("Added gameobject id " + std::to_string(id) + " type " +
-               typeid(gameObjectType).name());
-  if (!mRunning) putGameObjectsIntoWorld();
-  return *out;
-}

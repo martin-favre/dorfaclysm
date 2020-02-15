@@ -7,11 +7,18 @@
 class ItemType {
  public:
   ItemType(const std::type_index& type) : mType(type) {}
-  inline bool operator==(const ItemType& other) const { return mType == other.mType; }
+  inline bool operator==(const ItemType& other) const {
+    return mType == other.mType;
+  }
 
  private:
   const std::type_index mType;
 };
+
+template <typename T>
+inline ItemType getItemType() {
+  return ItemType(typeid(T));
+}
 
 class Item {
  public:
@@ -20,8 +27,10 @@ class Item {
   const std::string& getDescription() const;
   const Sprite& getSprite() const;
   uint getWorth() const;
-  inline bool isType(const ItemType& type) const {return mType == type;}
-  inline bool sameItemType(const Item& other) const { return other.mType == mType; }
+  inline bool isType(const ItemType& type) const { return mType == type; }
+  inline bool sameItemType(const Item& other) const {
+    return other.mType == mType;
+  }
 
   // If true, then it also inherits from IPlaceableItem
   virtual bool isPlaceable() const = 0;

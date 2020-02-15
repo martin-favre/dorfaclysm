@@ -11,9 +11,9 @@
 #include "GridActor.h"
 #include "GridMapHelpers.h"
 #include "Helpers.h"
+#include "Item.h"
 #include "ItemContainer.h"
 #include "ItemContainerObject.h"
-#include "Item.h"
 #include "Logging.h"
 
 GridMap GridMap::mActiveMap;
@@ -95,9 +95,8 @@ bool GridMap::isBlockValid(const Vector3DInt& pos) const {
   return mBlocks[pos.z][pos.y][pos.x].get();
 }
 
-void GridMap::addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item)
-{
-  std::list<GridActor*>& actors = getGridActorsAt(pos);
+void GridMap::addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item) {
+  const std::list<GridActor*>& actors = getGridActorsAt(pos);
   ItemContainer* container{};
   for (const auto& actor : actors) {
     if (actor->getType() == GridActor::item) {
@@ -114,7 +113,6 @@ void GridMap::addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item)
   if (item) {
     container->addItem(std::move(item));
   }
-
 }
 
 void GridMap::removeBlockAt(const Vector3DInt& pos) {
@@ -143,11 +141,13 @@ std::list<GridActor*>& GridMap::getGridActorsAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to access out of bounds");
   return mGridActors[pos.z][pos.y][pos.x];
 }
+
 const std::list<GridActor*>& GridMap::getGridActorsAt(
     const Vector3DInt& pos) const {
   ASSERT(isPosInMap(pos), "Trying to access out of bounds");
   return mGridActors[pos.z][pos.y][pos.x];
 }
+
 void GridMap::registerGridActorAt(const Vector3DInt& pos, GridActor* item) {
   std::list<GridActor*>& items = getGridActorsAt(pos);
   items.emplace_back(item);

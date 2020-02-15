@@ -65,6 +65,7 @@ class GridMap {
 
  private:
   bool isBlockValid(const Vector3DInt& pos) const;
+
   GridMap() = default;
   std::vector<std::vector<std::vector<std::shared_ptr<Block>>>> mBlocks;
   std::vector<std::vector<std::vector<std::list<GridActor*>>>> mGridActors;
