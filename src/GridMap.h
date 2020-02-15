@@ -13,6 +13,8 @@ class Block;
  * Use isPosInMap.
  */
 class GridActor;
+class Item;
+
 class GridMap {
  public:
   GridMap(const GridMap&) = delete;
@@ -29,7 +31,7 @@ class GridMap {
 
   void removeBlockAt(const Vector3DInt& pos);
   void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>&& newBlock);
- 
+  void addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item);
   inline std::weak_ptr<Block> getBlockPtrAt(const Vector3DInt& pos) {
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");

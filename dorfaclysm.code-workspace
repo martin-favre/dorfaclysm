@@ -60,7 +60,8 @@
 			"typeinfo": "cpp",
 			"bit": "cpp",
 			"list": "cpp",
-			"execution": "cpp"
+			"execution": "cpp",
+			"typeindex": "cpp"
 		},
 		"cmakeExplorer.buildDir": "build",
 		"catch2TestExplorer.executables": "testBin/*",

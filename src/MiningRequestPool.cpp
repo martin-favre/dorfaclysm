@@ -8,16 +8,20 @@
 #include "DeltaPositions.h"
 #include "GridMap.h"
 
-std::vector<std::shared_ptr<MiningRequest>> MiningRequestPool::mRequests;
-std::vector<std::weak_ptr<MiningRequest>> MiningRequestPool::mHandedOutRequests;
-
 MiningRequest::MiningRequest(std::weak_ptr<Block> target,
                              const Vector3DInt &pos)
-    : mTarget(target), mPos(pos) {}
-Block &MiningRequest::getBlock() { return *mTarget.lock(); }
+    : mTarget(target), mPos(pos) {
+  std::cout << "Echh" << std::endl;
+}
+Block &MiningRequest::getBlock() {
+  ASSERT(isValid(), "Check if block is valid before calling");
+  return *mTarget.lock();
+}
 bool MiningRequest::isValid() const { return !mTarget.expired(); }
 const Vector3DInt &MiningRequest::getPos() const { return mPos; }
-bool MiningRequest::operator==(const MiningRequest &other) {
+bool MiningRequest::operator==(const MiningRequest &other) const {
+  ASSERT(isValid(), "Check if block is valid before calling");
+  ASSERT(other.isValid(), "Check if block is valid before calling");
   const bool same = other.mTarget.lock() == mTarget.lock();
   if (same) {
     ASSERT(other.mPos == mPos,
@@ -26,6 +30,7 @@ bool MiningRequest::operator==(const MiningRequest &other) {
   return same;
 }
 
+#if 0
 bool isValidRequest(const MiningRequest &req) {
   const GridMap &map = GridMap::getActiveMap();
   for (const auto &delta : DELTA_POSITIONS_HORIZONTAL) {
@@ -38,6 +43,8 @@ bool isValidRequest(const MiningRequest &req) {
   }
   return false;
 }
+std::vector<std::shared_ptr<MiningRequest>> MiningRequestPool::mRequests;
+std::vector<std::weak_ptr<MiningRequest>> MiningRequestPool::mHandedOutRequests;
 
 void MiningRequestPool::addRequest(std::unique_ptr<MiningRequest> &&job) {
   ASSERT(job.get(), "Received null request");
@@ -114,3 +121,7 @@ void MiningRequestPool::returnRequest(
   }
   mRequests.emplace_back(std::move(request));
 }
+
+#endif
+MiningRequestPool MiningRequestPool::mInstance;
+MiningRequestPool &MiningRequestPool::getInstance() { return mInstance; }

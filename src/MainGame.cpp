@@ -23,6 +23,7 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
+#include "ItemContainerObject.h"
 
 void foo() {
   int mapSize = 64;
@@ -83,7 +84,7 @@ void foo() {
     for (int i = 0; i < 50; ++i) {
       GameObject& gObj = Engine::addGameObject<GameObject>();
       gObj.addComponent<DorfController>();
-      gObj.addComponent<GridActor>();
+      gObj.addComponent<GridActor>(GridActor::dorf);
       gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
           Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
       gObj.setScale({2, 2});

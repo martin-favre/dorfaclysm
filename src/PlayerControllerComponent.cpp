@@ -8,7 +8,9 @@
 #include "GridMapHelpers.h"
 #include "InputManager.h"
 #include "MiningRequestPool.h"
+#include "BlockBuildingRequestPool.h"
 #include "PlayerRequestType.h"
+
 void PlayerControllerComponent::setup() {
   mTextComponent = owner().getComponent<TextComponent>();
 }
@@ -29,6 +31,7 @@ void PlayerControllerComponent::renderText() {
         ASSERT(comp, "Received null GridActor ptr");
         outStr += '\n' + comp->getName();
       }
+      outStr += mMode == Mode::mine ? "\nMining" : "\nPlacing";
       mTextComponent->setText(outStr);
     }
   }
@@ -39,15 +42,22 @@ void PlayerControllerComponent::handleClick() {
   mousePos += Camera::get().getPosition();
   mousePos = Camera::renderPosToTilePos(mousePos);
   GridMap& gridMap = GridMap::getActiveMap();
+  if (!gridMap.isPosInMap(mousePos)) return;
 
-  if (gridMap.isPosInMap(mousePos)) {
+  if (mMode == Mode::mine) {
     std::weak_ptr<Block> block = gridMap.getBlockPtrAt(mousePos);
     if (block.lock()->supportsJob(requestTypeMining)) {
-      MiningRequestPool::addRequest(
+      MiningRequestPool::getInstance().addRequest(
           std::make_unique<MiningRequest>(block, mousePos));
     }
 
     GridMapHelpers::exploreMap(gridMap, mousePos);
+  } else {
+    std::weak_ptr<Block> block = gridMap.getBlockPtrAt(mousePos);
+    if (block.lock()->supportsJob(requestTypePlacing)) {
+      BlockBuildingRequestPool::getInstance().addRequest(
+          std::make_unique<BlockBuildingRequest>(block, mousePos));
+    }
   }
 }
 
@@ -55,5 +65,8 @@ void PlayerControllerComponent::update() {
   renderText();
   if (InputManager::getMouseDown(1)) {
     handleClick();
+  }
+  if (InputManager::getKeyDown(SDL_SCANCODE_TAB)) {
+    mMode = mMode == Mode::mine ? Mode::place : Mode::mine;
   }
 }

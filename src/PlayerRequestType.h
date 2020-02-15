@@ -1,3 +1,3 @@
 
 #pragma once
-enum PlayerRequestType { requestTypeUnknown, requestTypeMining };
+enum PlayerRequestType { requestTypeUnknown, requestTypeMining, requestTypePlacing};

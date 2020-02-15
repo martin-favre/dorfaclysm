@@ -5,11 +5,17 @@
 #include "AirBlock.h"
 #include "Block.h"
 #include "DeltaPositions.h"
+#include "Engine.h"
+#include "GameObject.h"
 #include "GrassBlock.h"
+#include "GridActor.h"
 #include "GridMapHelpers.h"
 #include "Helpers.h"
+#include "ItemContainer.h"
+#include "ItemContainerObject.h"
+#include "Item.h"
 #include "Logging.h"
-#include "GridActor.h"
+
 GridMap GridMap::mActiveMap;
 
 template <class T>
@@ -89,9 +95,35 @@ bool GridMap::isBlockValid(const Vector3DInt& pos) const {
   return mBlocks[pos.z][pos.y][pos.x].get();
 }
 
+void GridMap::addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item)
+{
+  std::list<GridActor*>& actors = getGridActorsAt(pos);
+  ItemContainer* container{};
+  for (const auto& actor : actors) {
+    if (actor->getType() == GridActor::item) {
+      container = actor->owner().getComponent<ItemContainer>();
+    }
+  }
+
+  if (!container) {
+    GameObject& gObj = Engine::addGameObject<ItemContainerObject>();
+    container = gObj.getComponent<ItemContainer>();
+    gObj.setPosition(pos);
+  }
+  ASSERT(container, "Should not be null");
+  if (item) {
+    container->addItem(std::move(item));
+  }
+
+}
+
 void GridMap::removeBlockAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
   ASSERT(isBlockValid(pos), "Block ptr is null");
+  const Block& block = getBlockAt(pos);
+  if (block.spawnsItem()) {
+    addItemAt(pos, block.getItem());
+  }
   mBlocks[pos.z][pos.y][pos.x] = std::make_shared<AirBlock>();
   GridMapHelpers::exploreMap(*this, pos);
 }

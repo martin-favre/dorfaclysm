@@ -2,8 +2,8 @@
 
 #include "GameObject.h"
 
-GridActor::GridActor(GameObject& gObj)
-    : Component(gObj), mGridMap(GridMap::getActiveMap()) {}
+GridActor::GridActor(GameObject& gObj, ActorType type)
+    : Component(gObj), mType(type), mGridMap(GridMap::getActiveMap()) {}
 
 const Vector3DInt& GridActor::getCurrentPos() const {
   return owner().getPosition();
@@ -24,3 +24,5 @@ void GridActor::teardown() {
 }
 
 const std::string& GridActor::getName() const { return owner().name(); }
+
+GridActor::ActorType GridActor::getType() const { return mType; }

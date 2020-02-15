@@ -2,11 +2,12 @@
 #include "IJob.h"
 #include "StateMachine.h"
 
+class BlockBuildingRequest;
 class GridActor;
 class MiningRequest;
-class MineJob : public IJob {
+class BlockBuildingJob : public IJob {
  public:
-  MineJob(GridActor& user, std::shared_ptr<MiningRequest> request);
+  BlockBuildingJob(GridActor& user, std::shared_ptr<BlockBuildingRequest>&& request);
   bool work() override;
 
  private:

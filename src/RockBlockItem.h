@@ -9,9 +9,6 @@ class RockBlockItem : public Item, public IPlaceableItem {
   bool isPlaceable() const override;
 
  private:
-  const Sprite& getSprite() const;
-  static const std::string mName;
-  static const std::string mDesc;
+  const Sprite& loadSprite() const;
   static std::unique_ptr<Sprite> mSprite;
-  static const uint worth;
 };

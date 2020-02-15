@@ -3,10 +3,10 @@
 #include "StateMachine.h"
 
 class GridActor;
-class MiningRequest;
-class MineJob : public IJob {
+class MoveItemRequest;
+class MoveItemJob : public IJob {
  public:
-  MineJob(GridActor& user, std::shared_ptr<MiningRequest> request);
+  MoveItemJob(GridActor& user, std::shared_ptr<MoveItemRequest>&& request);
   bool work() override;
 
  private:

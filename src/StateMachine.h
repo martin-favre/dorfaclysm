@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include "Helpers.h"
+
 class StateMachine;
 
 class State {

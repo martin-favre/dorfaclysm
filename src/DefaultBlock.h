@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Block.h"
-
+#include "Item.h"
 // for unit tests
 class DefaultBlock : public Block {
  public:
   const Sprite* getTopSprite() const override { return nullptr; }
-  bool isClickable() const override { return false; }
   bool mayPassThrough() const override { return false; }
   bool mayClimbUpFrom() const override { return false; }
   bool mayWalkOnTop() const override { return false; }
@@ -16,6 +15,8 @@ class DefaultBlock : public Block {
     return false;
   };
   bool isSeeThrough() const override { return false; };
+  bool spawnsItem() const override { return false; }
+  std::unique_ptr<Item> getItem() const override { return nullptr; }
 
  private:
   const std::string mName;

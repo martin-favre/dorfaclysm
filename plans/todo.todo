@@ -38,6 +38,7 @@
         Item can be equippable, where is then can affect stats
         Item can be placeable, where it contains blockinfo 
 
+Bug: Should only be able to see GameObjects on the current level
 
 ☐ Re-build a rock with a dropped rock item
     When 
