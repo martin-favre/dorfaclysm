@@ -8,7 +8,7 @@ class PlayerControllerComponent : public Component
   void setup()override;
   void update()override;
   private:
-  enum Mode {mine, place};
+  enum Mode {mine, place, clear};
   void renderText();
   void handleClick();
   TextComponent* mTextComponent{nullptr};

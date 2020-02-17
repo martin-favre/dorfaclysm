@@ -34,7 +34,9 @@ void PlayerControllerComponent::renderText() {
         ASSERT(comp, "Received null GridActor ptr");
         outStr += '\n' + comp->getName();
       }
-      outStr += mMode == Mode::mine ? "\nMining" : "\nPlacing";
+      if (mMode == mine) outStr += "\nMining";
+      if (mMode == place) outStr += "\nPlacing";
+      if (mMode == clear) outStr += "\nClearing";
       mTextComponent->setText(outStr);
     }
   }
@@ -55,7 +57,7 @@ void PlayerControllerComponent::handleClick() {
     }
 
     GridMapHelpers::exploreMap(gridMap, mousePos);
-  } else {
+  } else if (mMode == Mode::place) {
     std::weak_ptr<Block> block = gridMap.getBlockPtrAt(mousePos);
     if (block.lock()->supportsJob(requestTypePlacing)) {
       for (const auto& actor : gridMap.getGridActorsAt(mousePos)) {
@@ -67,15 +69,30 @@ void PlayerControllerComponent::handleClick() {
           Engine::addGameObject<BlockBuildObject>(getItemType<RockBlockItem>());
       gObj.setPosition(mousePos);
     }
+  } else if (mMode == Mode::clear) {
+    auto& items = gridMap.getGridActorsAt(mousePos);
+    for (auto& item : items) {
+      BlockBuildComponent* comp =
+          item->owner().getComponent<BlockBuildComponent>();
+      if (comp) {
+        Engine::removeGameObject(&item->owner());
+      }
+    }
   }
 }
 
 void PlayerControllerComponent::update() {
   renderText();
-  if (InputManager::getMouseDown(1)) {
+  if (InputManager::getMouse(1)) {
     handleClick();
   }
   if (InputManager::getKeyDown(SDL_SCANCODE_TAB)) {
-    mMode = mMode == Mode::mine ? Mode::place : Mode::mine;
+    if (mMode == mine) {
+      mMode = place;
+    } else if (mMode == place) {
+      mMode = clear;
+    } else {
+      mMode = mine;
+    }
   }
 }

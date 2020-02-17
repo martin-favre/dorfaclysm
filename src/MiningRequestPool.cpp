@@ -11,7 +11,6 @@
 MiningRequest::MiningRequest(std::weak_ptr<Block> target,
                              const Vector3DInt &pos)
     : mTarget(target), mPos(pos) {
-  std::cout << "Echh" << std::endl;
 }
 Block &MiningRequest::getBlock() {
   ASSERT(isValid(), "Check if block is valid before calling");
