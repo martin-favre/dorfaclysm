@@ -3,9 +3,9 @@
 #include <iostream>
 #include <sstream>
 void Logging::log(const std::string& text) {
-#ifndef DEBUG
+#ifdef DEBUG
   std::cout << text << "\n";
-#endif  // !DEBUG
+#endif
 }
 
 void Logging::log(const std::ostream& text) {

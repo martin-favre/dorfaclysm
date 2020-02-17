@@ -16,33 +16,19 @@ class ItemType {
 };
 
 template <typename T>
-inline ItemType getItemType() {
+inline ItemType generateItemType() {
   return ItemType(typeid(T));
 }
 
 class Item {
  public:
   virtual ~Item() = default;
-  const std::string& getName() const;
-  const std::string& getDescription() const;
-  const Sprite& getSprite() const;
-  uint getWorth() const;
-  inline bool isType(const ItemType& type) const { return mType == type; }
-  inline bool sameItemType(const Item& other) const {
-    return other.mType == mType;
-  }
+  virtual const std::string& getName() const = 0;
+  virtual const std::string& getDescription() const = 0;
+  virtual const Sprite& getSprite() const = 0;
+  virtual uint getWorth() const = 0;
+  virtual const ItemType& getItemType() const = 0;
 
   // If true, then it also inherits from IPlaceableItem
   virtual bool isPlaceable() const = 0;
-
- protected:
-  Item(const Sprite& sprite, const std::string& name, const std::string& desc,
-       uint worth, const ItemType& type);
-
- private:
-  const Sprite& mSprite;
-  const std::string& mName;
-  const std::string& mDesc;
-  const uint mWorth{0};
-  const ItemType mType;
 };

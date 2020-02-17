@@ -14,7 +14,7 @@ void ItemContainer::addItem(std::unique_ptr<Item>&& item) {
 
 std::unique_ptr<Item> ItemContainer::getItem(ItemType type) {
   for (auto it = mItems.begin(); it != mItems.end(); ++it) {
-    if ((*it)->isType(type)) {
+    if ((*it)->getItemType() == type) {
       std::unique_ptr<Item> item = std::move(*it);
       mItems.erase(it);
       if (mItems.size() == 0) {
@@ -28,7 +28,7 @@ std::unique_ptr<Item> ItemContainer::getItem(ItemType type) {
 
 bool ItemContainer::containsItemType(ItemType type) const {
   for (const auto& item : mItems) {
-    if (item->isType(type)) return true;
+    if (item->getItemType() == type) return true;
   }
   return false;
 }

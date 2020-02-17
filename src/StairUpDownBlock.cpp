@@ -1,6 +1,7 @@
 #include "StairUpDownBlock.h"
 
 #include "SpriteLoader.h"
+#include "Item.h"
 
 std::unique_ptr<Sprite> StairUpDownBlock::mSprite;
 const std::string StairUpDownBlock::mName{"Up/Down Stair"};

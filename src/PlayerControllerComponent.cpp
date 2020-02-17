@@ -66,7 +66,7 @@ void PlayerControllerComponent::handleClick() {
           return;
       }
       GameObject& gObj =
-          Engine::addGameObject<BlockBuildObject>(getItemType<RockBlockItem>());
+          Engine::addGameObject<BlockBuildObject>(generateItemType<RockBlockItem>());
       gObj.setPosition(mousePos);
     }
   } else if (mMode == Mode::clear) {

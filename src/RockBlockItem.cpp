@@ -4,9 +4,17 @@
 #include "RockBlock.h"
 #include "SpriteLoader.h"
 std::unique_ptr<Sprite> RockBlockItem::mSprite;
+const std::string RockBlockItem::mName{"Rock Block"};
+const std::string RockBlockItem::mDesc{"A block of Rock"};
+const uint RockBlockItem::mWorth{1};
+const ItemType RockBlockItem::mType{generateItemType<RockBlockItem>()};
 
-RockBlockItem::RockBlockItem()
-    : Item(getSprite(), "Rock Block", "A block of rock", 1, ItemType(typeid(*this))) {}
+const std::string& RockBlockItem::getName() const {return mName;}
+const std::string& RockBlockItem::getDescription() const {return mDesc;}
+const Sprite& RockBlockItem::getSprite() const {return *mSprite;}
+uint RockBlockItem::getWorth() const {return mWorth;}
+const ItemType& RockBlockItem::getItemType() const {return mType;}
+
 std::unique_ptr<Block> RockBlockItem::getBlock() const {
   return std::make_unique<RockBlock>();
 }
