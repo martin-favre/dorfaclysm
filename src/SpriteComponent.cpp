@@ -30,7 +30,7 @@ void SpriteComponent::render() {
       pos.y += centreOffsetY;
     }
     if (mCameraAsReference) {
-      if (pos.z > camPos.z) return;
+      if (pos.z != camPos.z) return;
       pos -= camPos;
     }
     GraphicsManager::renderTexture(*mSprite, pos, owner().getScale(),
