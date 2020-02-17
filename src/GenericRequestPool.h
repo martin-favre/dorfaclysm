@@ -52,11 +52,11 @@ class GenericRequestPool {
   }
   void returnRequest(std::shared_ptr<T> &&request) {
     cleanHandedoutRequests();
-    ASSERT(request, "Return nullptr");
+    ASSERT(request.get(), "Returned nullptr");
     for (auto it = mHandedOutRequests.begin(); it != mHandedOutRequests.end();
          ++it) {
       {
-        if (*it->lock() == *request) {
+        if (it->lock() == request) {
           mHandedOutRequests.erase(it);
           break;
         }
