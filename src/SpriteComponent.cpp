@@ -14,7 +14,12 @@ SpriteComponent::SpriteComponent(GameObject& owner,
                                  std::unique_ptr<Sprite>&& sprite)
     : Component(owner), mSprite(std::move(sprite)) {}
 
+void SpriteComponent::teardown() {
+  std::scoped_lock lock(mMutex);
+}
+
 void SpriteComponent::render() {
+  std::scoped_lock lock(mMutex);
   if (mSprite) {
     const Vector3DInt& camPos = Camera::get().getPosition();
     Vector3DInt pos{owner().getPosition()};

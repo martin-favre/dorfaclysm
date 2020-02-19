@@ -5,7 +5,7 @@ typedef unsigned long GAMEOBJECT_ID;
 #include <memory>
 #include <string>
 #include <vector>
-
+#include <mutex>
 #include "Component.h"
 #include "Vector2D.h"
 #include "Vector3DInt.h"
@@ -50,9 +50,9 @@ class GameObject {
   ---------------------------------------------------------*/
   int getRenderDepth() const;
   void setRenderDepth(int depth);
-  const Vector3DInt& getPosition() const;
+  Vector3DInt getPosition() const;
   void setPosition(const Vector3DInt& pos);
-  const Vector2D& getScale() const;
+  Vector2D getScale() const;
   void setScale(const Vector2D& newScale);
   double getRotation() const;
 
@@ -97,6 +97,7 @@ class GameObject {
   std::string mName{"NoName"};
   const GAMEOBJECT_ID mId{0};
   std::vector<std::unique_ptr<Component>> mComponents;
+  std::mutex mMutex;
 };
 
 template <class componentType>

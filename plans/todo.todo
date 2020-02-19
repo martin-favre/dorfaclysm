@@ -21,27 +21,10 @@
 ✔ Rework jobsystem @done(20-02-02 14:03)
 ✔ Render jobs again @done(20-02-12 19:02)
 ✔ Do not throw away jobs when they can't be completed @done(20-02-12 19:55)
+✔ Make mined rocks drop items @done(20-02-18 16:33)
+✔ Re-build a rock with a dropped rock item @done(20-02-18 16:33)
 
-☐ Make mined rocks drop items
-    Items in world are contained in an itemcontainer
-    Itemcontainers contains items.
-    There can only be one itemcontainer per block
-    When a block is removed spawns a blockitem
-    A blockitem is a sort of item (have to change name of worlditem)
-    A blockitem contains an enum of which block it represents
-    When used on a block is spawns the block is represents.
-    What is an item?
-        A name
-        A value
-        A description
-        A sprite
-        Item can be equippable, where is then can affect stats
-        Item can be placeable, where it contains blockinfo 
-
-Bug: Should only be able to see GameObjects on the current level
-
-☐ Re-build a rock with a dropped rock item
-    When 
+☐ Separate render and work thread
 
 ☐ Make block last more than one hit
 

@@ -14,32 +14,50 @@ TextComponent::TextComponent(GameObject& owner, const std::string& pathToFont,
       mFont(SpriteLoader::loadFont(pathToFont, size)) {}
 
 void TextComponent::setFontSize(int size) {
+  std::scoped_lock lock(mMutex);
   mFont = SpriteLoader::loadFont(mFontSource, size);
 }
 
 std::string TextComponent::getText() { return mText; }
 
 void TextComponent::setText(const std::string& text) {
-  mText = text;
-  size_t lastLinebreak = 0;
-  size_t indx = 0;
-  mSprites.clear();
-  while (indx != text.npos) {
-    indx = text.find("\n", lastLinebreak);
-    std::string subString = text.substr(lastLinebreak, indx - lastLinebreak);
-    if (subString != "") {
-      mSprites.emplace_back(
-          SpriteLoader::getSpriteFromTextFast(subString, *mFont, mColor));
+  if (text != mText) {
+    std::scoped_lock lock(mMutex);
+    size_t lastLinebreak = 0;
+    size_t indx = 0;
+    mRequestedSprites.clear();
+    while (indx != text.npos) {
+      indx = text.find("\n", lastLinebreak);
+      std::string subString = text.substr(lastLinebreak, indx - lastLinebreak);
+      if (subString != "") {
+        mRequestedSprites.emplace_back(
+            SpriteLoader::getSpriteFromTextFast(subString, *mFont, mColor));
+      }
+      lastLinebreak = indx + 1;
     }
-    lastLinebreak = indx + 1;
+    mText = text;
   }
 }
 
-void TextComponent::setColor(const SDL_Color& color) { mColor = color; }
+void TextComponent::setColor(const SDL_Color& color) {
+  std::scoped_lock lock(mMutex);
+  mColor = color;
+}
+
+void TextComponent::teardown() { std::scoped_lock lock(mMutex); }
 
 void TextComponent::render() {
   ASSERT(mFont.get(), "Received null Font ptr");
   ASSERT(mFont->getSdlFont(), "Received null TTF_Font ptr");
+  std::scoped_lock lock(mMutex);
+  if (mRequestedSprites.size()) {
+    mSprites.clear();
+    for (auto& sprite : mRequestedSprites) {
+      mSprites.emplace_back(std::move(sprite));
+    }
+    mRequestedSprites.clear();
+  }
+
   int fontHeight = TTF_FontHeight(mFont->getSdlFont());
   int heightOffset = 0;
   for (const auto& sprite : mSprites) {

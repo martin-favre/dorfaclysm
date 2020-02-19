@@ -6,7 +6,7 @@
 #include <queue>
 #include <set>
 #include <vector>
-
+#include <mutex>
 #include "GameObject.h"
 #include "Logging.h"
 /*
@@ -42,7 +42,10 @@ class Engine {
       Logging::log("Warning, gameobject id overflow");
     }
     gameObjType* out = newObject.get();
-    Engine::mGameobjectsToAdd.push(std::move(newObject));
+    {
+      std::scoped_lock lock(mMutex);
+      Engine::mGameobjectsToAdd.push(std::move(newObject));
+    }
     Engine::mLatestGameobjectId++;
     Logging::log("Added gameobject id " + std::to_string(id) + " type " +
                  typeid(gameObjType).name());
@@ -50,7 +53,6 @@ class Engine {
     return *out;
   }
   static void removeGameObject(GameObject* gObj);
-  static size_t getGameObjectCount();
   static void registerScene(const std::string& name, void (*scenecreator)());
   static void loadScene(const std::string& name);
 
@@ -61,7 +63,7 @@ class Engine {
   static void updateGameObjects();
   static void renderGameObjects();
   static void clearAllGameObjects();
-
+  static void logicThreadMainLoop();
   /*Actually puts the changes in place*/
   static void putGameObjectsIntoWorld();
   static void removeGameObjectFromWorld();
@@ -77,4 +79,5 @@ class Engine {
   static std::vector<std::unique_ptr<GameObject>> mGameobjects;
   static std::queue<std::unique_ptr<GameObject>> mGameobjectsToAdd;
   static std::set<GameObject*> mGameobjectsToRemove;
+  static std::mutex mMutex;
 };

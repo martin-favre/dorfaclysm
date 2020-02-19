@@ -8,7 +8,7 @@
 
 #include "Sprite.h"
 #include "Vector2D.h"
-
+#include <mutex>
 /*-------------------------------------------------------
         Interface for presenting images to the screen.
         Owns prepared textures, loaded from files.
@@ -53,4 +53,5 @@ class GraphicsManager {
   static unsigned int mScreenWidth;
   static unsigned int mScreenHeight;
   static std::string mWindowName;
+  static std::mutex mMutex;
 };

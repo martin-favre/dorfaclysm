@@ -85,5 +85,5 @@ void GridMapRenderer::prepareViewedArea() {
 GridMapRenderer::GridMapRenderer(GameObject& g)
     : Component(g), mActiveGridMap(GridMap::getActiveMap()) {}
 
-void GridMapRenderer::update() { prepareViewedArea(); }
-void GridMapRenderer::render() {}
+void GridMapRenderer::update() {}
+void GridMapRenderer::render() { prepareViewedArea(); }

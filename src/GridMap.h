@@ -4,7 +4,7 @@
 #include <list>
 #include <memory>
 #include <vector>
-
+#include <mutex>
 #include "Vector3DInt.h"
 class Block;
 
@@ -32,25 +32,29 @@ class GridMap {
   void removeBlockAt(const Vector3DInt& pos);
   void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>&& newBlock);
   void addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item);
+
   inline std::weak_ptr<Block> getBlockPtrAt(const Vector3DInt& pos) {
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
+    std::scoped_lock lock(mLock);
     return mBlocks[pos.z][pos.y][pos.x];
   }
 
   inline Block& getBlockAt(const Vector3DInt& pos) {
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
+    std::scoped_lock lock(mLock);
     return *mBlocks[pos.z][pos.y][pos.x];
   }
 
   inline const Block& getBlockAt(const Vector3DInt& pos) const {
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
+    std::scoped_lock lock(mLock);
     return *mBlocks[pos.z][pos.y][pos.x];
   }
 
-  std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos);
+  const std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos);
   const std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos) const;
   void registerGridActorAt(const Vector3DInt& pos, GridActor* item);
   void unregisterGridActorAt(const Vector3DInt& pos, const GridActor* item);
@@ -71,4 +75,5 @@ class GridMap {
   std::vector<std::vector<std::vector<std::list<GridActor*>>>> mGridActors;
   Vector3DInt mSize;
   static GridMap mActiveMap;
+  mutable std::mutex mLock;
 };

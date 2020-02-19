@@ -4,7 +4,7 @@
 class CameraControllerComponent : public Component {
  public:
   CameraControllerComponent(GameObject& gObj);
-  void update() override;
+  void render() override;
 
  private:
   Camera& mCam;

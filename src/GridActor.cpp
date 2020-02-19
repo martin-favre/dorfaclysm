@@ -5,7 +5,7 @@
 GridActor::GridActor(GameObject& gObj, ActorType type)
     : Component(gObj), mType(type), mGridMap(GridMap::getActiveMap()) {}
 
-const Vector3DInt& GridActor::getCurrentPos() const {
+Vector3DInt GridActor::getCurrentPos() const {
   return owner().getPosition();
 }
 

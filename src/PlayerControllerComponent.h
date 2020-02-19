@@ -7,6 +7,7 @@ class PlayerControllerComponent : public Component
   PlayerControllerComponent(GameObject& gObj) : Component(gObj){}
   void setup()override;
   void update()override;
+  void render()override;
   private:
   enum Mode {mine, place, clear};
   void renderText();

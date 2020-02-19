@@ -61,7 +61,9 @@
 			"bit": "cpp",
 			"list": "cpp",
 			"execution": "cpp",
-			"typeindex": "cpp"
+			"typeindex": "cpp",
+			"condition_variable": "cpp",
+			"mutex": "cpp"
 		},
 		"cmakeExplorer.buildDir": "build",
 		"catch2TestExplorer.executables": "testBin/*",

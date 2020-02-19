@@ -5,7 +5,7 @@
 CameraControllerComponent::CameraControllerComponent(GameObject& gObj)
     : Component(gObj), mCam(Camera::get()) {}
 
-void CameraControllerComponent::update() {
+void CameraControllerComponent::render() {
   Vector3DInt movement;
   const int speedx = GridMap::tileRenderSize.x;
   const int speedy = GridMap::tileRenderSize.y;

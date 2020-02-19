@@ -5,22 +5,24 @@
 #include <memory>
 
 #include "Component.h"
-
+#include <mutex>
 class Rect;
 class Sprite;
 class GameObject;
 class SpriteComponent : public Component {
  public:
   SpriteComponent(GameObject &owner, std::unique_ptr<Sprite> &&sprite);
-  void loadSpriteFromImage(const std::string &path);
-  void loadSpriteFromImage(const std::string &path, const Rect &area);
   void render() override;
-  void setCameraAsReference(bool useCamera) { mCameraAsReference = useCamera; }
+  void teardown() override;
+  void setCameraAsReference(bool useCamera) { 
+    std::scoped_lock lock(mMutex);
+    mCameraAsReference = useCamera; }
 
  private:
-  std::unique_ptr<Sprite> mSprite;
+  const std::unique_ptr<Sprite> mSprite;
   bool mCameraAsReference{true};
   bool mScaleToTileGrid{true};
-  bool mCentered{false};
-  SDL_RendererFlip mFlip{SDL_FLIP_NONE};
+  const bool mCentered{false};
+  const SDL_RendererFlip mFlip{SDL_FLIP_NONE};
+  std::mutex mMutex;
 };

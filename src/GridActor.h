@@ -5,9 +5,9 @@
 
 class GridActor : public Component {
  public:
-  enum ActorType { unset, item, dorf, building };
+  enum ActorType { unset, item, dorf, building, job};
   GridActor(GameObject& gObj, ActorType type);
-  const Vector3DInt& getCurrentPos() const;
+  Vector3DInt getCurrentPos() const;
   void moveTo(const Vector3DInt& newPos);
   void setup() override;
   void teardown() override;

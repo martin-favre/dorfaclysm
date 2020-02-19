@@ -17,19 +17,6 @@ class JobRenderer : public Component {
         mSprite(SpriteLoader::loadSprite(Paths::BROWN_SQUARE)) {}
 
   void render() override {
-    for (const auto& req : mPool.getRequests()) {
-      Vector3DInt pos = req->getPos();
-      pos = mCam.tilePosToRenderPos(pos);
-      pos -= mCam.getPosition();
-      GraphicsManager::renderTexture(*mSprite, pos);
-    }
-    for (const auto& req : mPool.getClaimedRequests()) {
-      ASSERT(!req.expired(), "weak_ptr expired");
-      Vector3DInt pos = req.lock()->getPos();
-      pos = mCam.tilePosToRenderPos(pos);
-      pos -= mCam.getPosition();
-      GraphicsManager::renderTexture(*mSprite, pos);
-    }
   }
 
  private:

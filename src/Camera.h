@@ -1,15 +1,16 @@
 #pragma once
 #include "Vector2D.h"
 #include "Vector2DInt.h"
+#include <mutex>
 class Camera {
  public:
   Camera(const Camera&) = delete;
   Camera& operator=(const Camera&) = delete;
 
   static Camera& get();
-  const Vector3DInt& getPosition() const;
+  Vector3DInt getPosition() const;
   void move(const Vector3DInt& movement);
-  const Vector2D& getScale() const;
+  Vector2D getScale() const;
   void setScale(const Vector2D& scale);
 
   template <class T>
@@ -22,4 +23,5 @@ class Camera {
   static Camera mCamera;
   Vector3DInt mPosition;
   Vector2D mScale{1, 1};
+  mutable std::mutex mMutex;
 };

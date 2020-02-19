@@ -6,8 +6,12 @@
 Camera Camera::mCamera;
 
 Camera& Camera::get() { return mCamera; }
-const Vector3DInt& Camera::getPosition() const { return mPosition; }
+Vector3DInt Camera::getPosition() const {
+  std::scoped_lock lock(mMutex);
+  return mPosition;
+}
 void Camera::move(const Vector3DInt& movement) {
+  std::scoped_lock lock(mMutex);
   mPosition += movement;
 
   if (mPosition.x < 0) mPosition.x = 0;
@@ -21,12 +25,18 @@ void Camera::move(const Vector3DInt& movement) {
                                          GraphicsManager::getScreenHeight()};
 
   const Vector2DInt maxPos = gridRenderSize - tilesCameraCovers;
-  if (mPosition.x >= maxPos.x) mPosition.x = maxPos.x-1;
-  if (mPosition.y >= maxPos.y) mPosition.y = maxPos.y-1;
-  if (mPosition.z >= gridSize.z) mPosition.z = gridSize.z-1;
+  if (mPosition.x >= maxPos.x) mPosition.x = maxPos.x - 1;
+  if (mPosition.y >= maxPos.y) mPosition.y = maxPos.y - 1;
+  if (mPosition.z >= gridSize.z) mPosition.z = gridSize.z - 1;
 }
-const Vector2D& Camera::getScale() const { return mScale; }
-void Camera::setScale(const Vector2D& scale) { mScale = scale; }
+Vector2D Camera::getScale() const {
+  std::scoped_lock lock(mMutex);
+  return mScale;
+}
+void Camera::setScale(const Vector2D& scale) {
+  std::scoped_lock lock(mMutex);
+  mScale = scale;
+}
 
 Vector3DInt Camera::renderPosToTilePos(const Vector3DInt& renderPos) {
   /*
@@ -41,13 +51,14 @@ Vector3DInt Camera::renderPosToTilePos(const Vector3DInt& renderPos) {
   return Vector3DInt{x, y, renderPos.z};
 }
 
-Vector2DInt Camera::tilePosToRenderPos(const Vector2DInt& pos)
-{
-  return Vector2DInt{pos.x*GridMap::tileRenderSize.x, pos.y*GridMap::tileRenderSize.y};
+Vector2DInt Camera::tilePosToRenderPos(const Vector2DInt& pos) {
+  return Vector2DInt{pos.x * GridMap::tileRenderSize.x,
+                     pos.y * GridMap::tileRenderSize.y};
 }
 
 template <class T>
 bool Camera::inCamera(const T& position) {
+  std::scoped_lock lock(mMutex);
   if (position.x < mPosition.x) return false;
   if (position.x >= mPosition.x) return false;
   if (position.y < mPosition.y) return false;

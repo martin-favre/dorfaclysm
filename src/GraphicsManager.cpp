@@ -13,6 +13,7 @@ unsigned int GraphicsManager::mScreenWidth = 1700;
 unsigned int GraphicsManager::mScreenHeight = 800;
 std::string GraphicsManager::mWindowName = "Let's go bois";
 SDL_Color GraphicsManager::mRenderDrawColor = {0, 0, 0, 1};
+std::mutex GraphicsManager::mMutex;
 /* Public Routines */
 
 void GraphicsManager::initialize() {
@@ -38,7 +39,7 @@ void GraphicsManager::initialize() {
 
   GraphicsManager::mMainRenderer =
       SDL_CreateRenderer(GraphicsManager::mMainWindow, -1,
-                         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+                         SDL_RENDERER_ACCELERATED);
 
   ASSERT(GraphicsManager::mMainRenderer != NULL,
          "Renderer could not be created! SDL Error: " +
@@ -76,6 +77,7 @@ void GraphicsManager::teardown() {
 
 void GraphicsManager::prepareRendering() {
   setRenderDrawColor(mDefaultDrawColor);
+  std::scoped_lock lock(mMutex);
   SDL_RenderClear(GraphicsManager::mMainRenderer);
 }
 
@@ -102,6 +104,7 @@ void GraphicsManager::renderTexture(const Sprite& sprite,
   }
   const SDL_Rect dstrect = {static_cast<int>(posx), static_cast<int>(posy),
                             static_cast<int>(scalex), static_cast<int>(scaley)};
+  std::scoped_lock lock(mMutex);
   SDL_RenderCopyEx(
       GraphicsManager::mMainRenderer,  // SDL_Renderer*          renderer
       texture,                         // SDL_Texture*           texture
@@ -125,6 +128,7 @@ void GraphicsManager::drawCircle(const Vector2D& pos, int radius) {
                                  // doubles the value. == tx - diameter
   int posx = Helpers::roundToInt(pos.x);
   int posy = Helpers::roundToInt(pos.y);
+  std::scoped_lock lock(mMutex);
   while (x >= y) {
     //  Each of the following renders an octant of the circle
     SDL_RenderDrawPoint(mMainRenderer, posx + x, posy - y);
@@ -152,6 +156,7 @@ void GraphicsManager::drawCircle(const Vector2D& pos, int radius) {
 void GraphicsManager::drawPoint(const Vector2D& pos) {
   int x = Helpers::roundToInt(pos.x);
   int y = Helpers::roundToInt(pos.y);
+  std::scoped_lock lock(mMutex);
   int success = SDL_RenderDrawPoint(mMainRenderer, x, y);
   ASSERT(success == 0, SDL_GetError());
 }
@@ -161,19 +166,23 @@ void GraphicsManager::drawLine(const Vector2D& from, const Vector2D& to) {
   int from_y = (int)round(from.y);
   int to_x = (int)round(to.x);
   int to_y = (int)round(to.y);
+  std::scoped_lock lock(mMutex);
   int success = SDL_RenderDrawLine(mMainRenderer, from_x, from_y, to_x, to_y);
   ASSERT(success == 0, SDL_GetError());
 }
 
 void GraphicsManager::drawRect(const Rect& rect) {
+  std::scoped_lock lock(mMutex);
   SDL_RenderFillRect(mMainRenderer, &rect.getSdlRect());
 }
 
 void GraphicsManager::executeRendering() {
+  std::scoped_lock lock(mMutex);
   SDL_RenderPresent(GraphicsManager::mMainRenderer);
 }
 
 void GraphicsManager::setRenderDrawColor(const SDL_Color& color) {
+  std::scoped_lock lock(mMutex);
   SDL_SetRenderDrawColor(GraphicsManager::mMainRenderer, color.r, color.g,
                          color.b, color.a);
 }

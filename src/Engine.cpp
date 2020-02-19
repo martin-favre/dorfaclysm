@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <string>
+#include <thread>
 
 #include "GraphicsManager.h"
 #include "Helpers.h"
@@ -17,6 +18,7 @@ GAMEOBJECT_ID Engine::mLatestGameobjectId{0};
 std::vector<std::unique_ptr<GameObject>> Engine::mGameobjects;
 std::queue<std::unique_ptr<GameObject>> Engine::mGameobjectsToAdd;
 std::set<GameObject*> Engine::mGameobjectsToRemove;
+std::mutex Engine::mMutex;
 
 /* Public routines */
 void Engine::initialize() {
@@ -45,10 +47,9 @@ void Engine::start() {
 void Engine::stop() { Engine::mRunning = false; }
 
 void Engine::removeGameObject(GameObject* gObj) {
+  std::scoped_lock lock(mMutex);
   Engine::mGameobjectsToRemove.insert(gObj);
 }
-
-size_t Engine::getGameObjectCount() { return Engine::mGameobjects.size(); }
 
 void Engine::registerScene(const std::string& name, void (*scenecreator)()) {
   Engine::mScenes[name] = scenecreator;
@@ -61,24 +62,34 @@ void Engine::loadScene(const std::string& name) {
 }
 /* Private routines*/
 
-void Engine::mainLoop() {
-  double ms_p_frame = 0.016666667 * 1000;
-  (void)ms_p_frame;
+void Engine::logicThreadMainLoop() {
+  Timer timer;
+  timer.start();
+  int maxFps = 60;
+  int msPerFrame = 1000 * 1 / maxFps;
   while (Engine::mRunning) {
     if (mAboutToLoadScene) {
       mAboutToLoadScene = false;
       replaceScene();
     }
-    GraphicsManager::prepareRendering();
-    // Timer tim;
-    // tim.start();
     Engine::putGameObjectsIntoWorld();
     Engine::removeGameObjectFromWorld();
-    InputManager::readInputs();
     Engine::updateGameObjects();
-    // int64_t time = tim.getElapsedMilliseconds();
+    auto elapsedMs = timer.getElapsedMilliseconds();
+    auto timeLeft = msPerFrame - elapsedMs;
+    if (timeLeft > 0)
+      std::this_thread::sleep_for(std::chrono::milliseconds(timeLeft));
+  }
+}
+
+void Engine::mainLoop() {
+  std::thread logicThread(logicThreadMainLoop);
+  while (Engine::mRunning) {
+    InputManager::readInputs();
+    GraphicsManager::prepareRendering();
     Engine::renderGameObjects();
   }
+  logicThread.join();
 }
 
 void Engine::replaceScene() {
@@ -101,6 +112,7 @@ void Engine::updateGameObjects() {
 bool debug_render_colliders = true;
 
 void Engine::renderGameObjects() {
+  std::scoped_lock lock(mMutex);
   for (auto& go : mGameobjects) {
     go->render();
   }
@@ -109,43 +121,48 @@ void Engine::renderGameObjects() {
 }
 
 void Engine::clearAllGameObjects() {
-  mGameobjects.clear();
-  std::queue<std::unique_ptr<GameObject>>().swap(mGameobjectsToAdd);
-  mGameobjectsToRemove.clear();
-
+  {
+    std::scoped_lock lock(mMutex);
+    mGameobjects.clear();
+    std::queue<std::unique_ptr<GameObject>>().swap(mGameobjectsToAdd);
+    mGameobjectsToRemove.clear();
+  }
   GameObject& g = Engine::addGameObject<GameObject>();
   g.addComponent<Debug_CloseGameComponent>();
   g.name() = "Debug_CloseGameComponent";
 }
 
 void Engine::putGameObjectsIntoWorld() {
-  std::vector<GameObject*> added_items;
-  while (!Engine::mGameobjectsToAdd.empty()) {
-    std::unique_ptr<GameObject> new_item =
-        std::move(Engine::mGameobjectsToAdd.front());
-    Engine::mGameobjectsToAdd.pop();
+  std::vector<GameObject*> addedItems;
+  {
+    std::scoped_lock lock(mMutex);
+    while (!Engine::mGameobjectsToAdd.empty()) {
+      std::unique_ptr<GameObject> newItem =
+          std::move(Engine::mGameobjectsToAdd.front());
+      Engine::mGameobjectsToAdd.pop();
 
-    // store away a ptr because we have to run setups afterwards
-    added_items.emplace_back(new_item.get());
-    size_t indx = 0;
-    /* Does insert sort based on renderdepth
-       to decide render order.
-       large renderdepth = rendered later = "on top" / "closer to camera"
-    */
-    for (; indx != mGameobjects.size(); ++indx) {
-      if (new_item->getRenderDepth() <= mGameobjects[indx]->getRenderDepth()) {
-        mGameobjects.insert(mGameobjects.begin() + indx, std::move(new_item));
-        break;
+      // store away a ptr because we have to run setups afterwards
+      addedItems.emplace_back(newItem.get());
+      size_t indx = 0;
+      /* Does insert sort based on renderdepth
+         to decide render order.
+         large renderdepth = rendered later = "on top" / "closer to camera"
+      */
+      for (; indx != mGameobjects.size(); ++indx) {
+        if (newItem->getRenderDepth() <= mGameobjects[indx]->getRenderDepth()) {
+          mGameobjects.insert(mGameobjects.begin() + indx, std::move(newItem));
+          break;
+        }
+      }
+      if (indx == mGameobjects.size()) {
+        mGameobjects.push_back(std::move(newItem));
       }
     }
-    if (indx == mGameobjects.size()) {
-      mGameobjects.push_back(std::move(new_item));
-    }
   }
-
-  Engine::runSetups(added_items);
+  Engine::runSetups(addedItems);
 }
 void Engine::removeGameObjectFromWorld() {
+  std::scoped_lock lock(mMutex);
   for (auto gObj_to_remove = mGameobjectsToRemove.begin();
        gObj_to_remove != mGameobjectsToRemove.end(); ++gObj_to_remove) {
     auto gObj_in_world = mGameobjects.begin();

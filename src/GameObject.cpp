@@ -28,20 +28,28 @@ void GameObject::updateComponents() {
 
 void GameObject::render() {
   if (!mEnabled) return;
+  std::scoped_lock lock(mMutex);
   for (auto& component : mComponents) {
     component->render();
   }
 }
 
-void GameObject::setPosition(const Vector3DInt& pos) { mPosition = pos; }
+void GameObject::setPosition(const Vector3DInt& pos) { 
+  std::scoped_lock lock(mMutex);
+  mPosition = pos; 
+  }
 
 int GameObject::getRenderDepth() const { return mRenderDepth; }
-void GameObject::setRenderDepth(int depth) { mRenderDepth = depth; }
+void GameObject::setRenderDepth(int depth) { 
+  std::scoped_lock lock(mMutex);
+  mRenderDepth = depth; }
 
-const Vector3DInt& GameObject::getPosition() const { return mPosition; }
+Vector3DInt GameObject::getPosition() const { return mPosition; }
 
-const Vector2D& GameObject::getScale() const { return mScale; }
-void GameObject::setScale(const Vector2D& newScale) { mScale = newScale; }
+Vector2D GameObject::getScale() const { return mScale; }
+void GameObject::setScale(const Vector2D& newScale) { 
+  std::scoped_lock lock(mMutex);
+  mScale = newScale; }
 double GameObject::getRotation() const { return mRotation; }
 
 void GameObject::destroy() { Engine::removeGameObject(this); }

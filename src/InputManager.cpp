@@ -12,6 +12,7 @@ SDL_MouseButtonEvent InputManager::mMouseLatestEvent[NOF_SDL_SCANCODES_BUFFER] =
     {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 SDL_Event InputManager::mSdlEvent;
 bool InputManager::mKeyStatesThisFrame[NOF_SDL_SCANCODES_BUFFER];
+std::mutex InputManager::mMutex;
 
 /*Publics*/
 void InputManager::initialize() {
@@ -21,6 +22,7 @@ void InputManager::initialize() {
 }
 
 void InputManager::readInputs() {
+  std::scoped_lock lock(mMutex);
   InputManager::resetKeys();
   InputManager::resetTextInput();
 
@@ -59,20 +61,28 @@ void InputManager::readInputs() {
   }
 }
 
-bool InputManager::getKey(int key) { return mKeyStates[key]; }
+bool InputManager::getKey(int key) {
+  std::scoped_lock lock(mMutex);
+  return mKeyStates[key];
+}
+
 bool InputManager::getKeyDown(int key) {
+  std::scoped_lock lock(mMutex);
   return InputManager::mKeyStatesThisFrame[key];
 }
 
 bool InputManager::getMouse(int mousebtn) {
+  std::scoped_lock lock(mMutex);
   return InputManager::mMouseStates[mousebtn];
 }
 
 bool InputManager::getMouseDown(int mousebtn) {
+  std::scoped_lock lock(mMutex);
   return InputManager::mMouseStatesThisFrame[mousebtn];
 }
 bool InputManager::getLatestMouseEvent(int mousebtn,
                                        SDL_MouseButtonEvent *evnt) {
+  std::scoped_lock lock(mMutex);
   if (mMouseLatestEvent[mousebtn].type != 0) {
     *evnt = mMouseLatestEvent[mousebtn];
     return true;
@@ -82,6 +92,7 @@ bool InputManager::getLatestMouseEvent(int mousebtn,
 }
 
 Vector2DInt InputManager::getMousePosition() {
+  std::scoped_lock lock(mMutex);
   Vector2DInt container;
   SDL_GetMouseState(&container.x, &container.y);
   return container;

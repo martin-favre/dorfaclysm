@@ -2,12 +2,9 @@
 
 #include <SDL.h>
 
-#include <cstdint>
-#include <iostream>
-#include <map>
+#include <mutex>
 #include <string>
 
-#include "Timer.h"
 #include "Vector2DInt.h"
 
 /* Should be slightly higher than the highest possible Scancode
@@ -92,4 +89,5 @@ class InputManager {
   static bool
       mKeyStatesThisFrame[NOF_SDL_SCANCODES_BUFFER];  // Contains if the key was
                                                       // added this frame
+  static std::mutex mMutex;
 };

@@ -8,7 +8,7 @@
 template <class T>
 class GenericRequestPool {
  public:
-  void addRequest(std::unique_ptr<T> &&job) {
+  void addRequest(std::unique_ptr<T> && job) {
     ASSERT(job.get(), "Received null request");
     cleanHandedoutRequests();
     auto comper = [&job](std::shared_ptr<T> &req) { return *job == *req; };
