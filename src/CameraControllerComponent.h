@@ -1,6 +1,8 @@
 #pragma once
 #include "Camera.h"
 #include "Component.h"
+#include "InputManager.h"
+
 class CameraControllerComponent : public Component {
  public:
   CameraControllerComponent(GameObject& gObj);
@@ -8,4 +10,5 @@ class CameraControllerComponent : public Component {
 
  private:
   Camera& mCam;
+  QueueHandle mInputHandle;
 };

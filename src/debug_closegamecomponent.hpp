@@ -5,10 +5,21 @@
 class GameObject;
 struct Debug_CloseGameComponent : public Component {
   Debug_CloseGameComponent(GameObject& owner) : Component(owner) {}
-  inline void render() final override {
-    if (InputManager::getKeyDown(INPUT_KEY_QUIT) ||
-        InputManager::getKeyDown(SDL_SCANCODE_Q)) {
-      Engine::stop();
+  inline void update() final override {
+    while (InputManager::hasKeyEvents(mInputHandle)) {
+      KeyEvent keyEvent = InputManager::dequeueKeyEvent(mInputHandle);
+      if (!keyEvent.mKeyDown) continue;
+      switch (keyEvent.mKey) {
+        case INPUT_KEY_QUIT:
+        case SDL_SCANCODE_Q:
+          Engine::stop();
+          break;
+        default:
+          break;
+      }
     }
   }
+
+ private:
+  QueueHandle mInputHandle;
 };

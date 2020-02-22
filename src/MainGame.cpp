@@ -5,13 +5,13 @@
 #include "CameraControllerComponent.h"
 #include "Component.h"
 #include "DorfController.h"
-#include "DrawLineComponent.h"
 #include "Engine.h"
 #include "Font.h"
 #include "FpsCounter.h"
 #include "GridActor.h"
 #include "GridMap.h"
 #include "GridMapRenderer.h"
+#include "ItemContainerObject.h"
 #include "JobRenderer.h"
 #include "MapGenerator.h"
 #include "Paths.h"
@@ -23,7 +23,6 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
-#include "ItemContainerObject.h"
 
 void foo() {
   int mapSize = 64;

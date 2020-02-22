@@ -2,11 +2,12 @@
 
 #include <SDL.h>
 
+#include <list>
 #include <mutex>
+#include <queue>
 #include <string>
 
 #include "Vector2DInt.h"
-
 /* Should be slightly higher than the highest possible Scancode
    (284 at time of writing)
 */
@@ -20,12 +21,58 @@ Arbitrary value hopefully not occupied by SDL keys
         Interface for key and mouse presses
         Uses SDL_Scancodes https://wiki.libsdl.org/SDL_Scancode as key
 definitions.
+
+Usage:
+
+QueueHandle myHandle;
+while (InputManager::hasKeyEvents(myHandle)) {
+  KeyEvent keyEvent = InputManager::dequeueKeyEvent(myHandle);
+  switch (keyEvent.mKey) {
+    ??
+  }
+}
+
 ---------------------------------------------------------*/
+
+class KeyEvent {
+ public:
+  KeyEvent(int key, bool keyDown);
+  const int mKey;
+  const bool mKeyDown;
+};
+
+class MouseEvent {
+ public:
+  MouseEvent(const Vector2DInt& pos, int button, bool buttonDown);
+  const Vector2DInt mPos;
+  const int mButton;
+  const bool mButtonDown;
+};
+
+class InputManager;
+class QueueHandle {
+ public:
+  QueueHandle();
+  ~QueueHandle();
+  friend class InputManager;
+
+ private:
+  std::queue<MouseEvent> mMouseEvents;
+  std::queue<KeyEvent> mKeyEvents;
+};
 
 class InputManager {
  public:
   static void initialize();
   static void readInputs();
+
+  static bool hasMouseEvents(const QueueHandle& handle);
+  static bool hasKeyEvents(const QueueHandle& handle);
+
+  static MouseEvent dequeueMouseEvent(QueueHandle& handle);
+  static KeyEvent dequeueKeyEvent(QueueHandle& handle);
+
+  static void clearQueues(QueueHandle& handle);
 
   /*-------------------------------------------------------
           Get the current state of the key
@@ -36,14 +83,6 @@ class InputManager {
   static bool getKey(int key);
 
   /*-------------------------------------------------------
-          Get if the key was pushed down this update
-  ---------------------------------------------------------
-  @param key - which key.
-  @return - true if the key is pushed down.
-  ---------------------------------------------------------*/
-  static bool getKeyDown(int key);
-
-  /*-------------------------------------------------------
           Get the current state of the mouse button
   ---------------------------------------------------------
   @param mousebtn - which mouse button.
@@ -51,31 +90,14 @@ class InputManager {
   ---------------------------------------------------------*/
   static bool getMouse(int mousebtn);
 
-  /*-------------------------------------------------------
-          Get if the mouse button was pushed down this update
-  ---------------------------------------------------------
-  @param mousebtn - which mouse button.
-  @return - true if the mouse button is pushed down.
-  ---------------------------------------------------------*/
-  static bool getMouseDown(int mousebtn);
-
-  /*-------------------------------------------------------
-          Populates evnt with the latest mouse event of that button
-          returns false if this event has not happened yet.
-  ---------------------------------------------------------
-  @param mousebtn - which mouse button.
-  @param evnt - the event which is populated. If this
-          event has not happened yet this is not populates.
-  @return - false if the event has not happened yet.
-  ---------------------------------------------------------*/
-  static bool getLatestMouseEvent(int mousebtn, SDL_MouseButtonEvent* evnt);
-
   static Vector2DInt getMousePosition();
+  friend class QueueHandle;
 
  private:
+  static void registerQueues(QueueHandle* handle);
+  static void unRegisterQueues(QueueHandle* handle);
   InputManager();
   static void setKey(int key, bool value);
-  static void resetKeys();
   static void addTextInput(const std::string& newText);
   static void resetTextInput();
   static void setMouse(int key, bool value, const SDL_MouseButtonEvent& evnt);
@@ -84,10 +106,6 @@ class InputManager {
   static SDL_Event mSdlEvent;
   static bool mKeyStates[NOF_SDL_SCANCODES_BUFFER];
   static bool mMouseStates[NOF_SDL_SCANCODES_BUFFER];
-  static bool mMouseStatesThisFrame[NOF_SDL_SCANCODES_BUFFER];
-  static SDL_MouseButtonEvent mMouseLatestEvent[NOF_SDL_SCANCODES_BUFFER];
-  static bool
-      mKeyStatesThisFrame[NOF_SDL_SCANCODES_BUFFER];  // Contains if the key was
-                                                      // added this frame
   static std::mutex mMutex;
+  static std::list<QueueHandle*> mQueueHandles;
 };

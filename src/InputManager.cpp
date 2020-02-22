@@ -1,5 +1,6 @@
 #include "InputManager.h"
 
+#include "Logging.h"
 /*-------------------------------------------------------
         Parameters.
 ---------------------------------------------------------*/
@@ -7,12 +8,16 @@ bool InputManager::mInitialized = false;
 std::string InputManager::mTextInput = "";
 bool InputManager::mKeyStates[NOF_SDL_SCANCODES_BUFFER] = {0};
 bool InputManager::mMouseStates[NOF_SDL_SCANCODES_BUFFER] = {0};
-bool InputManager::mMouseStatesThisFrame[NOF_SDL_SCANCODES_BUFFER] = {0};
-SDL_MouseButtonEvent InputManager::mMouseLatestEvent[NOF_SDL_SCANCODES_BUFFER] =
-    {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 SDL_Event InputManager::mSdlEvent;
-bool InputManager::mKeyStatesThisFrame[NOF_SDL_SCANCODES_BUFFER];
 std::mutex InputManager::mMutex;
+std::list<QueueHandle*> InputManager::mQueueHandles;
+
+QueueHandle::QueueHandle() { InputManager::registerQueues(this); }
+QueueHandle::~QueueHandle() { InputManager::unRegisterQueues(this); }
+
+KeyEvent::KeyEvent(int key, bool keyDown) : mKey(key), mKeyDown(keyDown) {}
+MouseEvent::MouseEvent(const Vector2DInt& pos, int button, bool buttonDown)
+    : mPos(pos), mButton(button), mButtonDown(buttonDown) {}
 
 /*Publics*/
 void InputManager::initialize() {
@@ -21,9 +26,46 @@ void InputManager::initialize() {
   }
 }
 
+void InputManager::registerQueues(QueueHandle* handle) {
+  std::scoped_lock lock(mMutex);
+  mQueueHandles.emplace_back(handle);
+}
+void InputManager::unRegisterQueues(QueueHandle* handle) {
+  std::scoped_lock lock(mMutex);
+  mQueueHandles.erase(
+      std::remove(mQueueHandles.begin(), mQueueHandles.end(), handle),
+      mQueueHandles.end());
+}
+
+bool InputManager::hasMouseEvents(const QueueHandle& handle) {
+  std::scoped_lock lock(mMutex);
+  return !handle.mMouseEvents.empty();
+}
+bool InputManager::hasKeyEvents(const QueueHandle& handle) {
+  std::scoped_lock lock(mMutex);
+  return !handle.mKeyEvents.empty();
+}
+MouseEvent InputManager::dequeueMouseEvent(QueueHandle& handle) {
+  std::scoped_lock lock(mMutex);
+  MouseEvent out = handle.mMouseEvents.front();
+  handle.mMouseEvents.pop();
+  return out;
+}
+KeyEvent InputManager::dequeueKeyEvent(QueueHandle& handle) {
+  std::scoped_lock lock(mMutex);
+  KeyEvent out = handle.mKeyEvents.front();
+  handle.mKeyEvents.pop();
+  return out;
+}
+
+void InputManager::clearQueues(QueueHandle& handle) {
+  std::scoped_lock lock(mMutex);
+  while (!handle.mMouseEvents.empty()) handle.mMouseEvents.pop();
+  while (!handle.mKeyEvents.empty()) handle.mKeyEvents.pop();
+}
+
 void InputManager::readInputs() {
   std::scoped_lock lock(mMutex);
-  InputManager::resetKeys();
   InputManager::resetTextInput();
 
   while (SDL_PollEvent(&InputManager::mSdlEvent) != 0) {
@@ -36,23 +78,22 @@ void InputManager::readInputs() {
       case SDL_TEXTINPUT:
         InputManager::addTextInput(InputManager::mSdlEvent.text.text);
         break;
-      // On key up
       case SDL_KEYUP:
         InputManager::setKey(InputManager::mSdlEvent.key.keysym.scancode,
                              false);
         break;
-      // On key down
       case SDL_KEYDOWN:
         if (!InputManager::mSdlEvent.key.repeat) {
           InputManager::setKey(InputManager::mSdlEvent.key.keysym.scancode,
                                true);
         }
         break;
-      // On mouse up
-      case SDL_MOUSEBUTTONDOWN:
+      case SDL_MOUSEBUTTONDOWN: {
         InputManager::setMouse(mSdlEvent.button.button, true, mSdlEvent.button);
+        Vector2DInt container;
+        SDL_GetMouseState(&container.x, &container.y);
         break;
-      // On mouse down
+      }
       case SDL_MOUSEBUTTONUP:
         InputManager::setMouse(mSdlEvent.button.button, false,
                                mSdlEvent.button);
@@ -66,33 +107,12 @@ bool InputManager::getKey(int key) {
   return mKeyStates[key];
 }
 
-bool InputManager::getKeyDown(int key) {
-  std::scoped_lock lock(mMutex);
-  return InputManager::mKeyStatesThisFrame[key];
-}
-
 bool InputManager::getMouse(int mousebtn) {
   std::scoped_lock lock(mMutex);
   return InputManager::mMouseStates[mousebtn];
 }
 
-bool InputManager::getMouseDown(int mousebtn) {
-  std::scoped_lock lock(mMutex);
-  return InputManager::mMouseStatesThisFrame[mousebtn];
-}
-bool InputManager::getLatestMouseEvent(int mousebtn,
-                                       SDL_MouseButtonEvent *evnt) {
-  std::scoped_lock lock(mMutex);
-  if (mMouseLatestEvent[mousebtn].type != 0) {
-    *evnt = mMouseLatestEvent[mousebtn];
-    return true;
-  } else {
-    return false;
-  }
-}
-
 Vector2DInt InputManager::getMousePosition() {
-  std::scoped_lock lock(mMutex);
   Vector2DInt container;
   SDL_GetMouseState(&container.x, &container.y);
   return container;
@@ -103,26 +123,25 @@ Vector2DInt InputManager::getMousePosition() {
 void InputManager::setKey(int key, bool val) {
   InputManager::mKeyStates[key] = val;
   if (val) {
-    InputManager::mKeyStatesThisFrame[key] = val;
+    for (auto& handle : mQueueHandles) {
+      handle->mKeyEvents.emplace(key, val);
+    }
   }
 }
 
-void InputManager::resetKeys() {
-  memset(mKeyStatesThisFrame, 0, sizeof(mKeyStatesThisFrame));
-  memset(mMouseStatesThisFrame, 0, sizeof(mMouseStatesThisFrame));
-}
-
-void InputManager::addTextInput(const std::string &text) {
+void InputManager::addTextInput(const std::string& text) {
   InputManager::mTextInput += text;
 }
 
 void InputManager::resetTextInput() { InputManager::mTextInput = ""; }
 
 void InputManager::setMouse(int key, bool val,
-                            const SDL_MouseButtonEvent &evnt) {
+                            const SDL_MouseButtonEvent& evnt) {
   InputManager::mMouseStates[key] = val;
   if (val) {
-    InputManager::mMouseStatesThisFrame[key] = val;
+    for (auto& handle : mQueueHandles) {
+      Vector2DInt pos{evnt.x, evnt.y};
+      handle->mMouseEvents.emplace(pos, key, val);
+    }
   }
-  InputManager::mMouseLatestEvent[key] = evnt;
 }

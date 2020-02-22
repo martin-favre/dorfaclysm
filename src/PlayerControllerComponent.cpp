@@ -13,8 +13,9 @@
 #include "MiningRequestPool.h"
 #include "PlayerRequestType.h"
 #include "RockBlockItem.h"
-#include "PlayerInputRequests.h"
-#include "InputManager.h"
+
+PlayerControllerComponent::PlayerControllerComponent(GameObject& gObj)
+    : Component(gObj) {}
 
 void PlayerControllerComponent::setup() {
   mTextComponent = owner().getComponent<TextComponent>();
@@ -45,9 +46,8 @@ void PlayerControllerComponent::renderText() {
 }
 
 void PlayerControllerComponent::handleClick() {
-  MouseClickInfo mouseInfo = PlayerInputRequests::dequeueMouseClick();
-  if(mouseInfo.getButton() != 1) return;
-  Vector3DInt mousePos = mouseInfo.getPos();
+  if (!InputManager::getMouse(1)) return;
+  Vector3DInt mousePos = InputManager::getMousePosition();
   mousePos += Camera::get().getPosition();
   mousePos = Camera::renderPosToTilePos(mousePos);
   GridMap& gridMap = GridMap::getActiveMap();
@@ -86,11 +86,11 @@ void PlayerControllerComponent::handleClick() {
 }
 
 void PlayerControllerComponent::update() {
-  if (PlayerInputRequests::hasMouseClicks()) handleClick();
+  handleClick();
 
-  if (PlayerInputRequests::hasKeyPresses()) {
-    int key = PlayerInputRequests::dequeueKeyPress();
-    if (key == SDL_SCANCODE_TAB) {
+  if (InputManager::hasKeyEvents(mInputHandle)) {
+    KeyEvent keyEvent = InputManager::dequeueKeyEvent(mInputHandle);
+    if (keyEvent.mKeyDown && keyEvent.mKey == SDL_SCANCODE_TAB) {
       if (mMode == mine) {
         mMode = place;
       } else if (mMode == place) {
