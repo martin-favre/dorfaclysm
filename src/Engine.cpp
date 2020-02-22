@@ -79,6 +79,7 @@ void Engine::logicThreadMainLoop() {
     auto timeLeft = msPerFrame - elapsedMs;
     if (timeLeft > 0)
       std::this_thread::sleep_for(std::chrono::milliseconds(timeLeft));
+    timer.start();
   }
 }
 
@@ -100,6 +101,9 @@ void Engine::replaceScene() {
           intial gameobjects to the engine.
   */
   clearAllGameObjects();
+  GameObject& g = Engine::addGameObject<GameObject>();
+  g.addComponent<Debug_CloseGameComponent>();
+  g.name() = "Debug_CloseGameComponent";
   mScenes[mSceneToLoad]();
 }
 
@@ -127,9 +131,6 @@ void Engine::clearAllGameObjects() {
     std::queue<std::unique_ptr<GameObject>>().swap(mGameobjectsToAdd);
     mGameobjectsToRemove.clear();
   }
-  GameObject& g = Engine::addGameObject<GameObject>();
-  g.addComponent<Debug_CloseGameComponent>();
-  g.name() = "Debug_CloseGameComponent";
 }
 
 void Engine::putGameObjectsIntoWorld() {

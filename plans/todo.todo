@@ -23,8 +23,8 @@
 ✔ Do not throw away jobs when they can't be completed @done(20-02-12 19:55)
 ✔ Make mined rocks drop items @done(20-02-18 16:33)
 ✔ Re-build a rock with a dropped rock item @done(20-02-18 16:33)
+✔ Separate render and work thread @done(20-02-22 13:24)
 
-☐ Separate render and work thread
 
 ☐ Make block last more than one hit
 
