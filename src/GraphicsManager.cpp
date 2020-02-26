@@ -25,7 +25,7 @@ void GraphicsManager::initialize() {
   if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,
                    "0"))  // 0 = nearest pixel sampling
   {
-    Logging::log("Warning: Linear texture filtering not enabled!");
+    LOG("Warning: Linear texture filtering not enabled!");
   }
 
   GraphicsManager::mMainWindow = SDL_CreateWindow(
@@ -61,7 +61,7 @@ void GraphicsManager::initialize() {
   ASSERT(ok != -1, "SDL_ttf could not initialize! SDL_ttf Error: " +
                        std::string(TTF_GetError()));
   GraphicsManager::mInitialized = true;
-  Logging::log("Finished initialing GraphicsManager");
+  LOG("Finished initialing GraphicsManager");
 }
 
 void GraphicsManager::teardown() {
@@ -72,7 +72,7 @@ void GraphicsManager::teardown() {
   IMG_Quit();
   SDL_Quit();
   mInitialized = false;
-  Logging::log("Finished teardown GraphicsManager");
+  LOG("Finished teardown GraphicsManager");
 }
 
 void GraphicsManager::prepareRendering() {

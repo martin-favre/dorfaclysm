@@ -119,15 +119,15 @@ IncrementalAstar::IncrementalAstar(const Vector3DInt& start,
       mStepTimeMs(stepTimeMs),
       mInternals(std::make_unique<Pimple>()) {
   if (!map.isPosInMap(start)) {
-    Logging::log("Could not find path, the start was outside map");
+    LOG("Could not find path, the start was outside map");
     mIsDone = true;
   }
   if (!map.isPosInMap(end)) {
-    Logging::log("Could not find path, the target position outside map");
+    LOG("Could not find path, the target position outside map");
     mIsDone = true;
   }
   if (!map.isPosFree(end)) {
-    Logging::log("Could not find path, the target position was occupied");
+    LOG("Could not find path, the target position was occupied");
     mIsDone = true;
   }
 
@@ -213,5 +213,5 @@ void IncrementalAstar::calculatePath() {
     }
   }
   mIsDone = true;
-  Logging::log("Could not find path, no path available");
+  LOG("Could not find path, no path available");
 }

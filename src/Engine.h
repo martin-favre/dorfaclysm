@@ -39,7 +39,7 @@ class Engine {
         std::make_unique<gameObjType>(id, std::forward<Args>(args)...);
     if (Engine::mLatestGameobjectId >=
         std::numeric_limits<unsigned long>::max()) {
-      Logging::log("Warning, gameobject id overflow");
+      LOG("Warning, gameobject id overflow");
     }
     gameObjType* out = newObject.get();
     {
@@ -47,7 +47,7 @@ class Engine {
       Engine::mGameobjectsToAdd.push(std::move(newObject));
     }
     Engine::mLatestGameobjectId++;
-    Logging::log("Added gameobject id " + std::to_string(id) + " type " +
+    LOG("Added gameobject id " + std::to_string(id) + " type " +
                  typeid(gameObjType).name());
     if (!mRunning) putGameObjectsIntoWorld();
     return *out;

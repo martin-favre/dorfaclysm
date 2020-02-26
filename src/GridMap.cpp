@@ -47,7 +47,7 @@ void makeGridGrass(
 GridMap& GridMap::generateActiveMap(
     const Vector3DInt& size,
     std::function<void(GridMap&, const Vector3DInt&)> generator) {
-  Logging::log(std::stringstream() << "Generating map of size " << size);
+  LOG("Generating map of size " << size) ;
   ASSERT(size.x > 0, "Size needs to be > 0");
   ASSERT(size.y > 0, "Size needs to be > 0");
   ASSERT(size.z > 0, "Size needs to be > 0");
@@ -58,7 +58,7 @@ GridMap& GridMap::generateActiveMap(
     generator(mActiveMap, size);
   } else {
     makeGridGrass(mActiveMap.mBlocks, size);
-    Logging::log(std::string(__func__) + ": generator not set");
+    LOG(std::string(__func__) + ": generator not set");
   }
   return mActiveMap;
 }

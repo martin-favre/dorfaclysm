@@ -26,21 +26,21 @@ void Engine::initialize() {
   GraphicsManager::initialize();
   InputManager::initialize();
   Engine::mInitialized = true;
-  Logging::log("Finished initialize Engine");
+  LOG("Finished initialize Engine");
 }
 
 void Engine::teardown() {
   ASSERT(!mRunning, "You need to stop the engine first");
   clearAllGameObjects();
   GraphicsManager::teardown();
-  Logging::log("Finished teardown Engine");
+  LOG("Finished teardown Engine");
   Engine::mInitialized = false;
 }
 
 void Engine::start() {
   ASSERT(Engine::mInitialized, "You need to initialize engine first!");
   Engine::mRunning = true;
-  Logging::log("Starting Engine");
+  LOG("Starting Engine");
   Engine::mainLoop();
 }
 
@@ -48,6 +48,7 @@ void Engine::stop() { Engine::mRunning = false; }
 
 void Engine::removeGameObject(GameObject* gObj) {
   std::scoped_lock lock(mMutex);
+  LOG("Removing GameObject " << gObj);
   Engine::mGameobjectsToRemove.insert(gObj);
 }
 
@@ -85,10 +86,19 @@ void Engine::logicThreadMainLoop() {
 
 void Engine::mainLoop() {
   std::thread logicThread(logicThreadMainLoop);
+  Timer timer;
+  timer.start();
+  int maxFps = 100;
+  int msPerFrame = 1000 * 1 / maxFps;
   while (Engine::mRunning) {
     InputManager::readInputs();
     GraphicsManager::prepareRendering();
     Engine::renderGameObjects();
+    auto elapsedMs = timer.getElapsedMilliseconds();
+    auto timeLeft = msPerFrame - elapsedMs;
+    if (timeLeft > 0)
+      std::this_thread::sleep_for(std::chrono::milliseconds(timeLeft));
+    timer.start();
   }
   logicThread.join();
 }
@@ -164,6 +174,7 @@ void Engine::putGameObjectsIntoWorld() {
 }
 void Engine::removeGameObjectFromWorld() {
   std::scoped_lock lock(mMutex);
+
   for (auto gObj_to_remove = mGameobjectsToRemove.begin();
        gObj_to_remove != mGameobjectsToRemove.end(); ++gObj_to_remove) {
     auto gObj_in_world = mGameobjects.begin();
@@ -177,6 +188,7 @@ void Engine::removeGameObjectFromWorld() {
       ++gObj_in_world;
     }
   }
+  mGameobjectsToRemove.clear();
 }
 
 void Engine::runSetups(std::vector<GameObject*>& gameobjects) {

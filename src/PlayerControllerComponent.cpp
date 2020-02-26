@@ -100,6 +100,7 @@ void PlayerControllerComponent::update() {
       }
     }
   }
+  InputManager::clearQueues(mInputHandle);
 }
 
 void PlayerControllerComponent::render() { renderText(); }

@@ -118,15 +118,15 @@ bool isStepValid(const GridMap& map, const Vector3DInt& newPos,
 bool Astar::getPath(const Vector3DInt& start, const Vector3DInt& finish,
                     const GridMap& map, std::stack<Vector3DInt>& path) {
   if (!map.isPosInMap(start)) {
-    Logging::log("Could not find path, the start was outside map");
+    LOG("Could not find path, the start was outside map");
     return false;
   }
   if (!map.isPosInMap(finish)) {
-    Logging::log("Could not find path, the target position outside map");
+    LOG("Could not find path, the target position outside map");
     return false;
   }
   if (!map.isPosFree(finish)) {
-    Logging::log("Could not find path, the target position was occupied");
+    LOG("Could not find path, the target position was occupied");
     return false;
   }
   std::priority_queue<AStarNode*, std::vector<AStarNode*>, Compare> node_queue;
@@ -141,7 +141,7 @@ bool Astar::getPath(const Vector3DInt& start, const Vector3DInt& finish,
   while (!node_queue.empty()) {
     ++steps;
     if (steps > 1000) {
-      Logging::log("Could not find path, over max number of steps");
+      LOG("Could not find path, over max number of steps");
       return false;
     }
     current_node = node_queue.top();
@@ -197,6 +197,6 @@ bool Astar::getPath(const Vector3DInt& start, const Vector3DInt& finish,
       old_nodes.push_back(current_node);
     }
   }
-  Logging::log("Could not find path, no possible path");
+  LOG("Could not find path, no possible path");
   return false;
 }
