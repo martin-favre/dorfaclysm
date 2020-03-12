@@ -1,6 +1,7 @@
 #include "GridMapHelpers.h"
 
 #include <queue>
+#include <set>
 #include <stack>
 
 #include "Block.h"
@@ -67,21 +68,26 @@ void exploreMap(GridMap& map, const Vector3DInt& startingFrom) {
 }
 
 bool getClosestFreePositionTo(const GridMap& map, const Vector3DInt pos,
-                              Vector3DInt& out, int widthToSearch) {
-  std::stack<std::pair<Vector3DInt, int>> testPositions;
+                              Vector3DInt& out, uint widthToSearch,
+                              uint minWidth) {
+  std::set<Vector3DInt> failedPositions;
+  std::stack<std::pair<Vector3DInt, uint>> testPositions;
   testPositions.emplace(pos, 0);
   while (!testPositions.empty()) {
-    const std::pair<Vector3DInt, int> current = testPositions.top();
+    const std::pair<Vector3DInt, uint> current = testPositions.top();
     testPositions.pop();
-    if (map.isPosFree(current.first)) {
+    if (current.second >= minWidth && map.isPosFree(current.first)) {
       out = current.first;
       return true;
     } else {
+      failedPositions.insert(current.first);
       if (current.second < widthToSearch) {
         for (const Vector3DInt& delta : DELTA_POSITIONS_HORIZONTAL) {
           const Vector3DInt newPos = current.first + delta;
           if (map.isPosInMap(newPos)) {
-            testPositions.emplace(newPos, current.second + 1);
+            if (failedPositions.count(newPos) == 0) {
+              testPositions.emplace(newPos, current.second + 1);
+            }
           }
         }
       }

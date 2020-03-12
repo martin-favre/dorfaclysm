@@ -25,9 +25,30 @@
 ✔ Re-build a rock with a dropped rock item @done(20-02-18 16:33)
 ✔ Separate render and work thread @done(20-02-22 13:24)
 
+☐ Add dorf needs system
+    ☐ Sleep
+        ☐ Add bed block
+            A steadily lowering value
+            When they are in bed they slowly get sleep back
+            Make buildable with just rock
+            Could choose what task to perform when clicking with 1-9 keys
+    ☐ Food
+        A steadily lowering value
+        This would need some item which the dorf can eat
+
+☐ Add stockpiles
+
+☐ Idea Standardize Inventory: 
+    ItemContainer just has an Inventory
+    Dorfs also has an Inventory
+
+☐ Make up/down stair buildable
+
+☐ Bug: Itemcontainers are not visible
+☐ Bug: Dorfs build where they stand
 
 ☐ Make block last more than one hit
-
+    So they don't run like sanic and clear the map
 
 ☐ Be able to zoom in/out of the map
     Quite messy

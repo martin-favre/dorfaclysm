@@ -47,17 +47,17 @@ void foo() {
     gObj.setPosition({20, 20});
     gObj.setScale({2, 2});
     gObj.addComponent<FpsCounter>();
-    gObj.setRenderDepth(RenderDepth::GUI);
+    gObj.setRenderDepth(RenderDepths::GUI);
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<GridMapRenderer>();
-    gObj.setRenderDepth(RenderDepth::GridMap);
+    gObj.setRenderDepth(RenderDepths::GridMap);
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<AirDepthRenderer>();
-    gObj.setRenderDepth(RenderDepth::AirDepth);
+    gObj.setRenderDepth(RenderDepths::AirDepth);
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
@@ -70,17 +70,17 @@ void foo() {
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
     gObj.setScale({2, 2});
     gObj.setPosition({20, 80});
-    gObj.setRenderDepth(RenderDepth::GUI);
+    gObj.setRenderDepth(RenderDepths::GUI);
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.setPosition({500, 0});
     gObj.addComponent<PlayerControllerComponent>();
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
-    gObj.setRenderDepth(RenderDepth::GUI);
+    gObj.setRenderDepth(RenderDepths::GUI);
   }
   {
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 2; ++i) {
       GameObject& gObj = Engine::addGameObject<GameObject>();
       gObj.addComponent<DorfController>();
       gObj.addComponent<GridActor>(GridActor::dorf);
@@ -88,7 +88,7 @@ void foo() {
           Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
       gObj.setScale({2, 2});
       gObj.setPosition({0, 0, 1});
-      gObj.setRenderDepth(RenderDepth::Actors);
+      gObj.setRenderDepth(RenderDepths::Actors);
       gObj.name() = "Dorf";
     }
   }
@@ -97,11 +97,11 @@ void foo() {
       // gObj.addComponent<DrawLineComponent>();
       // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
       // gObj.setPosition({20, 200});
-      // gObj.setRenderDepth(RenderDepth::GUI);
+      // gObj.setRenderDepth(RenderDepths::GUI);
   } {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<JobRenderer>();
-    gObj.setRenderDepth(RenderDepth::JobIndication);
+    gObj.setRenderDepth(RenderDepths::JobIndication);
   }
 }
 

@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "GridActor.h"
 #include "GridMap.h"
+#include "GridMapHelpers.h"
 #include "ItemContainer.h"
 #include "ItemPool.h"
 #include "Logging.h"
@@ -14,6 +15,12 @@ class FetchWalkingState : public WalkingState {
       : WalkingState(user, 100), mUser(user), mRequest(request) {
     bool success = ItemPool::whereIsClosestItem(
         mUser.getCurrentPos(), mTargetPos, mRequest->getType());
+    if (!success) {
+      onPathFindFail();
+      return;
+    }
+    success = GridMapHelpers::getClosestFreePositionTo(
+        GridMap::getActiveMap(), mTargetPos, mTargetPos, 1);
     if (!success) onPathFindFail();
   }
   Vector3DInt getTargetPos() override { return mTargetPos; }
@@ -37,8 +44,12 @@ class PlaceWalkingState : public WalkingState {
       : WalkingState(user, 100),
         mUser(user),
         mRequest(request),
-        mItem(std::move(item)) {}
-  Vector3DInt getTargetPos() override { return mRequest->getPos(); }
+        mItem(std::move(item)) {
+    bool success = GridMapHelpers::getClosestFreePositionTo(
+        GridMap::getActiveMap(), mRequest->getPos(), mTargetPos, 1, 1);
+    if (!success) onPathFindFail();
+  }
+  Vector3DInt getTargetPos() override { return mTargetPos; }
 
   std::unique_ptr<State> onReachedTarget() override;
   void onPathFindFail() override {
@@ -51,6 +62,7 @@ class PlaceWalkingState : public WalkingState {
   GridActor& mUser;
   std::shared_ptr<MoveItemRequest> mRequest;
   std::unique_ptr<Item> mItem;
+  Vector3DInt mTargetPos;
 };
 
 std::unique_ptr<State> FetchWalkingState::onReachedTarget() {
@@ -72,7 +84,7 @@ std::unique_ptr<State> FetchWalkingState::onReachedTarget() {
 }
 
 std::unique_ptr<State> PlaceWalkingState::onReachedTarget() {
-  GridMap::getActiveMap().addItemAt(mUser.getCurrentPos(), std::move(mItem));
+  GridMap::getActiveMap().addItemAt(mRequest->getPos(), std::move(mItem));
   terminateMachine();
   return noTransition();
 }

@@ -1,13 +1,5 @@
 
 #pragma once
-namespace RenderDepth
-{
-  enum 
-  {
-    GridMap,
-    Actors,
-    JobIndication,
-    AirDepth,
-    GUI
-  };
+namespace RenderDepths {
+enum { GridMap, Actors, JobIndication, AirDepth, GUI };
 }
