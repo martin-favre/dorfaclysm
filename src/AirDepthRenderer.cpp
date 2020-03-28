@@ -20,8 +20,8 @@ void AirDepthRenderer::renderBlock(Vector3DInt pos) {
   GraphicsManager::setRenderDrawColor({0, 0, 20, alpha});
   Vector3DInt renderPos = Camera::tilePosToRenderPos(pos);
   renderPos -= mCam.getPosition();
-  const Rect dstRect{renderPos.x, renderPos.y, GridMap::tileRenderSize.x,
-                     GridMap::tileRenderSize.y};
+  const Rect dstRect{renderPos.x, renderPos.y, Camera::tileRenderSize.x,
+                     Camera::tileRenderSize.y};
 
   GraphicsManager::drawRect(dstRect);
   GraphicsManager::setRenderDrawColor(GraphicsManager::mDefaultDrawColor);

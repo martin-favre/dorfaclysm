@@ -12,7 +12,6 @@
 #include "GridMap.h"
 #include "GridMapRenderer.h"
 #include "ItemContainerObject.h"
-#include "JobRenderer.h"
 #include "MapGenerator.h"
 #include "Paths.h"
 #include "PlayerControllerComponent.h"
@@ -25,9 +24,9 @@
 #include "Vector2DInt.h"
 
 void foo() {
-  int mapSize = 64;
+  int mapSize = 128;
   {
-    GridMap::generateActiveMap({mapSize, mapSize, mapSize},
+    GridMap::generateActiveMap({mapSize, mapSize, 64},
                                MapGenerator::generate);
   }
   Camera::get().move({0, 0, mapSize / 4});
@@ -85,8 +84,8 @@ void foo() {
       gObj.addComponent<DorfController>();
       gObj.addComponent<GridActor>(GridActor::dorf);
       gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
-          Paths::NPC_TILE, {0, 0}, Paths::SIZE_OF_NPC_TILE));
-      gObj.setScale({2, 2});
+          Paths::RG_TILE_TRANSPARENT, {25, 0}, Paths::SIZE_OF_RG_TILE_TRANSPARENT));
+      // gObj.setScale({2, 2});
       gObj.setPosition({0, 0, 1});
       gObj.setRenderDepth(RenderDepths::Actors);
       gObj.name() = "Dorf";
@@ -98,10 +97,6 @@ void foo() {
       // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
       // gObj.setPosition({20, 200});
       // gObj.setRenderDepth(RenderDepths::GUI);
-  } {
-    GameObject& gObj = Engine::addGameObject<GameObject>();
-    gObj.addComponent<JobRenderer>();
-    gObj.setRenderDepth(RenderDepths::JobIndication);
   }
 }
 

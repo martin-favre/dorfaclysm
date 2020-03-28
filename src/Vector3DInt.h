@@ -75,7 +75,10 @@ class Vector3DInt {
     return *this;
   }
 
+  static constexpr Vector3DInt zero() { return Vector3DInt(); }
+
   constexpr int squared_magnitude() const { return x * x + y * y + z * z; }
+
   friend std::ostream& operator<<(std::ostream& os, const Vector3DInt& vec);
 
   int x{0};

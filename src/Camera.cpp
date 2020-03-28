@@ -5,6 +5,11 @@
 
 Camera Camera::mCamera;
 
+Camera::Camera(){
+  // Camera topleft corner needs to be in topleft corner
+  
+}
+
 Camera& Camera::get() { return mCamera; }
 Vector3DInt Camera::getPosition() const {
   std::scoped_lock lock(mMutex);
@@ -19,8 +24,8 @@ void Camera::move(const Vector3DInt& movement) {
   if (mPosition.z < 0) mPosition.z = 0;
 
   const Vector3DInt gridSize{GridMap::getActiveMap().getSize()};
-  const Vector2DInt gridRenderSize{gridSize.x * GridMap::tileRenderSize.x,
-                                   gridSize.y * GridMap::tileRenderSize.y};
+  const Vector2DInt gridRenderSize{gridSize.x * tileRenderSize.x,
+                                   gridSize.y * tileRenderSize.y};
   const Vector2DInt tilesCameraCovers = {GraphicsManager::getScreenWidth(),
                                          GraphicsManager::getScreenHeight()};
 
@@ -46,14 +51,14 @@ Vector3DInt Camera::renderPosToTilePos(const Vector3DInt& renderPos) {
     64 -> 1
   */
 
-  const int x = round(renderPos.x / GridMap::tileRenderSize.x);
-  const int y = round(renderPos.y / GridMap::tileRenderSize.y);
+  const int x = round(renderPos.x / tileRenderSize.x);
+  const int y = round(renderPos.y / tileRenderSize.y);
   return Vector3DInt{x, y, renderPos.z};
 }
 
 Vector2DInt Camera::tilePosToRenderPos(const Vector2DInt& pos) {
-  return Vector2DInt{pos.x * GridMap::tileRenderSize.x,
-                     pos.y * GridMap::tileRenderSize.y};
+  return Vector2DInt{pos.x * tileRenderSize.x,
+                     pos.y * tileRenderSize.y};
 }
 
 template <class T>

@@ -6,8 +6,8 @@ CameraControllerComponent::CameraControllerComponent(GameObject& gObj)
 
 void CameraControllerComponent::render() {
   Vector3DInt movement;
-  const int speedx = GridMap::tileRenderSize.x;
-  const int speedy = GridMap::tileRenderSize.y;
+  const int speedx = Camera::tileRenderSize.x;
+  const int speedy = Camera::tileRenderSize.y;
   while (InputManager::hasKeyEvents(mInputHandle)) {
     KeyEvent keyEvent = InputManager::dequeueKeyEvent(mInputHandle);
     if (!keyEvent.mKeyDown) continue;
@@ -33,5 +33,7 @@ void CameraControllerComponent::render() {
         break;
     }
   }
-  mCam.move(movement);
+  if(movement != Vector3DInt::zero()){
+    mCam.move(movement);
+  }
 }

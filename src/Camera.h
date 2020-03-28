@@ -18,8 +18,11 @@ class Camera {
 
   static Vector3DInt renderPosToTilePos(const Vector3DInt& renderPos);
   static Vector2DInt tilePosToRenderPos(const Vector2DInt& pos);
+  static constexpr Vector2DInt tileRenderSize{
+      16, 16};  // How many pixels wide a tile is when rendered, before other
+                // modifiers
  private:
-  Camera() = default;
+  Camera();
   static Camera mCamera;
   Vector3DInt mPosition;
   Vector2D mScale{1, 1};

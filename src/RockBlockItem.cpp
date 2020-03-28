@@ -23,8 +23,8 @@ bool RockBlockItem::isPlaceable() const { return true; }
 
 const Sprite& RockBlockItem::loadSprite() const {
   if (!mSprite.get()) {
-    mSprite = SpriteLoader::loadSpriteByIndex(Paths::DF_TILE, {6, 2},
-                                              Paths::SIZE_OF_DF_TILE);
+    mSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE_TRANSPARENT, {6, 2},
+                                              Paths::SIZE_OF_RG_TILE_TRANSPARENT);
   }
   return *mSprite;
 }

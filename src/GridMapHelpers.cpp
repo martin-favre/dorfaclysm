@@ -15,7 +15,7 @@ namespace GridMapHelpers {
 void doToEachBlockInScreen(const GridMap& map, const Camera& cam,
                            std::function<void(const Vector3DInt&)> func) {
   const Vector3DInt cameraPos = cam.getPosition();
-  const Vector2DInt tileSize{GridMap::tileRenderSize};
+  const Vector2DInt tileSize{Camera::tileRenderSize};
   const Vector3DInt mapSize{map.getSize()};
   const Vector2DInt screenSize{GraphicsManager::getScreenWidth(),
                                GraphicsManager::getScreenHeight()};

@@ -7,8 +7,8 @@ const std::string RockBlock::mName{"Rock"};
 
 RockBlock::RockBlock() {
   if (!mSprite.get()) {
-    mSprite = SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {1, 6},
-                                              Paths::SIZE_OF_GRASS_TILE);
+    mSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE_TRANSPARENT, {1, 0},
+                                              Paths::SIZE_OF_RG_TILE_TRANSPARENT);
   }
 }
 const Sprite* RockBlock::getTopSprite() const { return mSprite.get(); }

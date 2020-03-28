@@ -63,9 +63,6 @@ class GridMap {
       const Vector3DInt& size,
       std::function<void(GridMap&, const Vector3DInt&)> generator);
   static GridMap& getActiveMap();
-  static constexpr Vector2DInt tileRenderSize{
-      64, 64};  // How many pixels wide a tile is when rendered, before other
-                // modifiers
 
  private:
   bool isBlockValid(const Vector3DInt& pos) const;

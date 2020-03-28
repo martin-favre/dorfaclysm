@@ -36,10 +36,8 @@ const Sprite* getSeeThroughSprite(const GridMap& gridmap, Vector3DInt pos) {
 }
 
 void GridMapRenderer::prepareViewedArea() {
-  std::unique_ptr<Sprite> tmpEmptySprite = SpriteLoader::loadSpriteByIndex(
-      Paths::BROWN_SQUARE, {0, 0}, Paths::SIZE_OF_BROWN_SQUARE);
   Vector3DInt cameraPos = Camera::get().getPosition();
-  Vector2DInt tileSize{GridMap::tileRenderSize};
+  Vector2DInt tileSize{Camera::tileRenderSize};
   const Vector3DInt mapSize{mActiveGridMap.getSize()};
   Vector2DInt screenSize{GraphicsManager::getScreenWidth(),
                          GraphicsManager::getScreenHeight()};
@@ -61,8 +59,8 @@ void GridMapRenderer::prepareViewedArea() {
       if (!mActiveGridMap.isPosInMap(pos)) continue;
       const Block& block = mActiveGridMap.getBlockAt(pos);
       if (!block.isExplored()) continue;
-      const int renderPosX = GridMap::tileRenderSize.x * x;
-      const int renderPosY = GridMap::tileRenderSize.y * y;
+      const int renderPosX = Camera::tileRenderSize.x * x;
+      const int renderPosY = Camera::tileRenderSize.y * y;
 
       const Sprite* sprite{nullptr};
       if (block.isSeeThrough()) {
@@ -71,8 +69,8 @@ void GridMapRenderer::prepareViewedArea() {
         // sprite = block.getTopSprite();
         GraphicsManager::setRenderDrawColor({158, 87, 0, SDL_ALPHA_OPAQUE});
         GraphicsManager::drawRect({renderPosX, renderPosY,
-                                   GridMap::tileRenderSize.x,
-                                   GridMap::tileRenderSize.y});
+                                   Camera::tileRenderSize.x,
+                                   Camera::tileRenderSize.y});
         GraphicsManager::setRenderDrawColor(GraphicsManager::mDefaultDrawColor);
       }
       if (sprite) {

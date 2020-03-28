@@ -13,6 +13,11 @@
 #include "MiningRequestPool.h"
 #include "PlayerRequestType.h"
 #include "RockBlockItem.h"
+const std::map<int, PlayerControllerComponent::Mode> PlayerControllerComponent::mKeyToMode = {
+  {SDL_SCANCODE_1, mine},
+  {SDL_SCANCODE_2, place},
+  {SDL_SCANCODE_3, clear},
+};
 
 PlayerControllerComponent::PlayerControllerComponent(GameObject& gObj)
     : Component(gObj) {}
@@ -90,14 +95,8 @@ void PlayerControllerComponent::update() {
 
   if (InputManager::hasKeyEvents(mInputHandle)) {
     KeyEvent keyEvent = InputManager::dequeueKeyEvent(mInputHandle);
-    if (keyEvent.mKeyDown && keyEvent.mKey == SDL_SCANCODE_TAB) {
-      if (mMode == mine) {
-        mMode = place;
-      } else if (mMode == place) {
-        mMode = clear;
-      } else {
-        mMode = mine;
-      }
+    if (keyEvent.mKeyDown && mKeyToMode.count(keyEvent.mKey)) {
+      mMode = mKeyToMode.at(keyEvent.mKey);
     }
   }
   InputManager::clearQueues(mInputHandle);

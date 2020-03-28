@@ -7,8 +7,8 @@ std::unique_ptr<Sprite> GrassBlock::mSprite;
 
 GrassBlock::GrassBlock() {
   if (!mSprite.get()) {
-    mSprite = SpriteLoader::loadSpriteByIndex(Paths::GRASS_TILE, {2, 1},
-                                              Paths::SIZE_OF_GRASS_TILE);
+    mSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE_TRANSPARENT, {6, 0},
+                                              Paths::SIZE_OF_RG_TILE_TRANSPARENT);
   }
 }
 const Sprite* GrassBlock::getTopSprite() const { return mSprite.get(); }

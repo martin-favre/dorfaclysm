@@ -25,6 +25,9 @@
 ✔ Re-build a rock with a dropped rock item @done(20-02-18 16:33)
 ✔ Separate render and work thread @done(20-02-22 13:24)
 
+☐ Make up/down stair buildable
+☐ Be able to choose what block to build
+
 ☐ Add dorf needs system
     ☐ Sleep
         ☐ Add bed block
@@ -36,13 +39,13 @@
         A steadily lowering value
         This would need some item which the dorf can eat
 
+
 ☐ Add stockpiles
 
 ☐ Idea Standardize Inventory: 
     ItemContainer just has an Inventory
     Dorfs also has an Inventory
 
-☐ Make up/down stair buildable
 
 ☐ Bug: Itemcontainers are not visible
 ☐ Bug: Dorfs build where they stand

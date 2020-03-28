@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "TextComponent.h"
 #include "InputManager.h"
+#include <map>
 class PlayerControllerComponent : public Component
 {
   public:
@@ -16,4 +17,6 @@ class PlayerControllerComponent : public Component
   TextComponent* mTextComponent{nullptr};
   Mode mMode{mine};
   QueueHandle mInputHandle;
+
+  static const std::map<int, PlayerControllerComponent::Mode> mKeyToMode;
 };
