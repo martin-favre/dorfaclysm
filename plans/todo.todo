@@ -24,6 +24,10 @@
 ✔ Make mined rocks drop items @done(20-02-18 16:33)
 ✔ Re-build a rock with a dropped rock item @done(20-02-18 16:33)
 ✔ Separate render and work thread @done(20-02-22 13:24)
+✔ Bug: Dorfs build where they stand @done(20-03-28 14:50)
+
+☐ Bug: Blocks gets auto built when an item is on their tile
+    They should be build when a dorf delivers an item to them.
 
 ☐ Make up/down stair buildable
 ☐ Be able to choose what block to build
@@ -45,10 +49,6 @@
 ☐ Idea Standardize Inventory: 
     ItemContainer just has an Inventory
     Dorfs also has an Inventory
-
-
-☐ Bug: Itemcontainers are not visible
-☐ Bug: Dorfs build where they stand
 
 ☐ Make block last more than one hit
     So they don't run like sanic and clear the map
