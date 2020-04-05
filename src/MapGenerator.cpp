@@ -1,12 +1,12 @@
 #include "MapGenerator.h"
 
 #include "AirBlock.h"
+#include "Engine.h"
 #include "GrassBlock.h"
+#include "Helpers.h"
 #include "RockBlock.h"
 #include "StairUpDownBlock.h"
-#include "Helpers.h"
 #include "Tree.h"
-#include "Engine.h"
 void MapGenerator::generateFlatWorld(GridMap& gridMap,
                                      const Vector3DInt& size) {
   for (int z = 0; z < size.z; ++z) {
@@ -39,8 +39,10 @@ void MapGenerator::generateStairWorld(GridMap& gridMap,
           gridMap.setBlockAt(pos, std::make_unique<RockBlock>());
         } else {
           gridMap.setBlockAt(pos, std::make_unique<AirBlock>());
-          if(Helpers::randomInt(0, 100) > 90){
-            Engine::addGameObject<Tree>().setPosition({x,y,z});
+          if (z > 0 && !gridMap.getBlockAt({x, y, z - 1}).mayPassThrough()) {
+            if (Helpers::randomInt(0, 100) > 90) {
+              Engine::addGameObject<Tree>().setPosition({x, y, z});
+            }
           }
         }
       }
