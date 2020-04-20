@@ -3,5 +3,5 @@
 class ItemType;
 class BlockBuildObject : public GameObject {
  public:
-  BlockBuildObject(GAMEOBJECT_ID id, const ItemType& item);
+  BlockBuildObject(const ItemType& item);
 };

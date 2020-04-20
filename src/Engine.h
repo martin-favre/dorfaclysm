@@ -33,25 +33,37 @@ class Engine {
   static void stop();
 
   template <typename gameObjType, class... Args>
-  static gameObjType& addGameObject(Args&&... args) {
-    GAMEOBJECT_ID id = Engine::mLatestGameobjectId;
+  static GameObject& addGameObject(Args&&... args) {
     std::unique_ptr<gameObjType> newObject =
-        std::make_unique<gameObjType>(id, std::forward<Args>(args)...);
-    if (Engine::mLatestGameobjectId >=
-        std::numeric_limits<unsigned long>::max()) {
-      LOG("Warning, gameobject id overflow");
-    }
-    gameObjType* out = newObject.get();
+        std::make_unique<gameObjType>(std::forward<Args>(args)...);
+
+    GameObject* out = newObject.get();
     {
       std::scoped_lock lock(mMutex);
       Engine::mGameobjectsToAdd.push(std::move(newObject));
     }
-    Engine::mLatestGameobjectId++;
-    LOG("Added gameobject id " + std::to_string(id) + " type " +
-                 typeid(gameObjType).name());
+    LOG("Added gameobject" << out);
     if (!mRunning) putGameObjectsIntoWorld();
     return *out;
   }
+
+  /**
+   * Note that unserializing a gameobject will make it forget whatever type it maybe was.
+   * It's now a GameObject.
+   */
+  static GameObject& addGameObject(const SerializedObj& serObj) {
+    std::unique_ptr<GameObject> newObject =
+        std::make_unique<GameObject>(serObj);
+    GameObject* out = newObject.get();
+    {
+      std::scoped_lock lock(mMutex);
+      Engine::mGameobjectsToAdd.push(std::move(newObject));
+    }
+    LOG("Unserialized gameobject : " << out);
+    if (!mRunning) putGameObjectsIntoWorld();
+    return *out;
+  }
+
   static void removeGameObject(GameObject* gObj);
   static void registerScene(const std::string& name, void (*scenecreator)());
   static void loadScene(const std::string& name);
@@ -73,7 +85,6 @@ class Engine {
 
   static std::string mSceneToLoad;
   static bool mAboutToLoadScene;
-  static GAMEOBJECT_ID mLatestGameobjectId;
   static bool mRunning;
   static bool mInitialized;
   static std::vector<std::unique_ptr<GameObject>> mGameobjects;

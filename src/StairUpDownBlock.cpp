@@ -8,8 +8,7 @@ const std::string StairUpDownBlock::mName{"Up/Down Stair"};
 
 StairUpDownBlock::StairUpDownBlock() {
   if (!mSprite.get()) {
-    mSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE_TRANSPARENT, {2, 6},
-                                              Paths::SIZE_OF_RG_TILE_TRANSPARENT);
+    mSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {2, 6});
   }
 }
 

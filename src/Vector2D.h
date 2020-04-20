@@ -2,6 +2,7 @@
 #include <SDL_rect.h>
 
 #include <iostream>
+#include "Serializer.h"
 class Vector2DInt;
 class Vector2D {
  public:
@@ -47,6 +48,9 @@ class Vector2D {
 
  private:
 };
+
+void to_json(SerializedObj& j, const Vector2D& vec);
+void from_json(const SerializedObj& j, Vector2D& vec);
 
 template <typename multiplierType>
 inline Vector2D Vector2D::operator*(const multiplierType& value) const {

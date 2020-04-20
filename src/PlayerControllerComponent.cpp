@@ -10,6 +10,8 @@
 #include "GridMap.h"
 #include "GridMapHelpers.h"
 #include "MineBlockObject.h"
+#include "MineBlockComponent.h"
+#include "BlockBuildComponent.h"
 #include "MiningRequestPool.h"
 #include "PlayerRequestType.h"
 #include "RockBlockItem.h"
@@ -63,7 +65,7 @@ void PlayerControllerComponent::handleClick() {
     if (block.supportsJob(requestTypeMining)) {
       for (const auto& actor : gridMap.getGridActorsAt(mousePos)) {
         // if we're not already building here
-        if (dynamic_cast<MineBlockObject*>(&actor->owner()) != nullptr) return;
+        if (actor->owner().hasComponent<MineBlockComponent>()) return;
       }
       GameObject& gObj = Engine::addGameObject<MineBlockObject>();
       gObj.setPosition(mousePos);
@@ -73,7 +75,7 @@ void PlayerControllerComponent::handleClick() {
     if (block.lock()->supportsJob(requestTypePlacing)) {
       for (const auto& actor : gridMap.getGridActorsAt(mousePos)) {
         // if we're not already building here
-        if (dynamic_cast<BlockBuildObject*>(&actor->owner()) != nullptr) return;
+        if (actor->owner().hasComponent<BlockBuildComponent>()) return;
       }
       GameObject& gObj = Engine::addGameObject<BlockBuildObject>(
           generateItemType<RockBlockItem>());
@@ -82,8 +84,8 @@ void PlayerControllerComponent::handleClick() {
   } else if (mMode == Mode::clear) {
     const auto& items = gridMap.getGridActorsAt(mousePos);
     for (auto& item : items) {
-      if (dynamic_cast<BlockBuildObject*>(&item->owner()) != nullptr ||
-          dynamic_cast<MineBlockObject*>(&item->owner()) != nullptr) {
+      if (item->owner().hasComponent<BlockBuildComponent>() ||
+          item->owner().hasComponent<MineBlockComponent>()) {
         Engine::removeGameObject(&item->owner());
       }
     }
