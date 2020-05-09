@@ -1,5 +1,4 @@
 #pragma once
-typedef unsigned long GAMEOBJECT_ID;
 
 #include <map>
 #include <memory>
@@ -9,10 +8,11 @@ typedef unsigned long GAMEOBJECT_ID;
 #include "Component.h"
 #include "Vector2D.h"
 #include "Vector3DInt.h"
-
+#include "Serializer.h"
 class GameObject {
  public:
-  GameObject(GAMEOBJECT_ID id);
+  GameObject(const SerializedObj& serObj);
+  GameObject();
   virtual ~GameObject();
   GameObject(const GameObject&) = delete;
   GameObject& operator=(const GameObject&) = delete;
@@ -43,6 +43,9 @@ class GameObject {
   template <class componentType>
   componentType* getComponent();
 
+  template <class componentType>
+  bool hasComponent();
+
   /*-------------------------------------------------------
   Larger renderDepth is closer to the camera
   Can only be changed in scene creation
@@ -63,9 +66,11 @@ class GameObject {
   will then be invalid.
   ---------------------------------------------------------*/
   void destroy();
-  GAMEOBJECT_ID id() const;
-  std::string& name();
+  void setName(const std::string&);
   const std::string& name() const;
+
+  SerializedObj serialize() const;
+  void unserialize(const SerializedObj& j);
 
  private:
   friend class Engine;
@@ -95,8 +100,9 @@ class GameObject {
   double mRotation{0};
   bool mEnabled{true};
   std::string mName{"NoName"};
-  const GAMEOBJECT_ID mId{0};
+
   std::vector<std::unique_ptr<Component>> mComponents;
+
   std::mutex mMutex;
 };
 
@@ -110,4 +116,9 @@ componentType* GameObject::getComponent() {
     }
   }
   return nullptr;
+}
+
+template <class componentType>
+bool GameObject::hasComponent() {
+  return getComponent<componentType>() != nullptr;
 }

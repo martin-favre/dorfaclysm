@@ -20,9 +20,7 @@ Block &MiningRequest::getBlock() {
   ASSERT(isValid(), "Check if block is valid before calling");
   return *mTarget.lock();
 }
-MiningRequest::~MiningRequest() { 
-  LOG("Destroying request " << this);
-  mOnJobCompleteCallback(); }
+MiningRequest::~MiningRequest() { mOnJobCompleteCallback(); }
 
 bool MiningRequest::isValid() const { return !mTarget.expired(); }
 const Vector3DInt &MiningRequest::getPos() const { return mPos; }

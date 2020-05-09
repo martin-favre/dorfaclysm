@@ -6,11 +6,10 @@
 #include "RenderDepths.h"
 #include "SpriteComponent.h"
 #include "SpriteLoader.h"
-MineBlockObject::MineBlockObject(GAMEOBJECT_ID id) : GameObject(id) {
+MineBlockObject::MineBlockObject() {
   addComponent<MineBlockComponent>();
   addComponent<GridActor>(GridActor::job);
-  addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
-      Paths::RG_TILE_TRANSPARENT, {23, 3}, Paths::SIZE_OF_RG_TILE_TRANSPARENT));
-  name() = "MineBlockObject";
+  addComponent<SpriteComponent>(Paths::RG_TILE, Vector2DInt{23, 3});
+  setName("MineBlockObject");
   setRenderDepth(RenderDepths::JobIndication);
 }

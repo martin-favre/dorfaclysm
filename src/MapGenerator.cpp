@@ -41,7 +41,7 @@ void MapGenerator::generateStairWorld(GridMap& gridMap,
           gridMap.setBlockAt(pos, std::make_unique<AirBlock>());
           if (z > 0 && !gridMap.getBlockAt({x, y, z - 1}).mayPassThrough()) {
             if (Helpers::randomInt(0, 100) > 90) {
-              Engine::addGameObject<Tree>().setPosition({x, y, z});
+              // Engine::addGameObject<Tree>().setPosition({x, y, z});
             }
           }
         }

@@ -8,7 +8,7 @@
 
 void AirDepthRenderer::renderBlock(Vector3DInt pos) {
   int depth = 0;
-  constexpr uint8_t maxDepth = 3;
+  constexpr uint8_t maxDepth = 6;
   if (!mGridMap.getBlockAt(pos).isExplored()) return;
   while (mGridMap.getBlockAt(pos).isSeeThrough()) {
     pos += {0, 0, -1};

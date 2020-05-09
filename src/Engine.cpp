@@ -14,7 +14,6 @@ std::string Engine::mSceneToLoad = "";
 bool Engine::mAboutToLoadScene = false;
 bool Engine::mRunning = false;
 bool Engine::mInitialized = false;
-GAMEOBJECT_ID Engine::mLatestGameobjectId{0};
 std::vector<std::unique_ptr<GameObject>> Engine::mGameobjects;
 std::queue<std::unique_ptr<GameObject>> Engine::mGameobjectsToAdd;
 std::set<GameObject*> Engine::mGameobjectsToRemove;
@@ -25,22 +24,25 @@ void Engine::initialize() {
   ASSERT(!Engine::mInitialized, "You can't initialize engine twice!");
   GraphicsManager::initialize();
   InputManager::initialize();
+  Logging::initialize();
   Engine::mInitialized = true;
-  LOG("Finished initialize Engine");
+  LOGL("Finished initialize Engine", Logging::info);
 }
 
 void Engine::teardown() {
   ASSERT(!mRunning, "You need to stop the engine first");
   clearAllGameObjects();
   GraphicsManager::teardown();
-  LOG("Finished teardown Engine");
+  LOGL("Finished teardown Engine", Logging::info);
+  Logging::flush();
+  Logging::teardown();
   Engine::mInitialized = false;
 }
 
 void Engine::start() {
   ASSERT(Engine::mInitialized, "You need to initialize engine first!");
   Engine::mRunning = true;
-  LOG("Starting Engine");
+  LOGL("Starting Engine", Logging::info);
   Engine::mainLoop();
 }
 
@@ -48,7 +50,7 @@ void Engine::stop() { Engine::mRunning = false; }
 
 void Engine::removeGameObject(GameObject* gObj) {
   std::scoped_lock lock(mMutex);
-  LOG("Removing GameObject " << gObj);
+  LOGL("Removing GameObject " << gObj, Logging::info);
   Engine::mGameobjectsToRemove.insert(gObj);
 }
 
@@ -113,7 +115,7 @@ void Engine::replaceScene() {
   clearAllGameObjects();
   GameObject& g = Engine::addGameObject<GameObject>();
   g.addComponent<Debug_CloseGameComponent>();
-  g.name() = "Debug_CloseGameComponent";
+  g.setName("Debug_CloseGameComponent");
   mScenes[mSceneToLoad]();
 }
 

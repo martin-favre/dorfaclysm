@@ -10,7 +10,7 @@ class GenericRequestPool {
  public:
   void addRequest(std::unique_ptr<T> && job) {
     ASSERT(job.get(), "Received null request");
-    LOG("Adding request " << job.get());
+    LOGL("Adding request " << job.get(), Logging::info);
     
     auto comper = [&job](std::shared_ptr<T> &req) { return *job == *req; };
 
@@ -20,7 +20,7 @@ class GenericRequestPool {
       mRequests.emplace_back(std::move(job));
     }
     else{
-      LOG("request already exists ");
+      LOGL("request already exists", Logging::info);
     }
   }
   bool hasRequests() const { return mRequests.size(); }

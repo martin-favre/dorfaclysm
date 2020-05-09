@@ -58,7 +58,7 @@ void GridMapRenderer::prepareViewedArea() {
       Vector3DInt pos{x + cameraTilePos.x, y + cameraTilePos.y, cameraPos.z};
       if (!mActiveGridMap.isPosInMap(pos)) continue;
       const Block& block = mActiveGridMap.getBlockAt(pos);
-      if (!block.isExplored()) continue;
+      // if (!block.isExplored()) continue;
       const int renderPosX = Camera::tileRenderSize.x * x;
       const int renderPosY = Camera::tileRenderSize.y * y;
 
