@@ -4,13 +4,8 @@ class GameObject;
 #include "Serializer.h"
 class Component {
  public:
-  Component(GameObject& user) : mOwner(user) {
-    LOG("Adding component " << this);
-  }
-  Component(GameObject& user, const SerializedObj& serObj) : mOwner(user) {
-    LOG("Loading component " << this);
-    unserialize(serObj);
-  }
+  Component(GameObject& user);
+  Component(GameObject& user, const SerializedObj& serObj);
   Component(const Component&) = delete;
   Component& operator=(const Component&) = delete;
   virtual ~Component() { LOG("Deleting component " << this); }
@@ -19,17 +14,21 @@ class Component {
   virtual void render() {}
   virtual void teardown() {}
   virtual SerializedObj serialize() const;
-
   bool& enabled();
   GameObject& owner() { return mOwner; }
   const GameObject& owner() const { return mOwner; }
   static const std::string SerializeString_Type;
+  static const std::string SerializeString_Parent;
 
-  protected:
-
+ protected:
  private:
-  virtual void unserialize(const SerializedObj& serObj);
   bool mEnabled = true;
-
   GameObject& mOwner;
 };
+
+template <typename T>
+SerializedObj createSerializedObj() {
+  SerializedObj out;
+  out[Component::SerializeString_Type] = T::getTypeString();
+  return out;
+}

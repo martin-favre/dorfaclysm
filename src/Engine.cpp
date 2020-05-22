@@ -34,7 +34,6 @@ void Engine::teardown() {
   clearAllGameObjects();
   GraphicsManager::teardown();
   LOGL("Finished teardown Engine", Logging::info);
-  Logging::flush();
   Logging::teardown();
   Engine::mInitialized = false;
 }

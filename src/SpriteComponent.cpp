@@ -18,8 +18,20 @@ SpriteComponent::SpriteComponent(GameObject& owner,
       mSpriteSheetIndex(indexInSpritesheet) {}
 
 SpriteComponent::SpriteComponent(GameObject& owner, const SerializedObj& serObj)
-    : Component(owner, serObj.at("parent")) {
-  unserialize(serObj);
+    : Component(owner, serObj.at(SerializeString_Parent)),
+      mCameraAsReference(serObj.at("cameraAsReference")),
+      mScaleToTileGrid(serObj.at("scaleToGrid")),
+      mSpriteSheetInfo(serObj.at("spritesheetInfo")),
+      mSpriteSheetIndex(serObj.at("spriteSheetIndex")) {}
+
+SerializedObj SpriteComponent::serialize() const {
+  SerializedObj out = createSerializedObj<SpriteComponent>();
+  out["cameraAsReference"] = mCameraAsReference;
+  out["scaleToGrid"] = mScaleToTileGrid;
+  out["spritesheetInfo"] = mSpriteSheetInfo;
+  out["spriteSheetIndex"] = mSpriteSheetIndex;
+  out[SerializeString_Parent] = Component::serialize();
+  return out;
 }
 
 void SpriteComponent::setup() {
@@ -52,22 +64,4 @@ void SpriteComponent::render() {
     GraphicsManager::renderTexture(*mSprite, pos, owner().getScale(),
                                    owner().getRotation(), mCentered, mFlip);
   }
-}
-
-SerializedObj SpriteComponent::serialize() const {
-  SerializedObj out;
-  out[SerializeString_Type] = getTypeName();
-  out["cameraAsReference"] = mCameraAsReference;
-  out["scaleToGrid"] = mScaleToTileGrid;
-  out["spritesheetInfo"] = mSpriteSheetInfo;
-  out["spriteSheetIndex"] = mSpriteSheetIndex;
-  out["parent"] = Component::serialize();
-  return out;
-}
-
-void SpriteComponent::unserialize(const SerializedObj& serObj) {
-  serObj.at("cameraAsReference").get_to(mCameraAsReference);
-  serObj.at("scaleToGrid").get_to(mScaleToTileGrid);
-  serObj.at("spritesheetInfo").get_to(mSpriteSheetInfo);
-  serObj.at("spriteSheetIndex").get_to(mSpriteSheetIndex);
 }

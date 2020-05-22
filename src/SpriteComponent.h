@@ -25,11 +25,8 @@ class SpriteComponent : public Component {
   }
 
   SerializedObj serialize() const override;
-  static std::string getTypeName() {return "spriteComponent";}
-
+  static std::string getTypeString() { return "SpriteComponent";}
  private:
-  void unserialize(const SerializedObj& serObj) override;
-
   bool mCameraAsReference{true};
   bool mScaleToTileGrid{true};
   SpriteSheetInfo mSpriteSheetInfo;

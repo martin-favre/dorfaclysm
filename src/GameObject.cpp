@@ -90,7 +90,7 @@ void GameObject::unserialize(const SerializedObj& j) {
   std::vector<SerializedObj> components;
   j.at("components").get_to(components);
   for (const auto& c : components) {
-    std::string type = c.at("type");
+    std::string type = c.at(Component::SerializeString_Type);
     if (StringToComponent::unserializeComponentMap.count(type)) {
       StringToComponent::unserializeComponentMap.at(type)(*this, c);
     }else{

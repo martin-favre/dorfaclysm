@@ -1,11 +1,11 @@
 #include "Logging.h"
 
+#include <chrono>
+#include <ctime>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <ctime>
-#include <chrono>
-#include <iomanip>
-#include <fstream>
 
 const std::string Logging::mLogFilename{"log.log"};
 std::unique_ptr<std::thread> Logging::mLogThread;
@@ -14,17 +14,23 @@ std::mutex Logging::mMutex;
 std::queue<std::pair<std::string, Logging::Level>> Logging::mLogQueue;
 std::ofstream Logging::mFile;
 bool Logging::mHasMessages{false};
+bool Logging::mInitialized{false};
 
 void Logging::initialize() {
   mRunning = true;
   mFile.open(mLogFilename);
   mLogThread = std::make_unique<std::thread>(Logging::logUpdate);
   LOGL("Logging initialized", Logging::info);
+  mInitialized = true;
 }
+
+bool Logging::isInitialized() { return mInitialized; }
 
 void Logging::teardown() {
   LOGL("Logging torn down", Logging::info);
+  mHasMessages = true;
   mRunning = false;
+  mInitialized = false;
   if (mFile.is_open()) {
     mFile.close();
   }
@@ -33,14 +39,9 @@ void Logging::teardown() {
   }
 }
 
-void Logging::flush() {
-  std::scoped_lock lock(mMutex);
-  mHasMessages = true;
-}
-
 void Logging::logUpdate() {
   while (mRunning || mHasMessages) {
-    {
+    { 
       std::scoped_lock lock(mMutex);
       if (!mLogQueue.empty()) {
         std::pair<std::string, Level> logPackage = mLogQueue.front();

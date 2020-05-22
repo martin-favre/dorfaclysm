@@ -9,6 +9,7 @@
 #include "Logging.h"
 #include "MoveItemRequestPool.h"
 #include "WalkingState.h"
+#include "Serializer.h"
 class FetchWalkingState : public WalkingState {
  public:
   FetchWalkingState(GridActor& user, std::shared_ptr<MoveItemRequest> request)
@@ -95,4 +96,8 @@ MoveItemJob::MoveItemJob(GridActor& user,
 bool MoveItemJob::work() {
   mStateMachine.update();
   return mStateMachine.isTerminated();
+}
+
+MoveItemJob::MoveItemJob(GridActor& user, const SerializedObj& serObj){
+
 }
