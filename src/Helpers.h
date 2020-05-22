@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <list>
+#include <functional>
 typedef unsigned int uint;
 
 /*-------------------------------------------------------
@@ -87,6 +89,18 @@ void addToAll(std::vector<T, Allocator>& vec, const T& to_add) {
   for (size_t i = 0; i < vec.size(); ++i) {
     vec[i] += to_add;
   }
+}
+
+template <typename T, typename Allocator>
+void eraseAll(std::list<T, Allocator>& container, T itemToRemove) {
+  container.erase(std::remove(container.begin(), container.end(), itemToRemove),
+                  container.end());
+}
+
+template <typename T, typename Allocator>
+void eraseAll(std::list<T, Allocator>& container, std::function<bool(const T&)> foo) {
+  container.erase(std::remove_if(container.begin(), container.end(), foo),
+                  container.end());
 }
 
 /*-------------------------------------------------------
