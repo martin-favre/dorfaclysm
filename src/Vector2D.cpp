@@ -5,6 +5,7 @@
 Vector2D::Vector2D() {}
 Vector2D::Vector2D(double _x, double _y) : x(_x), y(_y) {}
 Vector2D::Vector2D(const Vector2DInt& vec) : x(vec.x), y(vec.y) {}
+Vector2D::Vector2D(const SerializedObj& serObj) { from_json(serObj, *this); }
 
 Vector2D& Vector2D::operator+=(const Vector2D& other) {
   x += other.x;

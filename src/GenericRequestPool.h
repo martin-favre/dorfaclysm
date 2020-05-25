@@ -3,23 +3,23 @@
 #include <algorithm>
 #include <list>
 #include <memory>
+
 #include "Logging.h"
 #include "Vector3DInt.h"
 template <class T>
 class GenericRequestPool {
  public:
-  void addRequest(std::unique_ptr<T> && job) {
+  void addRequest(std::unique_ptr<T> &&job) {
     ASSERT(job.get(), "Received null request");
     LOGL("Adding request " << job.get(), Logging::info);
-    
+
     auto comper = [&job](std::shared_ptr<T> &req) { return *job == *req; };
 
     auto it = std::find_if(mRequests.begin(), mRequests.end(), comper);
 
     if (it == mRequests.end()) {
       mRequests.emplace_back(std::move(job));
-    }
-    else{
+    } else {
       LOGL("request already exists", Logging::info);
     }
   }
@@ -40,12 +40,31 @@ class GenericRequestPool {
     mRequests.erase(smallestIndx);
     return yourCopy;
   }
-  const std::list<std::shared_ptr<T>> &getRequests() const { return mRequests; }
+
   void returnRequest(std::shared_ptr<T> &&request) {
     ASSERT(request.get(), "Returned nullptr");
     mRequests.emplace_back(std::move(request));
   }
 
+  const std::list<std::shared_ptr<T>> &getRequests() const { return mRequests; }
+
  private:
   std::list<std::shared_ptr<T>> mRequests;
 };
+
+template <class T>
+void to_json(SerializedObj &out, const GenericRequestPool<T> &vec) {
+  std::vector<SerializedObj> requests;
+  for (const std::shared_ptr<T> &req : vec.getRequests()) {
+    requests.emplace_back(*req);
+  }
+  out["requests"] = requests;
+}
+
+template <class T>
+void from_json(const SerializedObj &serObj, GenericRequestPool<T> &vec) {
+  std::vector<SerializedObj> requests = serObj.at("requests");
+  for (const SerializedObj &req : requests) {
+    vec.addRequest(std::make_unique<T>(req));
+  }
+}

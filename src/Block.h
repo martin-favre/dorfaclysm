@@ -2,9 +2,13 @@
 #include <memory>
 
 #include "PlayerRequestType.h"
+#include "Serializer.h"
+#include "BlockType.h"
+
 class GridActor;
 class Item;
 class Sprite;
+
 class Block {
  public:
   Block() = default;

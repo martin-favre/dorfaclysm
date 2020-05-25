@@ -35,6 +35,11 @@ class WalkingState : public State {
     }
     return noTransition();
   }
+  SerializedObj serialize() const override {
+    SerializedObj out;
+    out["walker"] = mWalker;
+    return out;
+  }
 
  private:
   DorfWalker mWalker;

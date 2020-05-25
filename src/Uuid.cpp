@@ -40,6 +40,10 @@ std::string generate_uuid_v4() {
 }
 }  // namespace uuid
 
+Uuid::Uuid(const SerializedObj& serObj) : mUuid(serObj.at("uuid")) {}
+
 Uuid Uuid::generateNew() { return uuid::generate_uuid_v4(); }
 Uuid::Uuid(const std::string& rawUuid) : mUuid(rawUuid) {}
-bool Uuid::operator==(const Uuid& other) { return other.mUuid == mUuid;}
+bool Uuid::operator==(const Uuid& other) const { return other.mUuid == mUuid; }
+
+void to_json(SerializedObj& out, const Uuid& vec) { out["uuid"] = vec.mUuid; }

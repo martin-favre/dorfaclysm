@@ -3,11 +3,48 @@
 #include "Engine.h"
 #include "StringToComponent.h"
 
-GameObject::GameObject(const SerializedObj& serObj) { unserialize(serObj); }
+GameObject::GameObject(const SerializedObj& serObj)
+    : mPosition(serObj.at("position")),
+      mRenderDepth(serObj.at("renderDepth")),
+      mScale(serObj.at("scale")),
+      mRotation(serObj.at("rotation")),
+      mEnabled(serObj.at("enabled")),
+      mIdentifier(serObj.at("identifier")) {
+  unserializeComponents(serObj.at("components"));
+}
 
-GameObject::GameObject() {}
+GameObject::GameObject() : mIdentifier(Uuid::generateNew()) {}
 
 GameObject::~GameObject() { mComponents.clear(); }
+
+SerializedObj GameObject::serialize() const {
+  SerializedObj out;
+  out["position"] = mPosition;
+  out["renderDepth"] = mRenderDepth;
+  out["scale"] = mScale;
+  out["rotation"] = mRotation;
+  out["enabled"] = mEnabled;
+  out["name"] = mName;
+  out["identifier"] = mIdentifier;
+  std::vector<SerializedObj> components;
+  for (const auto& c : mComponents) {
+    components.emplace_back(c->serialize());
+  }
+  out["components"] = components;
+  return out;
+}
+
+void GameObject::unserializeComponents(
+    const std::vector<SerializedObj>& components) {
+  for (const auto& c : components) {
+    std::string type = c.at(Component::SerializeString_Type);
+    if (StringToComponent::unserializeComponentMap.count(type)) {
+      StringToComponent::unserializeComponentMap.at(type)(*this, c);
+    } else {
+      LOGL("Cannot unserialize type, unknown type", Logging::warning);
+    }
+  }
+}
 
 bool& GameObject::enabled() { return mEnabled; }
 
@@ -58,43 +95,10 @@ void GameObject::setScale(const Vector2D& newScale) {
 }
 double GameObject::getRotation() const { return mRotation; }
 
+const Uuid& GameObject::getIdentifier() const { return mIdentifier; }
+
 void GameObject::destroy() { Engine::removeGameObject(this); }
 
 void GameObject::setName(const std::string& name) { mName = name; }
 
 const std::string& GameObject::name() const { return mName; }
-
-SerializedObj GameObject::serialize() const {
-  SerializedObj j;
-  j["position"] = mPosition;
-  j["renderDepth"] = mRenderDepth;
-  j["scale"] = mScale;
-  j["rotation"] = mRotation;
-  j["enabled"] = mEnabled;
-  j["name"] = mName;
-  std::vector<SerializedObj> components;
-  for (const auto& c : mComponents) {
-    components.emplace_back(c->serialize());
-  }
-  j["components"] = components;
-  return j;
-}
-
-void GameObject::unserialize(const SerializedObj& j) {
-  j.at("position").get_to(mPosition);
-  j.at("renderDepth").get_to(mRenderDepth);
-  j.at("scale").get_to(mScale);
-  j.at("rotation").get_to(mRotation);
-  j.at("enabled").get_to(mEnabled);
-  j.at("name").get_to(mName);
-  std::vector<SerializedObj> components;
-  j.at("components").get_to(components);
-  for (const auto& c : components) {
-    std::string type = c.at(Component::SerializeString_Type);
-    if (StringToComponent::unserializeComponentMap.count(type)) {
-      StringToComponent::unserializeComponentMap.at(type)(*this, c);
-    }else{
-      LOGL("Cannot unserialize type, unknown type", Logging::warning);
-    }
-  }
-}

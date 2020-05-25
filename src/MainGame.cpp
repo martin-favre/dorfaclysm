@@ -23,6 +23,7 @@
 #include "TextComponent.h"
 #include "Vector2DInt.h"
 #include "Serializer.h"
+#include "RequestPoolComponent.h"
 
 void foo() {
   int mapSize = 128;
@@ -78,7 +79,11 @@ void foo() {
     gObj.setPosition({20, 80});
     gObj.setRenderDepth(RenderDepths::GUI);
     gObj.setName("Show position text");
-
+  }
+  {
+    GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.addComponent<RequestPoolComponent>();
+    gObj.setName("RequestPoolObject");
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
@@ -90,7 +95,7 @@ void foo() {
 
   }
   {
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 1; ++i) {
       GameObject gObj;
       gObj.addComponent<DorfController>();
       gObj.addComponent<GridActor>(GridActor::dorf);
@@ -103,6 +108,18 @@ void foo() {
       Engine::addGameObject(j);
     }
   }
+    {
+    for (int i = 0; i < 1; ++i) {
+      GameObject& gObj = Engine::addGameObject<GameObject>();
+      gObj.addComponent<DorfController>();
+      gObj.addComponent<GridActor>(GridActor::dorf);
+      gObj.addComponent<SpriteComponent>(Paths::RG_TILE, Vector2DInt{25, 0});
+      gObj.setPosition({0, 0, 1});
+      gObj.setRenderDepth(RenderDepths::Actors);
+      gObj.setName("Dorf");
+    }
+  }
+
   {
     // GameObject& gObj = Engine::addGameObject<GameObject>();
     // gObj.addComponent<DrawLineComponent>();

@@ -2,13 +2,16 @@
 
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
-#include <mutex>
+
 #include "Component.h"
+#include "Serializer.h"
+#include "Uuid.h"
 #include "Vector2D.h"
 #include "Vector3DInt.h"
-#include "Serializer.h"
+
 class GameObject {
  public:
   GameObject(const SerializedObj& serObj);
@@ -58,6 +61,7 @@ class GameObject {
   Vector2D getScale() const;
   void setScale(const Vector2D& newScale);
   double getRotation() const;
+  const Uuid& getIdentifier() const;
 
   /*-------------------------------------------------------
   Orders the removal of the GameObject. It will be removed
@@ -70,9 +74,9 @@ class GameObject {
   const std::string& name() const;
 
   SerializedObj serialize() const;
-  void unserialize(const SerializedObj& j);
 
  private:
+  void unserializeComponents(const std::vector<SerializedObj>& components);
   friend class Engine;
   /*-------------------------------------------------------
   Runs all components' setups.
@@ -100,6 +104,7 @@ class GameObject {
   double mRotation{0};
   bool mEnabled{true};
   std::string mName{"NoName"};
+  const Uuid mIdentifier;
 
   std::vector<std::unique_ptr<Component>> mComponents;
 

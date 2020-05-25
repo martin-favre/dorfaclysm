@@ -16,6 +16,7 @@ class Vector2DInt;
 class Vector3DInt {
  public:
   Vector3DInt() = default;
+  Vector3DInt(const SerializedObj& serObj);
   Vector3DInt& operator=(const Vector3DInt& vec) = default;
   Vector3DInt(const Vector3DInt& vec) = default;
   constexpr Vector3DInt(int x_, int y_, int z_ = 0) : x(x_), y(y_), z(z_) {}

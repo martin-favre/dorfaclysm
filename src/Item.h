@@ -1,24 +1,8 @@
 #pragma once
 #include <string>
 #include <typeindex>
-
+#include "ItemType.h"
 #include "Sprite.h"
-
-class ItemType {
- public:
-  ItemType(const std::type_index& type) : mType(type) {}
-  inline bool operator==(const ItemType& other) const {
-    return mType == other.mType;
-  }
-
- private:
-  const std::type_index mType;
-};
-
-template <typename T>
-inline ItemType generateItemType() {
-  return ItemType(typeid(T));
-}
 
 class Item {
  public:

@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-class ItemType;
+#include "ItemType.h"
 class BlockBuildObject : public GameObject {
  public:
   BlockBuildObject(const ItemType& item);

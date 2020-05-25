@@ -78,7 +78,7 @@ void PlayerControllerComponent::handleClick() {
         if (actor->owner().hasComponent<BlockBuildComponent>()) return;
       }
       GameObject& gObj = Engine::addGameObject<BlockBuildObject>(
-          generateItemType<RockBlockItem>());
+          ItemType(ItemType::ItemType_RockBlockItem));
       gObj.setPosition(mousePos);
     }
   } else if (mMode == Mode::clear) {

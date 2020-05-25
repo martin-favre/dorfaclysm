@@ -7,6 +7,7 @@ class Vector2DInt;
 class Vector2D {
  public:
   Vector2D();
+  Vector2D(const SerializedObj& serObj);
   Vector2D(double x, double y = 0);
   Vector2D(const Vector2DInt& vec);
   Vector2D& operator+=(const Vector2D&);

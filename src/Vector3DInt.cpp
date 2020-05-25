@@ -1,5 +1,7 @@
 #include "Vector3DInt.h"
 
+Vector3DInt::Vector3DInt(const SerializedObj& serObj) { from_json(serObj, *this); }
+
 std::ostream& operator<<(std::ostream& os, const Vector3DInt& dt) {
   os << "(" << dt.x << "," << dt.y << "," << dt.z << ")";
   return os;

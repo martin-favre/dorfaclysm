@@ -2,11 +2,42 @@
 
 #include "Astar.h"
 #include "GridMap.h"
+#include "Vector3DInt.h"
+
 
 DorfWalker::DorfWalker(GridActor& gridActor, int msPerMovement)
-    : mMsPerMovement(msPerMovement),
-      mGridActor(gridActor),
-      mGridMap(GridMap::getActiveMap()) {}
+    : mGridActor(gridActor),
+      mGridMap(GridMap::getActiveMap()),
+      mMsPerMovement(msPerMovement) {}
+
+DorfWalker::DorfWalker(GridActor& gridActor, const SerializedObj& serObj)
+    : mGridActor(gridActor),
+      mGridMap(GridMap::getActiveMap()),
+      mState(serObj.at("state")),
+      mFail(serObj.at("fail")),
+      mMsPerMovement(serObj.at("speed")),
+      mGoal(serObj.at("goal")),
+      mTimer(serObj.at("timer")),
+      mPlannedPosititions(serObj.at("plannedPositions"))
+
+{
+  // mPlannedPosititions = serObj.at("plannedPositions");
+}
+
+void to_json(SerializedObj& serObj, const DorfWalker& walker) {
+  serObj["state"] = walker.mState;
+  serObj["fail"] = walker.mFail;
+  std::vector<Vector3DInt> positions; 
+  std::stack<Vector3DInt> stackPos = walker.mPlannedPosititions;
+  while(!stackPos.empty()){
+    positions.emplace_back(stackPos.top());
+    stackPos.pop();
+  }
+  serObj["plannedPositions"] = positions;
+  serObj["speed"] = walker.mMsPerMovement;
+  serObj["goal"] = walker.mGoal;
+  serObj["timer"] = walker.mTimer;
+}
 
 Vector3DInt DorfWalker::getNextPlannedPosition() {
   if (!mPlannedPosititions.empty()) {

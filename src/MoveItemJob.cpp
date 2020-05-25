@@ -97,7 +97,3 @@ bool MoveItemJob::work() {
   mStateMachine.update();
   return mStateMachine.isTerminated();
 }
-
-MoveItemJob::MoveItemJob(GridActor& user, const SerializedObj& serObj){
-
-}

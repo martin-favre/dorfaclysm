@@ -69,6 +69,8 @@ class Engine {
   static void registerScene(const std::string& name, void (*scenecreator)());
   static void loadScene(const std::string& name);
 
+  static GameObject* getGameObject(const Uuid& identifier);
+
  private:
   Engine();
   static void mainLoop();

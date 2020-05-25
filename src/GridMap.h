@@ -3,8 +3,10 @@
 #include <functional>
 #include <list>
 #include <memory>
-#include <vector>
 #include <mutex>
+#include <vector>
+
+#include "BlockIdentifier.h"
 #include "Vector3DInt.h"
 class Block;
 
@@ -38,6 +40,44 @@ class GridMap {
     ASSERT(isBlockValid(pos), "Block ptr is null");
     std::scoped_lock lock(mLock);
     return mBlocks[pos.z][pos.y][pos.x];
+  }
+
+  inline std::weak_ptr<Block> getBlockPtrAt(const BlockIdentifier& blockIdent,
+                                            const Vector3DInt& pos) {
+    std::scoped_lock lock(mLock);
+    ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+    ASSERT(isBlockValid(pos), "Block ptr is null");
+    std::weak_ptr<Block> block = mBlocks[pos.z][pos.y][pos.x];
+    BlockIdentifier gridBlockIdent{*block.lock()};
+    if (gridBlockIdent == blockIdent) {
+      return mBlocks[pos.z][pos.y][pos.x];
+    }
+    return std::weak_ptr<Block>();  // Whatever block you expected to find here
+                                    // does no longer exist
+  }
+
+  inline const std::weak_ptr<Block> getBlockPtrAt(
+      const BlockIdentifier& blockIdent, const Vector3DInt& pos) const {
+    std::scoped_lock lock(mLock);
+    ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+    ASSERT(isBlockValid(pos), "Block ptr is null");
+    std::weak_ptr<Block> block = mBlocks[pos.z][pos.y][pos.x];
+    BlockIdentifier gridBlockIdent{*block.lock()};
+    if (gridBlockIdent == blockIdent) {
+      return mBlocks[pos.z][pos.y][pos.x];
+    }
+    return std::weak_ptr<Block>();  // Whatever block you expected to find here
+                                    // does no longer exist
+  }
+
+  inline BlockIdentifier getBlockIdentifier(const Vector3DInt& pos) const {
+    const Block& block = getBlockAt(pos);
+    return BlockIdentifier(block);
+  }
+
+  inline bool blockIdentifierMatches(const BlockIdentifier& blockIdent,
+                                     const Vector3DInt& pos) const {
+    return !getBlockPtrAt(blockIdent, pos).expired();
   }
 
   inline Block& getBlockAt(const Vector3DInt& pos) {

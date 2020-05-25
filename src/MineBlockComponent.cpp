@@ -9,12 +9,12 @@ MineBlockComponent::MineBlockComponent(GameObject& gObj) : Component(gObj) {}
 void MineBlockComponent::onJobComplete() { owner().destroy(); }
 
 void MineBlockComponent::setup() {
-  std::weak_ptr<Block> block =
-      GridMap::getActiveMap().getBlockPtrAt(owner().getPosition());
-  if (block.lock()->supportsJob(requestTypeMining)) {
+  const Block& block =
+      GridMap::getActiveMap().getBlockAt(owner().getPosition());
+  if (block.supportsJob(requestTypeMining)) {
     std::function<void()> callback = [this]() { this->onJobComplete(); };
-    auto ptr =
-        std::make_unique<MiningRequest>(block, owner().getPosition(), callback);
+    auto ptr = std::make_unique<MiningRequest>(
+        BlockIdentifier(block), owner().getPosition(), owner().getIdentifier());
     MiningRequestPool::getInstance().addRequest(std::move(ptr));
   } else {
     onJobComplete();

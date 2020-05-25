@@ -2,11 +2,14 @@
 #include <memory>
 
 #include "Helpers.h"
-
+#include "Serializer.h"
 class StateMachine;
 
 class State {
  public:
+  State() = default;
+  State(const SerializedObj& serObj)
+      : mMachineTerminated(serObj.at("terminated")) {}
   virtual void onEntry(){};
   virtual ~State() = default;
   /*
@@ -15,7 +18,13 @@ class State {
   */
   virtual std::unique_ptr<State> onDuring() = 0;
   virtual void onExit(){};
-  bool machineTerminated() { return mMachineTerminated; }
+  bool isMachineTerminated() { return mMachineTerminated; }
+
+  virtual SerializedObj serialize() const {
+    SerializedObj obj;
+    obj["terminated"] = mMachineTerminated;
+    return obj;
+  }
 
  protected:
   void terminateMachine() { mMachineTerminated = true; }
@@ -36,29 +45,35 @@ class StateMachine {
   StateMachine(std::unique_ptr<State>&& initialState)
       : mActiveState(std::move(initialState)) {
     ASSERT(mActiveState != nullptr, "Received null first state");
-    if (!mActiveState->machineTerminated()) {
+    if (!mActiveState->isMachineTerminated()) {
       mActiveState->onEntry();
     }
   }
 
   bool isTerminated() {
     ASSERT(mActiveState != nullptr, "mActiveState is null");
-    return mActiveState->machineTerminated();
+    return mActiveState->isMachineTerminated();
   }
 
   void update() {
     ASSERT(mActiveState != nullptr, "Received null first state");
-    if (!mActiveState->machineTerminated()) {
+    if (!mActiveState->isMachineTerminated()) {
       std::unique_ptr<State> nextState = mActiveState->onDuring();
       if (nextState != nullptr) {
         mActiveState->onExit();
         mActiveState = std::move(nextState);
-        if (!mActiveState->machineTerminated()) {
+        if (!mActiveState->isMachineTerminated()) {
           mActiveState->onEntry();
         }
       }
     }
   }
+
+  SerializedObj serializeActiveState() const {
+    return mActiveState->serialize();
+  }
+  
+  friend void to_json(SerializedObj& out, const StateMachine& machine);
 
  private:
   std::unique_ptr<State> mActiveState;

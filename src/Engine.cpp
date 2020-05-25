@@ -197,3 +197,12 @@ void Engine::runSetups(std::vector<GameObject*>& gameobjects) {
     go->setup();
   }
 }
+
+GameObject* Engine::getGameObject(const Uuid& identifier) {
+  for (auto& go : mGameobjects) {
+    if (go->getIdentifier() == identifier) {
+      return go.get();
+    }
+  }
+  return nullptr;
+}

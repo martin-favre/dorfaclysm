@@ -7,7 +7,7 @@ std::unique_ptr<Sprite> RockBlockItem::mSprite;
 const std::string RockBlockItem::mName{"Rock Block"};
 const std::string RockBlockItem::mDesc{"A block of Rock"};
 const uint RockBlockItem::mWorth{1};
-const ItemType RockBlockItem::mType{generateItemType<RockBlockItem>()};
+const ItemType RockBlockItem::mType{ItemType_RockBlockItem};
 
 const std::string& RockBlockItem::getName() const { return mName; }
 const std::string& RockBlockItem::getDescription() const { return mDesc; }
