@@ -40,7 +40,7 @@ class Engine {
     GameObject* out = newObject.get();
     {
       std::scoped_lock lock(mMutex);
-      Engine::mGameobjectsToAdd.push(std::move(newObject));
+      Engine::mGameobjectsToAdd.emplace_back(std::move(newObject));
     }
     LOG("Added gameobject" << out);
     if (!mRunning) putGameObjectsIntoWorld();
@@ -58,7 +58,7 @@ class Engine {
     GameObject* out = newObject.get();
     {
       std::scoped_lock lock(mMutex);
-      Engine::mGameobjectsToAdd.push(std::move(newObject));
+      Engine::mGameobjectsToAdd.emplace_back(std::move(newObject));
     }
     LOG("Unserialized gameobject : " << out);
     if (!mRunning) putGameObjectsIntoWorld();
@@ -70,9 +70,15 @@ class Engine {
   static void loadScene(const std::string& name);
 
   static GameObject* getGameObject(const Uuid& identifier);
+  
+  static void requestStateSave();
+  static bool saveStateAvailable();
+  static std::unique_ptr<SerializedObj> getSaveState();
+  static void requestLoadState(std::unique_ptr<SerializedObj> && serObj);
 
  private:
   Engine();
+  static void serialize();
   static void mainLoop();
   static void replaceScene();
   static void updateGameObjects();
@@ -82,6 +88,8 @@ class Engine {
   /*Actually puts the changes in place*/
   static void putGameObjectsIntoWorld();
   static void removeGameObjectFromWorld();
+  static void loadScene();
+  static void saveScene();
   static void runSetups(std::vector<GameObject*>&);
 
   static std::map<std::string, void (*)()> mScenes;
@@ -91,7 +99,10 @@ class Engine {
   static bool mRunning;
   static bool mInitialized;
   static std::vector<std::unique_ptr<GameObject>> mGameobjects;
-  static std::queue<std::unique_ptr<GameObject>> mGameobjectsToAdd;
+  static std::vector<std::unique_ptr<GameObject>> mGameobjectsToAdd;
   static std::set<GameObject*> mGameobjectsToRemove;
   static std::mutex mMutex;
+  static bool mSavingRequested;
+  static std::unique_ptr<SerializedObj> mSavedState;
+  static std::unique_ptr<SerializedObj> mLoadState;
 };
