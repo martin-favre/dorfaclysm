@@ -74,6 +74,7 @@ class BlockBuildingState : public State {
 std::unique_ptr<State> BlockBuildingState::onDuring() {
   if (mRequest->isValid()) {
     // GridMap::getActiveMap().setBlockAt(mRequest->getPos());
+    // Currently the block checks the location itself
   }
   terminateMachine();
   return noTransition();

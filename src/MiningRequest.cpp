@@ -37,14 +37,8 @@ const Vector3DInt &MiningRequest::getPos() const { return mPos; }
 bool MiningRequest::operator==(const MiningRequest &other) const {
   ASSERT(isValid(), "Check if block is valid before calling");
   ASSERT(other.isValid(), "Check if block is valid before calling");
-
-  const bool same = other.mTarget == mTarget;
-  if (same) {
-    ASSERT(other.mPos == mPos,
-           "Request on same block, but with different poses is not expected");
+  return mTarget == other.mTarget && mPos == other.mPos;
   }
-  return same;
-}
 
 void to_json(SerializedObj& out, const MiningRequest& vec) {
   out["target"] = vec.mTarget;
