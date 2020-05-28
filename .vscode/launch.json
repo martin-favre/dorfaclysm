@@ -11,6 +11,7 @@
             "program": "${workspaceFolder}/out/Vidya",
             // "program": "${workspaceFolder}/testBin/astar_test",
             // "program": "${workspaceFolder}/testBin/IncrementalAstar_test",
+            // "program": "${workspaceFolder}/testBin/DorfController_test",
             
             "args": [],
             "stopAtEntry": false,

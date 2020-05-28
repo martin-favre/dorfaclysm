@@ -3,6 +3,8 @@
 #include "Item.h"
 #include "Serializer.h"
 
+// Request to find an item a specific type and move it to
+// the designated position
 class MoveItemRequest {
  public:
   MoveItemRequest(ItemType item, const Vector3DInt& pos);

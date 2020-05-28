@@ -74,10 +74,7 @@ class GameObject {
   const std::string& name() const;
 
   SerializedObj serialize() const;
-
- private:
-  void unserializeComponents(const std::vector<SerializedObj>& components);
-  friend class Engine;
+  
   /*-------------------------------------------------------
   Runs all components' setups.
   ---------------------------------------------------------*/
@@ -97,6 +94,9 @@ class GameObject {
   Runs all components' update.
   ---------------------------------------------------------*/
   void updateComponents();
+
+ private:
+  void unserializeComponents(const std::vector<SerializedObj>& components);
 
   Vector3DInt mPosition;
   int mRenderDepth{0};

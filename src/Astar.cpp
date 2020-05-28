@@ -83,7 +83,7 @@ class Compare {
   }
 };
 
-bool isStepValid(const GridMap& map, const Vector3DInt& newPos,
+static bool isStepValid(const GridMap& map, const Vector3DInt& newPos,
                  const Vector3DInt& currentPos, const Vector3DInt& dir) {
   if (!map.isPosInMap(newPos)) return false;
   if (!map.isPosFree(newPos)) return false;

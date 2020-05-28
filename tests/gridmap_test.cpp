@@ -7,38 +7,16 @@
 #include "Engine.h"
 #include "GrassBlock.h"
 #include "Vector2DInt.h"
-
-class UnPassableBlock : public DefaultBlock {
- public:
-  bool mayPassThrough() const override { return false; }
-};
-
-class PassableBlock : public DefaultBlock {
- public:
-  bool mayPassThrough() const override { return true; }
-};
-
-void generateFlatWorld(GridMap& gridMap, const Vector3DInt& size) {
-  for (int z = 0; z < size.z; ++z) {
-    for (int y = 0; y < size.y; ++y) {
-      for (int x = 0; x < size.x; ++x) {
-        const Vector3DInt pos{x, y, z};
-        if (z < size.z / 2) {
-          gridMap.setBlockAt(pos, std::make_unique<UnPassableBlock>());
-        } else {
-          gridMap.setBlockAt(pos, std::make_unique<PassableBlock>());
-        }
-      }
-    }
-  }
-}
-
+#include "helpers/gridmap_testhelpers.h"
 class TestGridMap : public ::testing::Test {
  public:
   TestGridMap() : mGridmap(GridMap::getActiveMap()) {}
   void SetUp() override {
-    if (mGridmap.getSize() != mSize)
-      GridMap::generateActiveMap(mSize, generateFlatWorld);
+    std::function<void(GridMap&, const Vector3DInt&)> func =
+        [](GridMap& map, const Vector3DInt& size) {
+          generateFlatWorld(map, size);
+        };
+    GridMap::generateActiveMap(mSize, func);
   }
 
   void TearDown() override {}

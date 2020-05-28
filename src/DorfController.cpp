@@ -43,7 +43,9 @@ std::unique_ptr<IJob> DorfController::unserializeJob(
 
 DorfController::DorfController(GameObject& gObj, const SerializedObj& serObj)
     : Component(gObj, serObj.at(Component::SerializeString_Parent)),
-      mUnserializedJob(std::make_unique<SerializedObj>(serObj.at("job"))) {}
+      mUnserializedJob(serObj.contains("job")
+                           ? std::make_unique<SerializedObj>(serObj.at("job"))
+                           : nullptr) {}
 
 SerializedObj DorfController::serialize() const {
   SerializedObj out = createSerializedObj<DorfController>();
