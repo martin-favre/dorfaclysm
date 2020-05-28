@@ -14,7 +14,7 @@ class AirBlock : public Block {
   bool spawnsItem() const override;
   bool supportsJob(PlayerRequestType type) const override;
   std::unique_ptr<Item> getItem() const override;
-
+  BlockType getType() const override;
  private:
   static const std::string mName;
 };

@@ -8,12 +8,15 @@
 #include "ItemPool.h"
 #include "Logging.h"
 #include "MoveItemRequestPool.h"
-#include "WalkingState.h"
 #include "Serializer.h"
+#include "WalkingState.h"
+namespace {
+enum StateType { State_FetchWalkingState, State_PlaceWalkingState };
+constexpr int msPerMove = 100;
 class FetchWalkingState : public WalkingState {
  public:
   FetchWalkingState(GridActor& user, std::shared_ptr<MoveItemRequest> request)
-      : WalkingState(user, 100), mUser(user), mRequest(request) {
+      : WalkingState(user, msPerMove), mUser(user), mRequest(request) {
     bool success = ItemPool::whereIsClosestItem(
         mUser.getCurrentPos(), mTargetPos, mRequest->getType());
     if (!success) {
@@ -24,6 +27,22 @@ class FetchWalkingState : public WalkingState {
         GridMap::getActiveMap(), mTargetPos, mTargetPos, 1);
     if (!success) onPathFindFail();
   }
+
+  FetchWalkingState(GridActor& user, const SerializedObj& serObj)
+      : WalkingState(user, serObj),
+        mUser(user),
+        mRequest(serObj.at("request")),
+        mTargetPos(serObj.at("targetPos")) {}
+
+  SerializedObj serialize() const override {
+    SerializedObj out;
+    out["parent"] = WalkingState::serialize();
+    out["type"] = State_FetchWalkingState;
+    out["request"] = *mRequest;
+    out["targetPos"] = mTargetPos;
+    return out;
+  }
+
   Vector3DInt getTargetPos() override { return mTargetPos; }
 
   std::unique_ptr<State> onReachedTarget() override;
@@ -42,7 +61,7 @@ class PlaceWalkingState : public WalkingState {
  public:
   PlaceWalkingState(GridActor& user, std::shared_ptr<MoveItemRequest> request,
                     std::unique_ptr<Item>&& item)
-      : WalkingState(user, 100),
+      : WalkingState(user, msPerMove),
         mUser(user),
         mRequest(request),
         mItem(std::move(item)) {
@@ -50,6 +69,24 @@ class PlaceWalkingState : public WalkingState {
         GridMap::getActiveMap(), mRequest->getPos(), mTargetPos, 1, 1);
     if (!success) onPathFindFail();
   }
+
+  PlaceWalkingState(GridActor& user, const SerializedObj& serObj)
+      : WalkingState(user, 100),
+        mUser(user),
+        mRequest(std::make_shared<MoveItemRequest>(serObj.at("request"))),
+        mItem(generateItem(serObj.at("item"))),
+        mTargetPos(serObj.at("position")) {}
+
+  SerializedObj serialize() const override {
+    SerializedObj out;
+    out["parent"] = WalkingState::serialize();
+    out["type"] = State_PlaceWalkingState;
+    out["request"] = *mRequest;
+    out["position"] = mTargetPos;
+    out["item"] = mItem->getItemType();
+    return out;
+  }
+
   Vector3DInt getTargetPos() override { return mTargetPos; }
 
   std::unique_ptr<State> onReachedTarget() override;
@@ -90,10 +127,38 @@ std::unique_ptr<State> PlaceWalkingState::onReachedTarget() {
   return noTransition();
 }
 
+std::unique_ptr<State> unserializeState(GridActor& user,
+                                        const SerializedObj& serObj) {
+  SerializedObj state = serObj["activeState"];
+  StateType type = state["type"];
+  switch (type) {
+    case State_FetchWalkingState:
+      return std::make_unique<FetchWalkingState>(user, serObj);
+    case State_PlaceWalkingState:
+      return std::make_unique<PlaceWalkingState>(user, serObj);
+    default:
+      ASSERT(false, "Unknown state type");
+      return nullptr;
+  }
+}
+
+}  // namespace
+
 MoveItemJob::MoveItemJob(GridActor& user,
                          std::shared_ptr<MoveItemRequest> request)
     : mStateMachine(std::make_unique<FetchWalkingState>(user, request)) {}
+
 bool MoveItemJob::work() {
   mStateMachine.update();
   return mStateMachine.isTerminated();
+}
+
+MoveItemJob::MoveItemJob(GridActor& user, const SerializedObj& serObj)
+    : mStateMachine(unserializeState(user, serObj)) {}
+
+SerializedObj MoveItemJob::serialize() const {
+  SerializedObj out;
+  out[SerializeString_Type] = IJob::MoveItemJob;
+  out["activeState"] = mStateMachine.serializeActiveState();
+  return out;
 }

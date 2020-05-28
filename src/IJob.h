@@ -14,5 +14,3 @@ class IJob {
   virtual SerializedObj serialize() const = 0;
   static const std::string SerializeString_Type;
 };
-
-const std::string IJob::SerializeString_Type{"type"};

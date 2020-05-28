@@ -3,6 +3,7 @@
 #include "Paths.h"
 #include "RockBlock.h"
 #include "SpriteLoader.h"
+#include "ItemType.h"
 std::unique_ptr<Sprite> RockBlockItem::mSprite;
 const std::string RockBlockItem::mName{"Rock Block"};
 const std::string RockBlockItem::mDesc{"A block of Rock"};

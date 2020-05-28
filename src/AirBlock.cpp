@@ -1,4 +1,5 @@
 #include "AirBlock.h"
+
 #include "Item.h"
 const std::string AirBlock::mName;
 
@@ -11,5 +12,6 @@ bool AirBlock::supportsJob(PlayerRequestType type) const {
 }
 bool AirBlock::mayClimbUpFrom() const { return false; }
 bool AirBlock::mayWalkOnTop() const { return false; }
-bool AirBlock::spawnsItem() const {return false;}
-std::unique_ptr<Item> AirBlock::getItem() const {return nullptr;}
+bool AirBlock::spawnsItem() const { return false; }
+std::unique_ptr<Item> AirBlock::getItem() const { return nullptr; }
+BlockType AirBlock::getType() const { return BlockType::BlockTypeAirBlock; }

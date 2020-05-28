@@ -25,3 +25,4 @@ bool StairUpDownBlock::supportsJob(PlayerRequestType type) const {
 
 bool StairUpDownBlock::spawnsItem() const { return false; }
 std::unique_ptr<Item> StairUpDownBlock::getItem() const { return nullptr; }
+BlockType StairUpDownBlock::getType() const { return BlockType::BlockTypeStairUpDownBlock; }

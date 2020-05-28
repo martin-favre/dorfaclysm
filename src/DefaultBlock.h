@@ -17,6 +17,7 @@ class DefaultBlock : public Block {
   bool isSeeThrough() const override { return false; };
   bool spawnsItem() const override { return false; }
   std::unique_ptr<Item> getItem() const override { return nullptr; }
+  BlockType getType() const override { return BlockTypeInvalid;};
 
  private:
   const std::string mName;

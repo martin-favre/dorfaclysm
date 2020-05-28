@@ -5,18 +5,16 @@
 
 class BlockIdentifier {
  public:
-  BlockIdentifier(const Block& name);          // create new
-  BlockIdentifier(const SerializedObj& name);  // unserialize existing
-  BlockIdentifier(const BlockIdentifier&);
+  BlockIdentifier(const Block& block);          // create new
+  BlockIdentifier(const SerializedObj& serObj);  // unserialize existing
+  BlockIdentifier(const BlockIdentifier&) = default;
   bool operator==(const BlockIdentifier& block) const;
-  SerializedObj serialize() const;
+
   int getVersion() const;
   BlockType getBlockType() const;
 
-  static BlockIdentifier generateInvalid();
-
  private:
-  int mVersion;
+  int mVersion{0};
   BlockType mType;
 };
 

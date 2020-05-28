@@ -21,3 +21,4 @@ bool GrassBlock::supportsJob(PlayerRequestType type) const {
 }
 bool GrassBlock::spawnsItem() const { return false; }
 std::unique_ptr<Item> GrassBlock::getItem() const { return nullptr; }
+BlockType GrassBlock::getType() const { return BlockType::BlockTypeGrassBlock; }

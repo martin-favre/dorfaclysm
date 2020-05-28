@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <typeindex>
-#include "ItemType.h"
 #include "Sprite.h"
-
+#include "ItemType.h"
+#include "Serializer.h"
 class Item {
  public:
   virtual ~Item() = default;
@@ -12,7 +12,6 @@ class Item {
   virtual const Sprite& getSprite() const = 0;
   virtual uint getWorth() const = 0;
   virtual const ItemType& getItemType() const = 0;
-
   // If true, then it also inherits from IPlaceableItem
   virtual bool isPlaceable() const = 0;
 };

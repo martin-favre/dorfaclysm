@@ -6,10 +6,6 @@ class WalkingState : public State {
  public:
   WalkingState(GridActor& user, int msPerStep) : mWalker(user, msPerStep) {}
 
-  virtual Vector3DInt getTargetPos() = 0;
-  virtual std::unique_ptr<State> onReachedTarget() = 0;
-  virtual void onPathFindFail() = 0;
-
   void onEntry() override {
     GridMap& map = GridMap::getActiveMap();
     Vector3DInt movePos;
@@ -40,6 +36,11 @@ class WalkingState : public State {
     out["walker"] = mWalker;
     return out;
   }
+
+  protected:
+  virtual Vector3DInt getTargetPos() = 0;
+  virtual std::unique_ptr<State> onReachedTarget() = 0;
+  virtual void onPathFindFail() = 0;
 
  private:
   DorfWalker mWalker;

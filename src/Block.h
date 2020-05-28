@@ -24,6 +24,7 @@ class Block {
   virtual bool isSeeThrough() const = 0;
   virtual bool spawnsItem() const = 0;
   virtual std::unique_ptr<Item> getItem() const = 0;
+  virtual BlockType getType() const = 0;
 
   bool isExplored() const;
   void setExplored();
