@@ -16,3 +16,4 @@ out/
 testBin/
 shared_external_libs/
 *.a
+*.idx

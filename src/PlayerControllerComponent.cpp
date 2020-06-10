@@ -7,6 +7,7 @@
 #include "BlockBuildObject.h"
 #include "BlockBuildingRequestPool.h"
 #include "Camera.h"
+#include "Component.h"
 #include "Engine.h"
 #include "GameObject.h"
 #include "GridActor.h"
@@ -17,6 +18,7 @@
 #include "MiningRequestPool.h"
 #include "PlayerRequestType.h"
 #include "RockBlockItem.h"
+#include "Serializer.h"
 const std::map<int, PlayerControllerComponent::Mode>
     PlayerControllerComponent::mKeyToMode = {
         {SDL_SCANCODE_1, mine},
@@ -53,6 +55,19 @@ void PlayerControllerComponent::renderText() {
       mTextComponent->setText(outStr);
     }
   }
+}
+std::string PlayerControllerComponent::getTypeString() {
+  return "PlayerControllerComponent";
+}
+PlayerControllerComponent::PlayerControllerComponent(
+    GameObject& gObj, const SerializedObj& serObj)
+    : Component(gObj, serObj["parent"]), mMode(serObj["mode"]) {}
+
+SerializedObj PlayerControllerComponent::serialize() const {
+  SerializedObj out = createSerializedObj<PlayerControllerComponent>();
+  out["parent"] = Component::serialize();
+  out["mode"] = mMode;
+  return out;
 }
 
 void PlayerControllerComponent::handleClick() {
@@ -105,15 +120,15 @@ void PlayerControllerComponent::update() {
         mMode = mKeyToMode.at(keyEvent.mKey);
       } else if (keyEvent.mKey == SDL_SCANCODE_F5) {
         Engine::requestStateSave();
-      } else if(keyEvent.mKey == SDL_SCANCODE_F9){
+      } else if (keyEvent.mKey == SDL_SCANCODE_F9) {
         std::ifstream saveFile;
         saveFile.open("save.json", std::ios_base::binary);
-        if(saveFile.is_open()){
+        if (saveFile.is_open()) {
           std::stringstream ss;
           ss << saveFile.rdbuf();
           std::string contents = ss.str();
-          Engine::requestLoadState(std::make_unique<SerializedObj>(SerializedObj::parse(contents)));
-
+          Engine::requestLoadState(
+              std::make_unique<SerializedObj>(SerializedObj::parse(contents)));
         }
         saveFile.close();
       }

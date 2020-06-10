@@ -9,13 +9,17 @@ GameObject::GameObject(const SerializedObj& serObj)
       mScale(serObj.at("scale")),
       mRotation(serObj.at("rotation")),
       mEnabled(serObj.at("enabled")),
+      mName(serObj.at("name")),
       mIdentifier(serObj.at("identifier")) {
   unserializeComponents(serObj.at("components"));
 }
 
 GameObject::GameObject() : mIdentifier(Uuid::generateNew()) {}
 
-GameObject::~GameObject() { mComponents.clear(); }
+GameObject::~GameObject() {
+  LOG("Deleting GameObject " << mName << " " << this);
+  mComponents.clear();
+}
 
 SerializedObj GameObject::serialize() const {
   SerializedObj out;
@@ -41,7 +45,9 @@ void GameObject::unserializeComponents(
     if (StringToComponent::unserializeComponentMap.count(type)) {
       StringToComponent::unserializeComponentMap.at(type)(*this, c);
     } else {
-      LOGL("Cannot unserialize type, unknown type", Logging::warning);
+      LOGL("Cannot unserialize Component on object " << mName
+                                                     << ", unknown type",
+           Logging::warning);
     }
   }
 }

@@ -1,6 +1,8 @@
 #pragma once
+#include "Component.h"
 #include "Engine.h"
 #include "InputManager.h"
+#include "Serializer.h"
 
 class GameObject;
 struct Debug_CloseGameComponent : public Component {
@@ -19,6 +21,17 @@ struct Debug_CloseGameComponent : public Component {
       }
     }
   }
+
+  SerializedObj serialize() const override { 
+    SerializedObj out = createSerializedObj<Debug_CloseGameComponent>();
+    out["parent"] = Component::serialize();
+    return out;
+  }
+
+  Debug_CloseGameComponent(GameObject& owner, const SerializedObj& serObj)
+      : Component(owner, serObj["parent"]) {}
+
+  static std::string getTypeString() { return "Debug_CloseGameComponent"; }
 
  private:
   QueueHandle mInputHandle;

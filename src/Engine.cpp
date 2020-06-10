@@ -53,7 +53,7 @@ void Engine::stop() { Engine::mRunning = false; }
 
 void Engine::removeGameObject(GameObject* gObj) {
   std::scoped_lock lock(mMutex);
-  LOGL("Removing GameObject " << gObj, Logging::info);
+  LOG("Removing GameObject " << gObj->name() << " " << gObj);
   Engine::mGameobjectsToRemove.insert(gObj);
 }
 
@@ -240,11 +240,13 @@ void Engine::loadScene() {
       mGameobjectsToAdd.emplace_back(std::make_unique<GameObject>(obj));
     }
   }
-  {
-    {
-      std::scoped_lock lock(mMutex);
-      mGameobjects.clear();
+{
+    // gently clear all gameobjects
+    for (const auto& gObj : mGameobjects) {
+      removeGameObject(gObj.get());
     }
+    removeGameObjectFromWorld();
+    ASSERT(mGameobjects.size() == 0, "Didn't clear all Gobjs");
     std::vector<SerializedObj> objsToAdd = mLoadState->at("objects");
     for (const auto& obj : objsToAdd) {
       addGameObject(obj);

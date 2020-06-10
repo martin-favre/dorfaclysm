@@ -65,7 +65,8 @@
 			"condition_variable": "cpp",
 			"mutex": "cpp",
 			"forward_list": "cpp",
-			"valarray": "cpp"
+			"valarray": "cpp",
+			"hash_map": "cpp"
 		},
 		"cmakeExplorer.buildDir": "build",
 		"catch2TestExplorer.executables": "testBin/*",
