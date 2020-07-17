@@ -6,8 +6,10 @@
 
 class WalkRandomlyJob : public IJob {
  public:
+  WalkRandomlyJob(GridActor& user, const SerializedObj& serObj);
   WalkRandomlyJob(GridActor& user);
   bool work() override;
+  SerializedObj serialize() const override;
 
  private:
   StateMachine mStateMachine;

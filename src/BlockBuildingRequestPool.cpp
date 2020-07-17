@@ -1,26 +1,40 @@
 #include "BlockBuildingRequestPool.h"
 
-BlockBuildingRequest::BlockBuildingRequest(std::weak_ptr<Block> target,
-                                   const Vector3DInt& pos)
-    : mTarget(target), mPos(pos) {}
-Block& BlockBuildingRequest::getBlock() {
-  ASSERT(isValid(), "Check if block is valid before calling");
-  return *mTarget.lock();
+#include "GridMap.h"
+
+BlockBuildingRequest::BlockBuildingRequest(const SerializedObj& serObj)
+    : mTargetBlock(serObj["identifier"]), mPos(serObj["position"]) {}
+
+BlockBuildingRequest::BlockBuildingRequest(const BlockIdentifier& targetBlock,
+                                           const Vector3DInt& pos)
+    : mTargetBlock(targetBlock), mPos(pos) {}
+
+const BlockIdentifier& BlockBuildingRequest::getBlockIdentifier() const {
+  return mTargetBlock;
 }
-bool BlockBuildingRequest::isValid() const { return !mTarget.expired(); }
+
+bool BlockBuildingRequest::isValid() const {
+  return GridMap::getActiveMap().blockIdentifierMatches(mTargetBlock, mPos);
+}
 
 const Vector3DInt& BlockBuildingRequest::getPos() const { return mPos; }
 
 bool BlockBuildingRequest::operator==(const BlockBuildingRequest& other) const {
-  ASSERT(isValid(), "Check if block is valid before calling");
-  ASSERT(other.isValid(), "Check if block is valid before calling");
-  const bool same = other.mTarget.lock() == mTarget.lock();
+  const bool same = other.mTargetBlock == mTargetBlock;
   if (same) {
     ASSERT(other.mPos == mPos,
            "Request on same block, but with different poses is not expected");
   }
   return same;
 }
-BlockBuildingRequestPool& BlockBuildingRequestPool::getInstance() { return mInstance; }
+
+void to_json(SerializedObj& out, const BlockBuildingRequest& bbReq) {
+  out["identifier"] = bbReq.getBlockIdentifier();
+  out["position"] = bbReq.getPos();
+}
+
+BlockBuildingRequestPool& BlockBuildingRequestPool::getInstance() {
+  return mInstance;
+}
 
 BlockBuildingRequestPool BlockBuildingRequestPool::mInstance;

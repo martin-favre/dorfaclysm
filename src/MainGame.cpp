@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "Font.h"
 #include "FpsCounter.h"
+#include "GameObject.h"
 #include "GridActor.h"
 #include "GridMap.h"
 #include "GridMapRenderer.h"
@@ -22,12 +23,14 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
+#include "Serializer.h"
+#include "RequestPoolComponent.h"
+#include "GridMapLoader.h"
 
 void foo() {
   int mapSize = 128;
   {
-    GridMap::generateActiveMap({mapSize, mapSize, 64},
-                               MapGenerator::generate);
+    GridMap::generateActiveMap({mapSize, mapSize, 64}, MapGenerator::generate);
   }
   Camera::get().move({0, 0, mapSize / 4});
   // {
@@ -42,26 +45,35 @@ void foo() {
   // }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.addComponent<GridMapLoader>();
+    gObj.setName("GridMapLoader");
+  }
+  {
+    GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
     gObj.setPosition({20, 20});
     gObj.setScale({2, 2});
     gObj.addComponent<FpsCounter>();
     gObj.setRenderDepth(RenderDepths::GUI);
+    gObj.setName("Fpscounter");
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<GridMapRenderer>();
     gObj.setRenderDepth(RenderDepths::GridMap);
+    gObj.setName("Gridmaprenderer");
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<AirDepthRenderer>();
     gObj.setRenderDepth(RenderDepths::AirDepth);
+    gObj.setName("Airdepthrenderer");
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<CameraControllerComponent>();
     gObj.setPosition({0, 0, mapSize / 2});
+    gObj.setName("Cameracontroller");
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
@@ -70,6 +82,12 @@ void foo() {
     gObj.setScale({2, 2});
     gObj.setPosition({20, 80});
     gObj.setRenderDepth(RenderDepths::GUI);
+    gObj.setName("Show position text");
+  }
+  {
+    GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.addComponent<RequestPoolComponent>();
+    gObj.setName("RequestPoolObject");
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
@@ -77,26 +95,40 @@ void foo() {
     gObj.addComponent<PlayerControllerComponent>();
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
     gObj.setRenderDepth(RenderDepths::GUI);
+    gObj.setName("Playercontroller");
   }
   {
-    for (int i = 0; i < 2; ++i) {
-      GameObject& gObj = Engine::addGameObject<GameObject>();
+    for (int i = 0; i < 1; ++i) {
+      GameObject gObj;
       gObj.addComponent<DorfController>();
       gObj.addComponent<GridActor>(GridActor::dorf);
-      gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
-          Paths::RG_TILE_TRANSPARENT, {25, 0}, Paths::SIZE_OF_RG_TILE_TRANSPARENT));
-      // gObj.setScale({2, 2});
+      gObj.addComponent<SpriteComponent>(Paths::RG_TILE, Vector2DInt{25, 0});
       gObj.setPosition({0, 0, 1});
       gObj.setRenderDepth(RenderDepths::Actors);
-      gObj.name() = "Dorf";
+      gObj.setName("Dorf");
+      SerializedObj j = gObj.serialize();
+      LOG(j);
+      Engine::addGameObject(j);
     }
   }
   {
-      // GameObject& gObj = Engine::addGameObject<GameObject>();
-      // gObj.addComponent<DrawLineComponent>();
-      // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
-      // gObj.setPosition({20, 200});
-      // gObj.setRenderDepth(RenderDepths::GUI);
+    for (int i = 0; i < 1; ++i) {
+      GameObject& gObj = Engine::addGameObject<GameObject>();
+      gObj.addComponent<DorfController>();
+      gObj.addComponent<GridActor>(GridActor::dorf);
+      gObj.addComponent<SpriteComponent>(Paths::RG_TILE, Vector2DInt{25, 0});
+      gObj.setPosition({0, 0, 1});
+      gObj.setRenderDepth(RenderDepths::Actors);
+      gObj.setName("Dorf");
+    }
+  }
+
+  {
+    // GameObject& gObj = Engine::addGameObject<GameObject>();
+    // gObj.addComponent<DrawLineComponent>();
+    // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
+    // gObj.setPosition({20, 200});
+    // gObj.setRenderDepth(RenderDepths::GUI);
   }
 }
 

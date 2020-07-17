@@ -1,9 +1,56 @@
 #include "GameObject.h"
 
 #include "Engine.h"
-GameObject::GameObject(GAMEOBJECT_ID id) : mId(id) {}
+#include "StringToComponent.h"
 
-GameObject::~GameObject() { mComponents.clear(); }
+GameObject::GameObject(const SerializedObj& serObj)
+    : mPosition(serObj.at("position")),
+      mRenderDepth(serObj.at("renderDepth")),
+      mScale(serObj.at("scale")),
+      mRotation(serObj.at("rotation")),
+      mEnabled(serObj.at("enabled")),
+      mName(serObj.at("name")),
+      mIdentifier(serObj.at("identifier")) {
+  unserializeComponents(serObj.at("components"));
+}
+
+GameObject::GameObject() : mIdentifier(Uuid::generateNew()) {}
+
+GameObject::~GameObject() {
+  LOG("Deleting GameObject " << mName << " " << this);
+  mComponents.clear();
+}
+
+SerializedObj GameObject::serialize() const {
+  SerializedObj out;
+  out["position"] = mPosition;
+  out["renderDepth"] = mRenderDepth;
+  out["scale"] = mScale;
+  out["rotation"] = mRotation;
+  out["enabled"] = mEnabled;
+  out["name"] = mName;
+  out["identifier"] = mIdentifier;
+  std::vector<SerializedObj> components;
+  for (const auto& c : mComponents) {
+    components.emplace_back(c->serialize());
+  }
+  out["components"] = components;
+  return out;
+}
+
+void GameObject::unserializeComponents(
+    const std::vector<SerializedObj>& components) {
+  for (const auto& c : components) {
+    std::string type = c.at(Component::SerializeString_Type);
+    if (StringToComponent::unserializeComponentMap.count(type)) {
+      StringToComponent::unserializeComponentMap.at(type)(*this, c);
+    } else {
+      LOGL("Cannot unserialize Component on object " << mName
+                                                     << ", unknown type",
+           Logging::warning);
+    }
+  }
+}
 
 bool& GameObject::enabled() { return mEnabled; }
 
@@ -34,27 +81,30 @@ void GameObject::render() {
   }
 }
 
-void GameObject::setPosition(const Vector3DInt& pos) { 
+void GameObject::setPosition(const Vector3DInt& pos) {
   std::scoped_lock lock(mMutex);
-  mPosition = pos; 
-  }
+  mPosition = pos;
+}
 
 int GameObject::getRenderDepth() const { return mRenderDepth; }
-void GameObject::setRenderDepth(int depth) { 
+void GameObject::setRenderDepth(int depth) {
   std::scoped_lock lock(mMutex);
-  mRenderDepth = depth; }
+  mRenderDepth = depth;
+}
 
 Vector3DInt GameObject::getPosition() const { return mPosition; }
 
 Vector2D GameObject::getScale() const { return mScale; }
-void GameObject::setScale(const Vector2D& newScale) { 
+void GameObject::setScale(const Vector2D& newScale) {
   std::scoped_lock lock(mMutex);
-  mScale = newScale; }
+  mScale = newScale;
+}
 double GameObject::getRotation() const { return mRotation; }
+
+const Uuid& GameObject::getIdentifier() const { return mIdentifier; }
 
 void GameObject::destroy() { Engine::removeGameObject(this); }
 
-GAMEOBJECT_ID
-GameObject::id() const { return mId; }
-std::string& GameObject::name() { return mName; }
+void GameObject::setName(const std::string& name) { mName = name; }
+
 const std::string& GameObject::name() const { return mName; }

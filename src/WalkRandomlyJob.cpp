@@ -6,17 +6,22 @@
 #include "GameObject.h"
 #include "GridMap.h"
 #include "Helpers.h"
+#include "WalkingState.h"
 namespace {
 
-class WalkingState : public State {
+enum StateType { State_WalkingState, State_WaitingState };
+
+class WalkingRandomlyState : public WalkingState {
  public:
-  WalkingState(GridActor& user, const Vector3DInt& targetPos)
-      : mWalker(user), mTargetPos(targetPos) {}
-  void onEntry() override { mWalker.startNewPath(mTargetPos); }
-  std::unique_ptr<State> onDuring() override;
+  WalkingRandomlyState(GridActor& user, const Vector3DInt& targetPos)
+      : WalkingState(user, 500), mTargetPos(targetPos) {}
+  Vector3DInt getTargetPos() override { return mTargetPos; }
+
+  std::unique_ptr<State> onReachedTarget() override;
+
+  void onPathFindFail() override { terminateMachine(); }
 
  private:
-  DorfWalker mWalker;
   Vector3DInt mTargetPos;
 };
 
@@ -40,12 +45,9 @@ class CalculatingPositionState : public State {
   GridActor& mUser;
 };
 
-std::unique_ptr<State> WalkingState::onDuring() {
-  mWalker.update();
-  if (mWalker.isIdle()) {
-    return transitTo<WaitingState>(3000);
-  }
-  return noTransition();
+
+std::unique_ptr<State> WalkingRandomlyState::onReachedTarget() {
+  return transitTo<WaitingState>(3000);
 }
 
 std::unique_ptr<State> WaitingState::onDuring() {
@@ -65,13 +67,31 @@ std::unique_ptr<State> CalculatingPositionState::onDuring() {
   if (map.isPosInMap(newPos) && map.isPosFree(newPos)) {
     bool success = map.getLowestPassablePositionFrom(newPos, newPos);
     if (success) {
-      return transitTo<WalkingState>(mUser, newPos);
+      return transitTo<WalkingRandomlyState>(mUser, newPos);
     }
   }
   return transitTo<WaitingState>(200);
 }
 
+std::unique_ptr<State> unserializeState(GridActor& user,
+                                        const SerializedObj& serObj) {
+  SerializedObj state = serObj["activeState"];
+  StateType type = state["type"];
+  switch (type) {
+    case State_WalkingState:
+      return std::make_unique<WalkingRandomlyState>(user, serObj);
+    case State_WaitingState:
+      return std::make_unique<WaitingState>(serObj);
+    default:
+      ASSERT(false, "Unknown state type");
+      return nullptr;
+  }
+}
+
 }  // namespace
+
+WalkRandomlyJob::WalkRandomlyJob(GridActor& user, const SerializedObj& serObj)
+    : mStateMachine(unserializeState(user, serObj)) {}
 
 WalkRandomlyJob::WalkRandomlyJob(GridActor& user)
     : mStateMachine(std::make_unique<CalculatingPositionState>(user)) {}
@@ -79,4 +99,11 @@ WalkRandomlyJob::WalkRandomlyJob(GridActor& user)
 bool WalkRandomlyJob::work() {
   mStateMachine.update();
   return mStateMachine.isTerminated();
+}
+
+SerializedObj WalkRandomlyJob::serialize() const {
+  SerializedObj out;
+  out[SerializeString_Type] = IJob::MineJob;
+  out["activeState"] = mStateMachine.serializeActiveState();
+  return out;
 }

@@ -1,18 +1,21 @@
 #pragma once
-typedef unsigned long GAMEOBJECT_ID;
 
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
-#include <mutex>
+
 #include "Component.h"
+#include "Serializer.h"
+#include "Uuid.h"
 #include "Vector2D.h"
 #include "Vector3DInt.h"
 
 class GameObject {
  public:
-  GameObject(GAMEOBJECT_ID id);
+  GameObject(const SerializedObj& serObj);
+  GameObject();
   virtual ~GameObject();
   GameObject(const GameObject&) = delete;
   GameObject& operator=(const GameObject&) = delete;
@@ -43,6 +46,9 @@ class GameObject {
   template <class componentType>
   componentType* getComponent();
 
+  template <class componentType>
+  bool hasComponent();
+
   /*-------------------------------------------------------
   Larger renderDepth is closer to the camera
   Can only be changed in scene creation
@@ -55,6 +61,7 @@ class GameObject {
   Vector2D getScale() const;
   void setScale(const Vector2D& newScale);
   double getRotation() const;
+  const Uuid& getIdentifier() const;
 
   /*-------------------------------------------------------
   Orders the removal of the GameObject. It will be removed
@@ -63,12 +70,11 @@ class GameObject {
   will then be invalid.
   ---------------------------------------------------------*/
   void destroy();
-  GAMEOBJECT_ID id() const;
-  std::string& name();
+  void setName(const std::string&);
   const std::string& name() const;
 
- private:
-  friend class Engine;
+  SerializedObj serialize() const;
+  
   /*-------------------------------------------------------
   Runs all components' setups.
   ---------------------------------------------------------*/
@@ -89,14 +95,19 @@ class GameObject {
   ---------------------------------------------------------*/
   void updateComponents();
 
+ private:
+  void unserializeComponents(const std::vector<SerializedObj>& components);
+
   Vector3DInt mPosition;
   int mRenderDepth{0};
   Vector2D mScale{1, 1};
   double mRotation{0};
   bool mEnabled{true};
   std::string mName{"NoName"};
-  const GAMEOBJECT_ID mId{0};
+  const Uuid mIdentifier;
+
   std::vector<std::unique_ptr<Component>> mComponents;
+
   std::mutex mMutex;
 };
 
@@ -110,4 +121,9 @@ componentType* GameObject::getComponent() {
     }
   }
   return nullptr;
+}
+
+template <class componentType>
+bool GameObject::hasComponent() {
+  return getComponent<componentType>() != nullptr;
 }

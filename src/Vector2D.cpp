@@ -5,6 +5,7 @@
 Vector2D::Vector2D() {}
 Vector2D::Vector2D(double _x, double _y) : x(_x), y(_y) {}
 Vector2D::Vector2D(const Vector2DInt& vec) : x(vec.x), y(vec.y) {}
+Vector2D::Vector2D(const SerializedObj& serObj) { from_json(serObj, *this); }
 
 Vector2D& Vector2D::operator+=(const Vector2D& other) {
   x += other.x;
@@ -97,4 +98,12 @@ SDL_Point Vector2D::getSdlPoint() {
 std::ostream& operator<<(std::ostream& stream, const Vector2D& p) {
   stream << "(" << p.x << "," << p.y << ")";
   return stream;
+}
+
+void to_json(SerializedObj& j, const Vector2D& vec) {
+  j = {{"x", vec.x}, {"y", vec.y}};
+}
+void from_json(const SerializedObj& j, Vector2D& vec) {
+  j.at("x").get_to(vec.x);
+  j.at("y").get_to(vec.y);
 }

@@ -1,21 +1,28 @@
 #pragma once
 
 #include "Block.h"
+#include "BlockIdentifier.h"
 #include "GenericRequestPool.h"
+#include "Serializer.h"
 class BlockBuildingRequest {
  public:
-  BlockBuildingRequest(std::weak_ptr<Block> target, const Vector3DInt& pos);
-  Block& getBlock();
+  BlockBuildingRequest(const SerializedObj& serObj);
+  BlockBuildingRequest(const BlockIdentifier& targetBlock,
+                       const Vector3DInt& pos);
+  const BlockIdentifier& getBlockIdentifier() const;
   bool isValid() const;
   const Vector3DInt& getPos() const;
   bool operator==(const BlockBuildingRequest& other) const;
-
+  
  private:
-  const std::weak_ptr<Block> mTarget;
+  const BlockIdentifier mTargetBlock;
   const Vector3DInt mPos;
 };
 
-class BlockBuildingRequestPool : public GenericRequestPool<BlockBuildingRequest> {
+void to_json(SerializedObj& out, const BlockBuildingRequest& req);
+
+class BlockBuildingRequestPool
+    : public GenericRequestPool<BlockBuildingRequest> {
  public:
   static BlockBuildingRequestPool& getInstance();
 

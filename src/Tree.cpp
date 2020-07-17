@@ -3,9 +3,8 @@
 #include "SpriteLoader.h"
 #include "GridActor.h"
 #include "RenderDepths.h"
-Tree::Tree(GAMEOBJECT_ID id) : GameObject(id){
-  addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
-      Paths::RG_TILE_TRANSPARENT, {2, 1}, Paths::SIZE_OF_RG_TILE_TRANSPARENT));
+Tree::Tree(){
+  addComponent<SpriteComponent>(Paths::RG_TILE, Vector2DInt{2, 1});
   setRenderDepth(RenderDepths::Actors);
-  name() = "Tree";
+  setName("Tree");
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
-class ItemType;
+#include "ItemType.h"
 class BlockBuildObject : public GameObject {
  public:
-  BlockBuildObject(GAMEOBJECT_ID id, const ItemType& item);
+  BlockBuildObject(const ItemType& item);
 };

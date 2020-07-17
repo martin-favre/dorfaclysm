@@ -6,7 +6,7 @@
 #include <cmath>
 #include <functional>
 #include <ostream>
-
+#include "Serializer.h"
 #include "Helpers.h"
 
 /*-------------------------------------------------------
@@ -16,15 +16,11 @@ class Vector2DInt;
 class Vector3DInt {
  public:
   Vector3DInt() = default;
+  Vector3DInt(const SerializedObj& serObj);
   Vector3DInt& operator=(const Vector3DInt& vec) = default;
   Vector3DInt(const Vector3DInt& vec) = default;
   constexpr Vector3DInt(int x_, int y_, int z_ = 0) : x(x_), y(y_), z(z_) {}
   constexpr Vector3DInt(const Vector2DInt& vec);
-  // constexpr Vector3DInt(uint x_, uint y_, uint z_) : x(x_), y(y_), z(z_) {}
-  // constexpr Vector3DInt(float x_, float y_)
-  //     : x(Helpers::roundToInt(x_)), y(Helpers::roundToInt(y_)) {}
-  // constexpr Vector3DInt(double x_, double y_)
-  //     : x(Helpers::roundToInt(x_)), y(Helpers::roundToInt(y_)) {}
 
   /*-------------------------------------------------------
           Note: designed for creating an unique value for usage in a map,
@@ -85,6 +81,9 @@ class Vector3DInt {
   int y{0};
   int z{0};
 };
+
+void to_json(SerializedObj& j, const Vector3DInt& vec);
+void from_json(const SerializedObj& j, Vector3DInt& vec);
 
 #include "Vector2DInt.h"
 

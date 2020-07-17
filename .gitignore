@@ -10,9 +10,10 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
-
+*.log
 bin/
 out/
 testBin/
 shared_external_libs/
 *.a
+*.idx

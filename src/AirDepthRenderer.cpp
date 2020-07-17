@@ -2,13 +2,15 @@
 
 #include "Block.h"
 #include "Camera.h"
+#include "Component.h"
 #include "GraphicsManager.h"
 #include "GridMap.h"
 #include "GridMapHelpers.h"
+#include "Serializer.h"
 
 void AirDepthRenderer::renderBlock(Vector3DInt pos) {
   int depth = 0;
-  constexpr uint8_t maxDepth = 3;
+  constexpr uint8_t maxDepth = 6;
   if (!mGridMap.getBlockAt(pos).isExplored()) return;
   while (mGridMap.getBlockAt(pos).isSeeThrough()) {
     pos += {0, 0, -1};
@@ -27,6 +29,18 @@ void AirDepthRenderer::renderBlock(Vector3DInt pos) {
   GraphicsManager::setRenderDrawColor(GraphicsManager::mDefaultDrawColor);
 }
 
+AirDepthRenderer::AirDepthRenderer(GameObject& gObj,
+                                   const SerializedObj& serObj)
+    : Component(gObj, serObj["parent"]),
+      mGridMap(GridMap::getActiveMap()),
+      mCam(Camera::get()) {}
+
+SerializedObj AirDepthRenderer::serialize() const {
+  SerializedObj out = createSerializedObj<AirDepthRenderer>();
+  out["parent"] = Component::serialize();
+  return out;
+}
+
 AirDepthRenderer::AirDepthRenderer(GameObject& gObj)
     : Component(gObj), mGridMap(GridMap::getActiveMap()), mCam(Camera::get()) {}
 
@@ -36,3 +50,5 @@ void AirDepthRenderer::render() {
   };
   GridMapHelpers::doToEachBlockInScreen(mGridMap, mCam, foo);
 }
+
+std::string AirDepthRenderer::getTypeString() { return "AirDepthRenderer"; }

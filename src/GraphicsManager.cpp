@@ -25,7 +25,7 @@ void GraphicsManager::initialize() {
   if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY,
                    "0"))  // 0 = nearest pixel sampling
   {
-    LOG("Warning: Linear texture filtering not enabled!");
+    LOGL("Warning: Linear texture filtering not enabled!", Logging::warning);
   }
 
   GraphicsManager::mMainWindow = SDL_CreateWindow(
@@ -39,7 +39,8 @@ void GraphicsManager::initialize() {
 
   GraphicsManager::mMainRenderer =
       SDL_CreateRenderer(GraphicsManager::mMainWindow, -1,
-                         SDL_RENDERER_ACCELERATED);
+                         SDL_RENDERER_SOFTWARE); 
+                         // SDL_RENDERER_ACCELERATED caused issues (black sprites) depending on computer
 
   ASSERT(GraphicsManager::mMainRenderer != NULL,
          "Renderer could not be created! SDL Error: " +
@@ -61,7 +62,7 @@ void GraphicsManager::initialize() {
   ASSERT(ok != -1, "SDL_ttf could not initialize! SDL_ttf Error: " +
                        std::string(TTF_GetError()));
   GraphicsManager::mInitialized = true;
-  LOG("Finished initialing GraphicsManager");
+  LOGL("Finished initialing GraphicsManager", Logging::info);
 }
 
 void GraphicsManager::teardown() {
@@ -72,7 +73,7 @@ void GraphicsManager::teardown() {
   IMG_Quit();
   SDL_Quit();
   mInitialized = false;
-  LOG("Finished teardown GraphicsManager");
+  LOGL("Finished teardown GraphicsManager", Logging::info);
 }
 
 void GraphicsManager::prepareRendering() {

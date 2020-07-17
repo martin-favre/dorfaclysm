@@ -63,10 +63,16 @@
 			"execution": "cpp",
 			"typeindex": "cpp",
 			"condition_variable": "cpp",
-			"mutex": "cpp"
+			"mutex": "cpp",
+			"forward_list": "cpp",
+			"valarray": "cpp",
+			"hash_map": "cpp"
 		},
 		"cmakeExplorer.buildDir": "build",
 		"catch2TestExplorer.executables": "testBin/*",
-		"editor.tabSize": 2
+		"editor.tabSize": 2,
+		"C_Cpp.intelliSenseEngine": "Disabled",
+		"C_Cpp.autocomplete": "Disabled",
+		"C_Cpp.errorSquiggles": "Disabled"
 	}
 }

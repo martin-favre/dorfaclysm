@@ -1,13 +1,15 @@
 #include "GridMap.h"
 
+#include <cstddef>
+#include <memory>
 #include <queue>
 
-#include "AirBlock.h"
 #include "Block.h"
+#include "BlockIdentifier.h"
+#include "BlockType.h"
 #include "DeltaPositions.h"
 #include "Engine.h"
 #include "GameObject.h"
-#include "GrassBlock.h"
 #include "GridActor.h"
 #include "GridMapHelpers.h"
 #include "Helpers.h"
@@ -15,8 +17,24 @@
 #include "ItemContainer.h"
 #include "ItemContainerObject.h"
 #include "Logging.h"
+#include "Serializer.h"
+#include "Vector3DInt.h"
 
 GridMap GridMap::mActiveMap;
+
+namespace {
+
+// constexpr size_t posToIndex(const Vector3DInt& pos, const Vector3DInt& size) {
+//   return pos.x + size.y * (pos.y + size.z * pos.z);
+// }
+
+constexpr Vector3DInt indexToPos(size_t index, const Vector3DInt& size) {
+  int z = index / (size.x * size.y);
+  index -= (z * size.x * size.y);
+  int y = index / size.x;
+  int x = index % size.x;
+  return Vector3DInt{x, y, z};
+}
 
 template <class T>
 void initializeGrid(T& grid, const Vector3DInt& size) {
@@ -33,27 +51,40 @@ void initializeGrid(T& grid, const Vector3DInt& size) {
 }
 
 void makeGridGrass(
-    std::vector<std::vector<std::vector<std::shared_ptr<Block>>>>& grid,
+    std::vector<std::vector<std::vector<std::unique_ptr<Block>>>>& grid,
     const Vector3DInt& size) {
   for (int z = 0; z < size.z; ++z) {
     for (int y = 0; y < size.y; ++y) {
       for (int x = 0; x < size.x; ++x) {
-        grid[z][y][x] = std::make_shared<GrassBlock>();
+        grid[z][y][x] = std::make_unique<Block>(BlockTypeGrassBlock);
       }
     }
   }
 }
 
+void allocateGridActors(std::unordered_map<Vector3DInt, std::list<GridActor*>,
+                                           Vector3DIntHash>& gridActors,
+                        const Vector3DInt& size) {
+  for (int z = 0; z < size.z; ++z) {
+    for (int y = 0; y < size.y; ++y) {
+      for (int x = 0; x < size.x; ++x) {
+        gridActors[Vector3DInt{x, y, z}] = {};
+      }
+    }
+  }
+}
+}  // namespace
+
 GridMap& GridMap::generateActiveMap(
     const Vector3DInt& size,
     std::function<void(GridMap&, const Vector3DInt&)> generator) {
-  LOG("Generating map of size " << size) ;
+  LOG("Generating map of size " << size);
   ASSERT(size.x > 0, "Size needs to be > 0");
   ASSERT(size.y > 0, "Size needs to be > 0");
   ASSERT(size.z > 0, "Size needs to be > 0");
   mActiveMap.mSize = size;
   initializeGrid(mActiveMap.mBlocks, size);
-  initializeGrid(mActiveMap.mGridActors, size);
+  allocateGridActors(mActiveMap.mGridActors, size);
   if (generator) {
     generator(mActiveMap, size);
   } else {
@@ -123,18 +154,29 @@ void GridMap::removeBlockAt(const Vector3DInt& pos) {
     addItemAt(pos, block.getItem());
   }
   {
-    std::scoped_lock lock (mLock);
-    mBlocks[pos.z][pos.y][pos.x] = std::make_shared<AirBlock>();
+    setBlockAt(pos, BlockTypeAirBlock);
   }
   GridMapHelpers::exploreMap(*this, pos);
 }
 
-void GridMap::setBlockAt(const Vector3DInt& pos,
-                         std::unique_ptr<Block>&& newBlock) {
-  ASSERT(newBlock.get(), "Trying set a block to null ptr");
+void GridMap::setBlockAt(const Vector3DInt& pos, BlockType newBlock) {
+  std::scoped_lock lock(mLock);
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-  std::scoped_lock lock (mLock);
-  mBlocks[pos.z][pos.y][pos.x] = std::move(newBlock);
+  if (mBlocks[pos.z][pos.y][pos.x]) {
+    BlockIdentifier newIdent =
+        mBlocks[pos.z][pos.y][pos.x]->getIdentifier().generateReplacement(
+            newBlock);
+    mBlocks[pos.z][pos.y][pos.x] = std::make_unique<Block>(newIdent);
+  } else {
+    BlockIdentifier newIdent{newBlock};
+    mBlocks[pos.z][pos.y][pos.x] = std::make_unique<Block>(newIdent);
+  }
+}
+
+void GridMap::setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block> block) {
+  std::scoped_lock lock(mLock);
+  ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+  mBlocks[pos.z][pos.y][pos.x] = std::move(block);
 }
 
 bool GridMap::isPosFree(const Vector3DInt& pos) const {
@@ -143,30 +185,56 @@ bool GridMap::isPosFree(const Vector3DInt& pos) const {
 
 const std::list<GridActor*>& GridMap::getGridActorsAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to access out of bounds");
-  std::scoped_lock lock (mLock);
-  return mGridActors[pos.z][pos.y][pos.x];
+  std::scoped_lock lock(mLock);
+  if (!mGridActors.count(pos)) mGridActors[pos] = {};
+  return mGridActors[pos];
 }
 
 const std::list<GridActor*>& GridMap::getGridActorsAt(
     const Vector3DInt& pos) const {
   ASSERT(isPosInMap(pos), "Trying to access out of bounds");
-  std::scoped_lock lock (mLock);
-  return mGridActors[pos.z][pos.y][pos.x];
+  std::scoped_lock lock(mLock);
+  return mGridActors.at(pos);
 }
 
 void GridMap::registerGridActorAt(const Vector3DInt& pos, GridActor* item) {
-  std::scoped_lock lock (mLock);
-  mGridActors[pos.z][pos.y][pos.x].emplace_back(item);
-  
+  std::scoped_lock lock(mLock);
+  mGridActors[pos].emplace_back(item);
 }
 void GridMap::unregisterGridActorAt(const Vector3DInt& pos,
                                     const GridActor* item) {
   ASSERT(isPosInMap(pos), "Trying to access out of bounds");
-  std::scoped_lock lock (mLock);
-  std::list<GridActor*>& items = mGridActors[pos.z][pos.y][pos.x];
+  std::scoped_lock lock(mLock);
+  std::list<GridActor*>& items = mGridActors[pos];
   const auto iter = std::find(items.begin(), items.end(), item);
   ASSERT(iter != items.end(), "Item not in list");
   items.erase(iter);
 }
 
 GridMap& GridMap::getActiveMap() { return mActiveMap; }
+
+void GridMap::loadActiveMap(const SerializedObj& serObj) {
+  mActiveMap.mSize = serObj["size"];
+  initializeGrid(mActiveMap.mBlocks, mActiveMap.mSize);
+  allocateGridActors(mActiveMap.mGridActors, mActiveMap.mSize);
+
+  std::vector<SerializedObj> blocks = serObj["blocks"];
+  for(size_t i = 0; i < blocks.size(); ++i){
+    Vector3DInt pos = indexToPos(i, mActiveMap.mSize);
+    mActiveMap.mBlocks[pos.z][pos.y][pos.x] = std::make_unique<Block>(blocks[i]);
+  }
+}
+
+void to_json(SerializedObj& json, const GridMap& gridMap) {
+  std::vector<SerializedObj> blocks;
+  for (int z = 0; z < gridMap.mSize.z; ++z) {
+    for (int y = 0; y < gridMap.mSize.y; ++y) {
+      for (int x = 0; x < gridMap.mSize.x; ++x) {
+        blocks.emplace_back(gridMap.getBlockAt({x,y,z}));
+      }
+    }
+  }
+
+  json["size"] = gridMap.mSize;
+  json["blocks"] = blocks;
+}

@@ -2,10 +2,12 @@
 
 #include "Block.h"
 #include "Camera.h"
+#include "Component.h"
 #include "GraphicsManager.h"
 #include "Helpers.h"
 #include "Logging.h"
 #include "Paths.h"
+#include "Serializer.h"
 #include "SpriteLoader.h"
 #include "Vector2DInt.h"
 
@@ -58,7 +60,7 @@ void GridMapRenderer::prepareViewedArea() {
       Vector3DInt pos{x + cameraTilePos.x, y + cameraTilePos.y, cameraPos.z};
       if (!mActiveGridMap.isPosInMap(pos)) continue;
       const Block& block = mActiveGridMap.getBlockAt(pos);
-      if (!block.isExplored()) continue;
+      // if (!block.isExplored()) continue;
       const int renderPosX = Camera::tileRenderSize.x * x;
       const int renderPosY = Camera::tileRenderSize.y * y;
 
@@ -83,5 +85,16 @@ void GridMapRenderer::prepareViewedArea() {
 GridMapRenderer::GridMapRenderer(GameObject& g)
     : Component(g), mActiveGridMap(GridMap::getActiveMap()) {}
 
+GridMapRenderer::GridMapRenderer(GameObject& g, const SerializedObj& serObj)
+    : Component(g, serObj["parent"]), mActiveGridMap(GridMap::getActiveMap()) {}
+
+SerializedObj GridMapRenderer::serialize() const {
+  SerializedObj out = createSerializedObj<GridMapRenderer>();
+  out["parent"] = Component::serialize();
+  return out;
+}
+
 void GridMapRenderer::update() {}
 void GridMapRenderer::render() { prepareViewedArea(); }
+
+std::string GridMapRenderer::getTypeString() { return "GridMapRenderer"; }

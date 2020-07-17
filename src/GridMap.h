@@ -1,20 +1,26 @@
 #pragma once
 
+#include <cstddef>
 #include <functional>
 #include <list>
 #include <memory>
-#include <vector>
 #include <mutex>
+#include <unordered_map>
+#include <vector>
+
+#include "Block.h"
+#include "BlockIdentifier.h"
 #include "Vector3DInt.h"
+#include "Vector3DIntHash.h"
 class Block;
+class GridActor;
+class Item;
+class Internals;
 
 /**
  * Accessing map outside bounds will throw exception.
  * Use isPosInMap.
  */
-class GridActor;
-class Item;
-
 class GridMap {
  public:
   GridMap(const GridMap&) = delete;
@@ -30,27 +36,33 @@ class GridMap {
                                      int maxDepth = -1) const;
 
   void removeBlockAt(const Vector3DInt& pos);
-  void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>&& newBlock);
+  void setBlockAt(const Vector3DInt& pos, BlockType newBlock);
+  void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>);  // unittests
   void addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item);
 
-  inline std::weak_ptr<Block> getBlockPtrAt(const Vector3DInt& pos) {
+  inline BlockIdentifier getBlockIdentifier(const Vector3DInt& pos) const {
+    const Block& block = getBlockAt(pos);
+    return block.getIdentifier();
+  }
+
+  inline bool blockIdentifierMatches(const BlockIdentifier& blockIdent,
+                                     const Vector3DInt& pos) const {
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
-    std::scoped_lock lock(mLock);
-    return mBlocks[pos.z][pos.y][pos.x];
+    return mBlocks[pos.z][pos.y][pos.x]->getIdentifier() == blockIdent;
   }
 
   inline Block& getBlockAt(const Vector3DInt& pos) {
+    std::scoped_lock lock(mLock);
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
-    std::scoped_lock lock(mLock);
     return *mBlocks[pos.z][pos.y][pos.x];
   }
 
   inline const Block& getBlockAt(const Vector3DInt& pos) const {
+    std::scoped_lock lock(mLock);
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
-    std::scoped_lock lock(mLock);
     return *mBlocks[pos.z][pos.y][pos.x];
   }
 
@@ -62,15 +74,20 @@ class GridMap {
   static GridMap& generateActiveMap(
       const Vector3DInt& size,
       std::function<void(GridMap&, const Vector3DInt&)> generator);
+  static void loadActiveMap(const SerializedObj&);
   static GridMap& getActiveMap();
 
  private:
+  friend void to_json(SerializedObj& json, const GridMap& gridMap);
   bool isBlockValid(const Vector3DInt& pos) const;
-
+  std::vector<std::vector<std::vector<std::unique_ptr<Block>>>> mBlocks;
+  std::unordered_map<Vector3DInt, std::list<GridActor*>, Vector3DIntHash>
+      mGridActors;
   GridMap() = default;
-  std::vector<std::vector<std::vector<std::shared_ptr<Block>>>> mBlocks;
-  std::vector<std::vector<std::vector<std::list<GridActor*>>>> mGridActors;
+
   Vector3DInt mSize;
   static GridMap mActiveMap;
   mutable std::mutex mLock;
 };
+
+void to_json(SerializedObj& json, const GridMap& gridMap);

@@ -14,6 +14,7 @@ class DorfWalker {
   enum FailureReason { noFailure, noPathFound, pathInterrupted };
 
   DorfWalker(GridActor& gridActor, int msPerMovement = 500);
+  DorfWalker(GridActor& gridActor, const SerializedObj& serObj);
   Vector3DInt getNextPlannedPosition();
   void update();
   void startNewPath(const Vector3DInt& to);
@@ -22,17 +23,21 @@ class DorfWalker {
   bool isIdle() const;
   bool hasFailed() const;
   FailureReason getFailReason() const;
-
+  friend void to_json(SerializedObj& serObj, const DorfWalker& walker); 
  private:
   void calculateNewPath();
   void walk();
-  WalkerState mState{idle};
-  FailureReason mFail{noFailure};
-  std::stack<Vector3DInt> mPlannedPosititions;
-  int mMsPerMovement;
+
   GridActor& mGridActor;
   const GridMap& mGridMap;
   std::unique_ptr<IncrementalAstar> mAstar;
+
+  WalkerState mState{idle};
+  FailureReason mFail{noFailure};
+  int mMsPerMovement;
   Vector3DInt mGoal;
   Timer mTimer;
+  std::stack<Vector3DInt> mPlannedPosititions;
 };
+
+void to_json(SerializedObj& serObj, const DorfWalker& walker);

@@ -2,10 +2,12 @@
 #include <SDL_rect.h>
 
 #include <iostream>
+#include "Serializer.h"
 class Vector2DInt;
 class Vector2D {
  public:
   Vector2D();
+  Vector2D(const SerializedObj& serObj);
   Vector2D(double x, double y = 0);
   Vector2D(const Vector2DInt& vec);
   Vector2D& operator+=(const Vector2D&);
@@ -47,6 +49,9 @@ class Vector2D {
 
  private:
 };
+
+void to_json(SerializedObj& j, const Vector2D& vec);
+void from_json(const SerializedObj& j, Vector2D& vec);
 
 template <typename multiplierType>
 inline Vector2D Vector2D::operator*(const multiplierType& value) const {
