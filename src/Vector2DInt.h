@@ -5,11 +5,10 @@
 
 #include "Helpers.h"
 #include "Vector2D.h"
-#include "Serializer.h"
+
 /*-------------------------------------------------------
         Contains 2D vector of integers
 ---------------------------------------------------------*/
-
 class Vector3DInt;
 class Vector2DInt {
  public:
@@ -42,9 +41,5 @@ class Vector2DInt {
   friend std::ostream& operator<<(std::ostream& os, const Vector2DInt& vec);
 };
 
-void to_json(SerializedObj& j, const Vector2DInt& vec);
-void from_json(const SerializedObj& j, Vector2DInt& vec);
-
 #include "Vector3DInt.h"
-constexpr Vector2DInt::Vector2DInt(const Vector3DInt& vec)
-    : x(vec.x), y(vec.y) {}
+constexpr Vector2DInt::Vector2DInt(const Vector3DInt& vec) : x(vec.x), y(vec.y){}

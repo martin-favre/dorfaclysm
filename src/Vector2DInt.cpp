@@ -40,12 +40,3 @@ std::ostream& operator<<(std::ostream& os, const Vector2DInt& dt) {
   os << "(" << dt.x << "," << dt.y << ")";
   return os;
 }
-
-void to_json(SerializedObj& j, const Vector2DInt& vec) {
-  j = {{"x", vec.x}, {"y", vec.y}};
-}
-
-void from_json(const SerializedObj& j, Vector2DInt& vec) {
-  j.at("x").get_to(vec.x);
-  j.at("y").get_to(vec.y);
-}

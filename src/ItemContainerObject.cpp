@@ -6,10 +6,11 @@
 #include "RenderDepths.h"
 #include "SpriteComponent.h"
 #include "SpriteLoader.h"
-ItemContainerObject::ItemContainerObject() {
+ItemContainerObject::ItemContainerObject(GAMEOBJECT_ID id) : GameObject(id) {
   addComponent<GridActor>(GridActor::item);
   addComponent<ItemContainer>();
-  addComponent<SpriteComponent>(Paths::RG_TILE, Vector2DInt{8, 6});
+  addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
+      Paths::RG_TILE_TRANSPARENT, {8, 6}, Paths::SIZE_OF_RG_TILE_TRANSPARENT));
   setRenderDepth(RenderDepths::Actors);
   name() = "Item Container";
 }

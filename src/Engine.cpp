@@ -14,6 +14,7 @@ std::string Engine::mSceneToLoad = "";
 bool Engine::mAboutToLoadScene = false;
 bool Engine::mRunning = false;
 bool Engine::mInitialized = false;
+GAMEOBJECT_ID Engine::mLatestGameobjectId{0};
 std::vector<std::unique_ptr<GameObject>> Engine::mGameobjects;
 std::queue<std::unique_ptr<GameObject>> Engine::mGameobjectsToAdd;
 std::set<GameObject*> Engine::mGameobjectsToRemove;

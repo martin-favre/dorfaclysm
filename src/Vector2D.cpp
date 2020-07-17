@@ -98,11 +98,3 @@ std::ostream& operator<<(std::ostream& stream, const Vector2D& p) {
   stream << "(" << p.x << "," << p.y << ")";
   return stream;
 }
-
-void to_json(SerializedObj& j, const Vector2D& vec) {
-  j = {{"x", vec.x}, {"y", vec.y}};
-}
-void from_json(const SerializedObj& j, Vector2D& vec) {
-  j.at("x").get_to(vec.x);
-  j.at("y").get_to(vec.y);
-}

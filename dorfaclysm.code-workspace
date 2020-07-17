@@ -63,9 +63,7 @@
 			"execution": "cpp",
 			"typeindex": "cpp",
 			"condition_variable": "cpp",
-			"mutex": "cpp",
-			"forward_list": "cpp",
-			"valarray": "cpp"
+			"mutex": "cpp"
 		},
 		"cmakeExplorer.buildDir": "build",
 		"catch2TestExplorer.executables": "testBin/*",

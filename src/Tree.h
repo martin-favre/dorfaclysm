@@ -3,5 +3,5 @@
 
 class Tree : public GameObject{
   public:
-  Tree();
+  Tree(GAMEOBJECT_ID id);
 };

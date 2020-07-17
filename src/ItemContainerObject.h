@@ -4,5 +4,5 @@
 class ItemContainerObject : public GameObject
 {
   public:
-  ItemContainerObject();
+  ItemContainerObject(GAMEOBJECT_ID id);
 };

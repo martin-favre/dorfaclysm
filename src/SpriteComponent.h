@@ -5,38 +5,24 @@
 #include <memory>
 
 #include "Component.h"
-#include "SpriteSheetInfo.h"
-
 #include <mutex>
 class Rect;
 class Sprite;
 class GameObject;
 class SpriteComponent : public Component {
  public:
-  SpriteComponent(GameObject& owner, const SpriteSheetInfo& spriteSheet,
-                  const Vector2DInt& indexInSpritesheet);
-  SpriteComponent(GameObject& owner, const SerializedObj& serObj);
-  void setup() override;
+  SpriteComponent(GameObject &owner, std::unique_ptr<Sprite> &&sprite);
   void render() override;
   void teardown() override;
-  void setCameraAsReference(bool useCamera) {
+  void setCameraAsReference(bool useCamera) { 
     std::scoped_lock lock(mMutex);
-    mCameraAsReference = useCamera;
-  }
-
-  SerializedObj serialize() const override;
-  static std::string getTypeName() {return "spriteComponent";}
+    mCameraAsReference = useCamera; }
 
  private:
-  void unserialize(const SerializedObj& serObj) override;
-
+  const std::unique_ptr<Sprite> mSprite;
   bool mCameraAsReference{true};
   bool mScaleToTileGrid{true};
-  SpriteSheetInfo mSpriteSheetInfo;
-  Vector2DInt mSpriteSheetIndex;
-
   const bool mCentered{false};
-  std::unique_ptr<Sprite> mSprite;
   const SDL_RendererFlip mFlip{SDL_FLIP_NONE};
   std::mutex mMutex;
 };

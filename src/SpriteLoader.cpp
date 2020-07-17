@@ -77,8 +77,9 @@ std::unique_ptr<Sprite> SpriteLoader::loadSprite(const std::string &path,
 }
 
 std::unique_ptr<Sprite> SpriteLoader::loadSpriteByIndex(
-    const SpriteSheetInfo &ssInfo, const Vector2DInt &index) {
-  Rect area{index.x * ssInfo.mTileSize.x, index.y * ssInfo.mTileSize.y,
-            ssInfo.mTileSize.x, ssInfo.mTileSize.y};
-  return loadSprite(ssInfo.mPath, area);
+    const std::string &path, const Vector2DInt &indx,
+    const Vector2DInt &sizePerSprite) {
+  Rect area{indx.x * sizePerSprite.x, indx.y * sizePerSprite.y, sizePerSprite.x,
+            sizePerSprite.y};
+  return loadSprite(path, area);
 }

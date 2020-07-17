@@ -22,12 +22,12 @@
 #include "SpriteLoader.h"
 #include "TextComponent.h"
 #include "Vector2DInt.h"
-#include "Serializer.h"
 
 void foo() {
   int mapSize = 128;
   {
-    GridMap::generateActiveMap({mapSize, mapSize, 64}, MapGenerator::generate);
+    GridMap::generateActiveMap({mapSize, mapSize, 64},
+                               MapGenerator::generate);
   }
   Camera::get().move({0, 0, mapSize / 4});
   // {
@@ -83,22 +83,20 @@ void foo() {
       GameObject& gObj = Engine::addGameObject<GameObject>();
       gObj.addComponent<DorfController>();
       gObj.addComponent<GridActor>(GridActor::dorf);
-      gObj.addComponent<SpriteComponent>(Paths::RG_TILE, Vector2DInt{25, 0});
+      gObj.addComponent<SpriteComponent>(SpriteLoader::loadSpriteByIndex(
+          Paths::RG_TILE_TRANSPARENT, {25, 0}, Paths::SIZE_OF_RG_TILE_TRANSPARENT));
       // gObj.setScale({2, 2});
       gObj.setPosition({0, 0, 1});
       gObj.setRenderDepth(RenderDepths::Actors);
       gObj.name() = "Dorf";
-      SerializedObj j = gObj.serialize();
-      std::cout << j << std::endl;
-      Engine::addGameObject(j);
     }
   }
   {
-    // GameObject& gObj = Engine::addGameObject<GameObject>();
-    // gObj.addComponent<DrawLineComponent>();
-    // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
-    // gObj.setPosition({20, 200});
-    // gObj.setRenderDepth(RenderDepths::GUI);
+      // GameObject& gObj = Engine::addGameObject<GameObject>();
+      // gObj.addComponent<DrawLineComponent>();
+      // gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
+      // gObj.setPosition({20, 200});
+      // gObj.setRenderDepth(RenderDepths::GUI);
   }
 }
 

@@ -3,5 +3,5 @@
 class ItemType;
 class MineBlockObject : public GameObject {
  public:
-  MineBlockObject();
+  MineBlockObject(GAMEOBJECT_ID id);
 };
