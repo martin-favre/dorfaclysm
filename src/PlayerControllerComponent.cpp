@@ -89,8 +89,8 @@ void PlayerControllerComponent::handleClick() {
       gObj.setPosition(mousePos);
     }
   } else if (mMode == Mode::place) {
-    std::weak_ptr<Block> block = gridMap.getBlockPtrAt(mousePos);
-    if (block.lock()->supportsJob(requestTypePlacing)) {
+    Block& block = gridMap.getBlockAt(mousePos);
+    if (block.supportsJob(requestTypePlacing)) {
       for (const auto& actor : gridMap.getGridActorsAt(mousePos)) {
         // if we're not already building here
         if (actor->owner().hasComponent<BlockBuildComponent>()) return;

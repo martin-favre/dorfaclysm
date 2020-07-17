@@ -1,17 +1,18 @@
 #pragma once
-#include "Block.h"
+#include <cstddef>
+
 #include "BlockType.h"
 #include "Vector3DInt.h"
 
 class BlockIdentifier {
  public:
-  BlockIdentifier(const Block& block);          // create new
+  BlockIdentifier(const BlockType& type);        // create new
   BlockIdentifier(const SerializedObj& serObj);  // unserialize existing
   BlockIdentifier(const BlockIdentifier&) = default;
   bool operator==(const BlockIdentifier& block) const;
-
   int getVersion() const;
   BlockType getBlockType() const;
+  BlockIdentifier generateReplacement(const BlockType& newType)const;
 
  private:
   int mVersion{0};

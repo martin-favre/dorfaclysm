@@ -15,15 +15,6 @@
         http://code.activestate.com/recipes/577457-a-star-shortest-path-algorithm/
 */
 
-class Vec3Hash {
- public:
-  size_t operator()(const Vector3DInt& vec) const {
-    constexpr int random_prime_1 = 7919;
-    constexpr int random_prime_2 = 6599;
-    return (vec.x * random_prime_1 + vec.y) * random_prime_2 + vec.z;
-  }
-};
-
 class AStarNode {
   /* Tuning parameters
           Increase level weights to punish every extra level taken
@@ -134,7 +125,7 @@ bool Astar::getPath(const Vector3DInt& start, const Vector3DInt& finish,
   current_node->updatePriority(finish);
   node_queue.push(current_node);
 
-  std::unordered_map<Vector3DInt, int, Vec3Hash> map_weights;
+  std::unordered_map<Vector3DInt, int, Vector3DIntHash> map_weights;
   map_weights[start] = current_node->getPriority();
   int steps = 0;
   std::vector<AStarNode*> old_nodes;

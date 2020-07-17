@@ -1,12 +1,13 @@
 #include "StairUpDownBlock.h"
 
+#include "Block.h"
 #include "SpriteLoader.h"
 #include "Item.h"
 
 std::unique_ptr<Sprite> StairUpDownBlock::mSprite;
 const std::string StairUpDownBlock::mName{"Up/Down Stair"};
 
-StairUpDownBlock::StairUpDownBlock() {
+StairUpDownBlock::StairUpDownBlock() : Block(BlockType::BlockTypeStairUpDownBlock){
   if (!mSprite.get()) {
     mSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {2, 6});
   }
@@ -25,4 +26,3 @@ bool StairUpDownBlock::supportsJob(PlayerRequestType type) const {
 
 bool StairUpDownBlock::spawnsItem() const { return false; }
 std::unique_ptr<Item> StairUpDownBlock::getItem() const { return nullptr; }
-BlockType StairUpDownBlock::getType() const { return BlockType::BlockTypeStairUpDownBlock; }

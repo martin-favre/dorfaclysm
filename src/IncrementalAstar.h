@@ -30,7 +30,5 @@ class IncrementalAstar {
   Timer mTimer;
   AStarNode* mFinishNode{nullptr};
   std::unique_ptr<Pimple> mInternals;
-  // std::priority_queue<AStarNode*, std::vector<AStarNode*>, Compare>
-  // mNodeQueue; std::unordered_map<Vector3DInt, int, Vec3Hash> mMapWeights;
   std::vector<AStarNode*> mOldNodes;
 };

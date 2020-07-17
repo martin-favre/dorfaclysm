@@ -1,22 +1,26 @@
 #pragma once
 
+#include <cstddef>
 #include <functional>
 #include <list>
 #include <memory>
 #include <mutex>
+#include <unordered_map>
 #include <vector>
 
+#include "Block.h"
 #include "BlockIdentifier.h"
 #include "Vector3DInt.h"
+#include "Vector3DIntHash.h"
 class Block;
+class GridActor;
+class Item;
+class Internals;
 
 /**
  * Accessing map outside bounds will throw exception.
  * Use isPosInMap.
  */
-class GridActor;
-class Item;
-
 class GridMap {
  public:
   GridMap(const GridMap&) = delete;
@@ -32,66 +36,35 @@ class GridMap {
                                      int maxDepth = -1) const;
 
   void removeBlockAt(const Vector3DInt& pos);
-  void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>&& newBlock);
+  void setBlockAt(const Vector3DInt& pos, BlockType newBlock);
+  void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>); // unittests
   void addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item);
-
-  inline std::weak_ptr<Block> getBlockPtrAt(const Vector3DInt& pos) {
-    ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-    ASSERT(isBlockValid(pos), "Block ptr is null");
-    std::scoped_lock lock(mLock);
-    return mBlocks[pos.z][pos.y][pos.x];
-  }
-
-  inline std::weak_ptr<Block> getBlockPtrAt(const BlockIdentifier& blockIdent,
-                                            const Vector3DInt& pos) {
-    std::scoped_lock lock(mLock);
-    ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-    ASSERT(isBlockValid(pos), "Block ptr is null");
-    std::weak_ptr<Block> block = mBlocks[pos.z][pos.y][pos.x];
-    BlockIdentifier gridBlockIdent{*block.lock()};
-    if (gridBlockIdent == blockIdent) {
-      return mBlocks[pos.z][pos.y][pos.x];
-    }
-    return std::weak_ptr<Block>();  // Whatever block you expected to find here
-                                    // does no longer exist
-  }
-
-  inline const std::weak_ptr<Block> getBlockPtrAt(
-      const BlockIdentifier& blockIdent, const Vector3DInt& pos) const {
-    std::scoped_lock lock(mLock);
-    ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-    ASSERT(isBlockValid(pos), "Block ptr is null");
-    std::weak_ptr<Block> block = mBlocks[pos.z][pos.y][pos.x];
-    BlockIdentifier gridBlockIdent{*block.lock()};
-    if (gridBlockIdent == blockIdent) {
-      return mBlocks[pos.z][pos.y][pos.x];
-    }
-    return std::weak_ptr<Block>();  // Whatever block you expected to find here
-                                    // does no longer exist
-  }
 
   inline BlockIdentifier getBlockIdentifier(const Vector3DInt& pos) const {
     const Block& block = getBlockAt(pos);
-    return BlockIdentifier(block);
+    return block.getIdentifier();
   }
 
   inline bool blockIdentifierMatches(const BlockIdentifier& blockIdent,
                                      const Vector3DInt& pos) const {
-    return !getBlockPtrAt(blockIdent, pos).expired();
+                                    
+    ASSERT(isPosInMap(pos), "Trying to get tile out of map");
+    ASSERT(isBlockValid(pos), "Block ptr is null");
+    return mBlocks.at(pos)->getIdentifier() == blockIdent;
   }
 
   inline Block& getBlockAt(const Vector3DInt& pos) {
+    std::scoped_lock lock(mLock);
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
-    std::scoped_lock lock(mLock);
-    return *mBlocks[pos.z][pos.y][pos.x];
+    return *mBlocks.at(pos);
   }
 
   inline const Block& getBlockAt(const Vector3DInt& pos) const {
+    std::scoped_lock lock(mLock);
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
-    std::scoped_lock lock(mLock);
-    return *mBlocks[pos.z][pos.y][pos.x];
+    return *mBlocks.at(pos);
   }
 
   const std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos);
@@ -106,10 +79,10 @@ class GridMap {
 
  private:
   bool isBlockValid(const Vector3DInt& pos) const;
-
+  std::unordered_map<Vector3DInt, std::unique_ptr<Block>, Vector3DIntHash> mBlocks;
+  std::unordered_map<Vector3DInt, std::list<GridActor*>, Vector3DIntHash> mGridActors;
   GridMap() = default;
-  std::vector<std::vector<std::vector<std::shared_ptr<Block>>>> mBlocks;
-  std::vector<std::vector<std::vector<std::list<GridActor*>>>> mGridActors;
+
   Vector3DInt mSize;
   static GridMap mActiveMap;
   mutable std::mutex mLock;

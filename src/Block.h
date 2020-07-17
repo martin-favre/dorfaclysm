@@ -1,9 +1,10 @@
 #pragma once
 #include <memory>
 
+#include "BlockIdentifier.h"
+#include "BlockType.h"
 #include "PlayerRequestType.h"
 #include "Serializer.h"
-#include "BlockType.h"
 
 class GridActor;
 class Item;
@@ -11,7 +12,7 @@ class Sprite;
 
 class Block {
  public:
-  Block() = default;
+  Block(const BlockIdentifier& identifier);
   Block(const Block&) = delete;
   Block& operator=(const Block&) = delete;
   virtual ~Block() = default;
@@ -24,11 +25,12 @@ class Block {
   virtual bool isSeeThrough() const = 0;
   virtual bool spawnsItem() const = 0;
   virtual std::unique_ptr<Item> getItem() const = 0;
-  virtual BlockType getType() const = 0;
+  const BlockIdentifier& getIdentifier() const;
 
   bool isExplored() const;
   void setExplored();
 
  private:
   bool mExplored{false};
+  const BlockIdentifier mIdentifier;
 };

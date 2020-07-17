@@ -1,7 +1,9 @@
 #include "AirBlock.h"
 
+#include "Block.h"
 #include "Item.h"
 const std::string AirBlock::mName;
+AirBlock::AirBlock() : Block(BlockType::BlockTypeAirBlock) {}
 
 const Sprite* AirBlock::getTopSprite() const { return nullptr; }
 bool AirBlock::mayPassThrough() const { return true; }
@@ -14,4 +16,3 @@ bool AirBlock::mayClimbUpFrom() const { return false; }
 bool AirBlock::mayWalkOnTop() const { return false; }
 bool AirBlock::spawnsItem() const { return false; }
 std::unique_ptr<Item> AirBlock::getItem() const { return nullptr; }
-BlockType AirBlock::getType() const { return BlockType::BlockTypeAirBlock; }

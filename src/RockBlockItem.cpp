@@ -1,5 +1,6 @@
 #include "RockBlockItem.h"
 
+#include "BlockType.h"
 #include "Paths.h"
 #include "RockBlock.h"
 #include "SpriteLoader.h"
@@ -16,8 +17,8 @@ const Sprite& RockBlockItem::getSprite() const { return *mSprite; }
 uint RockBlockItem::getWorth() const { return mWorth; }
 const ItemType& RockBlockItem::getItemType() const { return mType; }
 
-std::unique_ptr<Block> RockBlockItem::getBlock() const {
-  return std::make_unique<RockBlock>();
+BlockType RockBlockItem::getBlock() const {
+  return BlockTypeRockBlock;
 }
 
 bool RockBlockItem::isPlaceable() const { return true; }

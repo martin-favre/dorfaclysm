@@ -1,6 +1,7 @@
 #include "MapGenerator.h"
 
 #include "AirBlock.h"
+#include "BlockType.h"
 #include "Engine.h"
 #include "GrassBlock.h"
 #include "Helpers.h"
@@ -14,11 +15,11 @@ void MapGenerator::generateFlatWorld(GridMap& gridMap,
       for (int x = 0; x < size.x; ++x) {
         const Vector3DInt pos{x, y, z};
         if (z < size.z / 2 - 1) {
-          gridMap.setBlockAt(pos, std::make_unique<RockBlock>());
+          gridMap.setBlockAt(pos, BlockTypeRockBlock);
         } else if (z == (size.z / 2) - 1) {
-          gridMap.setBlockAt(pos, std::make_unique<GrassBlock>());
+          gridMap.setBlockAt(pos, BlockTypeGrassBlock);
         } else {
-          gridMap.setBlockAt(pos, std::make_unique<AirBlock>());
+          gridMap.setBlockAt(pos, BlockTypeAirBlock);
         }
       }
     }
@@ -32,13 +33,13 @@ void MapGenerator::generateStairWorld(GridMap& gridMap,
       for (int x = 0; x < size.x; ++x) {
         const Vector3DInt pos{x, y, z};
         if (z == x && y == 5) {
-          gridMap.setBlockAt(pos, std::make_unique<StairUpDownBlock>());
+          gridMap.setBlockAt(pos, BlockTypeStairUpDownBlock);
         } else if (z == x) {
-          gridMap.setBlockAt(pos, std::make_unique<GrassBlock>());
+          gridMap.setBlockAt(pos, BlockTypeGrassBlock);
         } else if (z < x) {
-          gridMap.setBlockAt(pos, std::make_unique<RockBlock>());
+          gridMap.setBlockAt(pos, BlockTypeRockBlock);
         } else {
-          gridMap.setBlockAt(pos, std::make_unique<AirBlock>());
+          gridMap.setBlockAt(pos, BlockTypeAirBlock);
           if (z > 0 && !gridMap.getBlockAt({x, y, z - 1}).mayPassThrough()) {
             if (Helpers::randomInt(0, 100) > 90) {
               // Engine::addGameObject<Tree>().setPosition({x, y, z});

@@ -9,20 +9,11 @@
 #include "GridMap.h"
 #include "Helpers.h"
 #include "Logging.h"
-
+#include "Vector3DIntHash.h"
 /*
         Implementation stolen/inspired from here:
         http://code.activestate.com/recipes/577457-a-star-shortest-path-algorithm/
 */
-
-class Vec3Hash {
- public:
-  size_t operator()(const Vector3DInt& vec) const {
-    constexpr int random_prime_1 = 7919;
-    constexpr int random_prime_2 = 6599;
-    return (vec.x * random_prime_1 + vec.y) * random_prime_2 + vec.z;
-  }
-};
 
 class AStarNode {
   /* Tuning parameters
@@ -75,7 +66,7 @@ class Compare {
 class Pimple {
  public:
   std::priority_queue<AStarNode*, std::vector<AStarNode*>, Compare> mNodeQueue;
-  std::unordered_map<Vector3DInt, int, Vec3Hash> mMapWeights;
+  std::unordered_map<Vector3DInt, int, Vector3DIntHash> mMapWeights;
 };
 
 static bool isStepValid(const GridMap& map, const Vector3DInt& newPos,

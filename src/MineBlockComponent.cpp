@@ -14,7 +14,7 @@ void MineBlockComponent::setup() {
   if (block.supportsJob(requestTypeMining)) {
     std::function<void()> callback = [this]() { this->onJobComplete(); };
     auto ptr = std::make_unique<MiningRequest>(
-        BlockIdentifier(block), owner().getPosition(), owner().getIdentifier());
+        block.getIdentifier(), owner().getPosition(), owner().getIdentifier());
     MiningRequestPool::getInstance().addRequest(std::move(ptr));
   } else {
     onJobComplete();

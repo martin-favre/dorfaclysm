@@ -1,11 +1,14 @@
 #include "GrassBlock.h"
 
-#include "SpriteLoader.h"
+#include "Block.h"
+#include "BlockType.h"
 #include "Item.h"
+#include "SpriteLoader.h"
 const std::string GrassBlock::mName{"Grass"};
 std::unique_ptr<Sprite> GrassBlock::mSprite;
 
-GrassBlock::GrassBlock() {
+GrassBlock::GrassBlock(const BlockIdentifier& blockIdent) : Block(blockIdent) {}
+GrassBlock::GrassBlock() : Block(BlockTypeGrassBlock) {
   if (!mSprite.get()) {
     mSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {6, 0});
   }
@@ -21,4 +24,3 @@ bool GrassBlock::supportsJob(PlayerRequestType type) const {
 }
 bool GrassBlock::spawnsItem() const { return false; }
 std::unique_ptr<Item> GrassBlock::getItem() const { return nullptr; }
-BlockType GrassBlock::getType() const { return BlockType::BlockTypeGrassBlock; }

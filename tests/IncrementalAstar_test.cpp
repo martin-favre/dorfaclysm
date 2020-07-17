@@ -1,3 +1,4 @@
+#include "BlockType.h"
 #include "IncrementalAstar.h"
 
 #include <gtest/gtest.h>
@@ -14,7 +15,7 @@ void generateEmptyWorld(GridMap& gridMap, const Vector3DInt& size) {
     for (int y = 0; y < size.y; ++y) {
       for (int x = 0; x < size.x; ++x) {
         const Vector3DInt pos{x, y, z};
-        gridMap.setBlockAt(pos, std::make_unique<AirBlock>());
+        gridMap.setBlockAt(pos, BlockTypeAirBlock);
       }
     }
   }

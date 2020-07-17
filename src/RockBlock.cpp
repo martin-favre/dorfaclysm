@@ -5,7 +5,7 @@
 std::unique_ptr<Sprite> RockBlock::mSprite;
 const std::string RockBlock::mName{"Rock"};
 
-RockBlock::RockBlock() {
+RockBlock::RockBlock() : Block(BlockType::BlockTypeRockBlock) {
   if (!mSprite.get()) {
     mSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {1, 0});
   }
@@ -24,4 +24,3 @@ bool RockBlock::spawnsItem() const { return true; }
 std::unique_ptr<Item> RockBlock::getItem() const {
   return std::make_unique<RockBlockItem>();
 }
-BlockType RockBlock::getType() const { return BlockType::BlockTypeRockBlock; }

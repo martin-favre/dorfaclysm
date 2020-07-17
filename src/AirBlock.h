@@ -4,7 +4,7 @@
 class Item;
 class AirBlock : public Block {
  public:
-  AirBlock() = default;
+  AirBlock();
   const Sprite* getTopSprite() const override;
   bool mayPassThrough() const override;
   bool mayClimbUpFrom() const override;
@@ -14,7 +14,6 @@ class AirBlock : public Block {
   bool spawnsItem() const override;
   bool supportsJob(PlayerRequestType type) const override;
   std::unique_ptr<Item> getItem() const override;
-  BlockType getType() const override;
  private:
   static const std::string mName;
 };

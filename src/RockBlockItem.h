@@ -10,7 +10,7 @@ class RockBlockItem : public Item, public IPlaceableItem {
   uint getWorth() const override;
   const ItemType& getItemType() const override;
 
-  std::unique_ptr<Block> getBlock() const override;
+  BlockType getBlock() const override;
   bool isPlaceable() const override;
 
  private:
