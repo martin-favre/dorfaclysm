@@ -24,13 +24,27 @@
 
 GridMap GridMap::mActiveMap;
 
-void makeGridGrass(std::unordered_map<Vector3DInt, std::unique_ptr<Block>,
-                                      Vector3DIntHash>& grid,
+template <class T>
+void initializeGrid(T& grid, const Vector3DInt& size) {
+  // ech
+  for (int z = 0; z < size.z; ++z) {
+    grid.emplace_back();
+    for (int y = 0; y < size.y; ++y) {
+      grid[z].emplace_back();
+      for (int x = 0; x < size.x; ++x) {
+        grid[z][y].emplace_back();
+      }
+    }
+  }
+}
+
+
+void makeGridGrass(std::vector<std::vector<std::vector<std::unique_ptr<Block>>>>& grid,
                    const Vector3DInt& size) {
   for (int z = 0; z < size.z; ++z) {
     for (int y = 0; y < size.y; ++y) {
       for (int x = 0; x < size.x; ++x) {
-        grid[Vector3DInt{x, y, z}] = std::make_unique<GrassBlock>();
+        grid[z][y][x] = std::make_unique<GrassBlock>();
       }
     }
   }
@@ -55,6 +69,7 @@ GridMap& GridMap::generateActiveMap(
   ASSERT(size.y > 0, "Size needs to be > 0");
   ASSERT(size.z > 0, "Size needs to be > 0");
   mActiveMap.mSize = size;
+  initializeGrid(mActiveMap.mBlocks, size);
   allocateGridActors(mActiveMap.mGridActors, size);
   if (generator) {
     generator(mActiveMap, size);
@@ -94,7 +109,7 @@ bool GridMap::isPosInMap(const Vector3DInt& pos) const {
 }
 
 bool GridMap::isBlockValid(const Vector3DInt& pos) const {
-  return mBlocks.at(pos).get();
+  return mBlocks[pos.z][pos.y][pos.x].get();
 }
 
 void GridMap::addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item) {
@@ -126,7 +141,7 @@ void GridMap::removeBlockAt(const Vector3DInt& pos) {
   }
   {
     std::scoped_lock lock(mLock);
-    mBlocks[pos] = std::make_unique<AirBlock>();
+    mBlocks[pos.z][pos.y][pos.x] = std::make_unique<AirBlock>();
   }
   GridMapHelpers::exploreMap(*this, pos);
 }
@@ -134,20 +149,20 @@ void GridMap::removeBlockAt(const Vector3DInt& pos) {
 void GridMap::setBlockAt(const Vector3DInt& pos, BlockType newBlock) {
   std::scoped_lock lock(mLock);
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-  if (mBlocks[pos]) {
+  if (mBlocks[pos.z][pos.y][pos.x]) {
     BlockIdentifier newIdent =
-        mBlocks[pos]->getIdentifier().generateReplacement(newBlock);
-    mBlocks[pos] = BlockFactory::makeBlock(newIdent);
+        mBlocks[pos.z][pos.y][pos.x]->getIdentifier().generateReplacement(newBlock);
+    mBlocks[pos.z][pos.y][pos.x] = BlockFactory::makeBlock(newIdent);
   } else {
     BlockIdentifier newIdent{newBlock};
-    mBlocks[pos] = BlockFactory::makeBlock(newIdent);
+    mBlocks[pos.z][pos.y][pos.x] = BlockFactory::makeBlock(newIdent);
   }
 }
 
 void GridMap::setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block> block) {
   std::scoped_lock lock(mLock);
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
-  mBlocks[pos] = std::move(block);
+  mBlocks[pos.z][pos.y][pos.x] = std::move(block);
 }
 
 bool GridMap::isPosFree(const Vector3DInt& pos) const {

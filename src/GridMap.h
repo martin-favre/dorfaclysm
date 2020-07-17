@@ -50,21 +50,21 @@ class GridMap {
                                     
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
-    return mBlocks.at(pos)->getIdentifier() == blockIdent;
+    return mBlocks[pos.z][pos.y][pos.x]->getIdentifier() == blockIdent;
   }
 
   inline Block& getBlockAt(const Vector3DInt& pos) {
     std::scoped_lock lock(mLock);
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
-    return *mBlocks.at(pos);
+    return *mBlocks[pos.z][pos.y][pos.x];
   }
 
   inline const Block& getBlockAt(const Vector3DInt& pos) const {
     std::scoped_lock lock(mLock);
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
-    return *mBlocks.at(pos);
+    return *mBlocks[pos.z][pos.y][pos.x];
   }
 
   const std::list<GridActor*>& getGridActorsAt(const Vector3DInt& pos);
@@ -79,7 +79,7 @@ class GridMap {
 
  private:
   bool isBlockValid(const Vector3DInt& pos) const;
-  std::unordered_map<Vector3DInt, std::unique_ptr<Block>, Vector3DIntHash> mBlocks;
+  std::vector<std::vector<std::vector<std::unique_ptr<Block>>>> mBlocks;
   std::unordered_map<Vector3DInt, std::list<GridActor*>, Vector3DIntHash> mGridActors;
   GridMap() = default;
 
