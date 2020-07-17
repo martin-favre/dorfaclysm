@@ -4,5 +4,6 @@ enum BlockType {
   BlockTypeAirBlock,
   BlockTypeGrassBlock,
   BlockTypeRockBlock,
-  BlockTypeStairUpDownBlock
+  BlockTypeStairUpDownBlock,
+  BlockTypeSizeOf
 };

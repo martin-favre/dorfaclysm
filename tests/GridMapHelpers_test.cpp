@@ -1,20 +1,10 @@
+#include "BlockType.h"
 #include "GridMapHelpers.h"
 
 #include <gtest/gtest.h>
 
-#include "DefaultBlock.h"
 #include "GridMap.h"
 #include "Vector2DInt.h"
-
-class UnPassableBlock : public DefaultBlock {
- public:
-  bool mayPassThrough() const override { return false; }
-};
-
-class PassableBlock : public DefaultBlock {
- public:
-  bool mayPassThrough() const override { return true; }
-};
 
 bool rowIsExplored(int y, const GridMap& map) {
   for (int x = 0; x < map.getSize().x; ++x) {
@@ -42,21 +32,21 @@ TEST(TestGridMap, getLowestPassablePositionFrom_TopOfWorld) {
         ...
         ###
         */
-        map.setBlockAt({0, 0}, std::make_unique<UnPassableBlock>());
-        map.setBlockAt({1, 0}, std::make_unique<UnPassableBlock>());
-        map.setBlockAt({2, 0}, std::make_unique<UnPassableBlock>());
+        map.setBlockAt({0, 0}, std::make_unique<Block>(BlockTypeRockBlock));
+        map.setBlockAt({1, 0}, std::make_unique<Block>(BlockTypeRockBlock));
+        map.setBlockAt({2, 0}, std::make_unique<Block>(BlockTypeRockBlock));
 
-        map.setBlockAt({0, 1}, std::make_unique<UnPassableBlock>());
-        map.setBlockAt({1, 1}, std::make_unique<UnPassableBlock>());
-        map.setBlockAt({2, 1}, std::make_unique<UnPassableBlock>());
+        map.setBlockAt({0, 1}, std::make_unique<Block>(BlockTypeRockBlock));
+        map.setBlockAt({1, 1}, std::make_unique<Block>(BlockTypeRockBlock));
+        map.setBlockAt({2, 1}, std::make_unique<Block>(BlockTypeRockBlock));
 
-        map.setBlockAt({0, 2}, std::make_unique<PassableBlock>());
-        map.setBlockAt({1, 2}, std::make_unique<PassableBlock>());
-        map.setBlockAt({2, 2}, std::make_unique<PassableBlock>());
+        map.setBlockAt({0, 2}, std::make_unique<Block>(BlockTypeAirBlock));
+        map.setBlockAt({1, 2}, std::make_unique<Block>(BlockTypeAirBlock));
+        map.setBlockAt({2, 2}, std::make_unique<Block>(BlockTypeAirBlock));
 
-        map.setBlockAt({0, 3}, std::make_unique<UnPassableBlock>());
-        map.setBlockAt({1, 3}, std::make_unique<UnPassableBlock>());
-        map.setBlockAt({2, 3}, std::make_unique<UnPassableBlock>());
+        map.setBlockAt({0, 3}, std::make_unique<Block>(BlockTypeRockBlock));
+        map.setBlockAt({1, 3}, std::make_unique<Block>(BlockTypeRockBlock));
+        map.setBlockAt({2, 3}, std::make_unique<Block>(BlockTypeRockBlock));
       };
   GridMap::generateActiveMap({3, 4, 1}, foo);
   GridMap& map = GridMap::getActiveMap();
@@ -89,11 +79,11 @@ TEST(TestGridMap, getClosestFreePositionToTest)
           {
             if(x > 1 && y < 3)
             {
-              map.setBlockAt({x, y}, std::make_unique<UnPassableBlock>());
+              map.setBlockAt({x, y}, std::make_unique<Block>(BlockTypeRockBlock));
             }
             else
             {
-              map.setBlockAt({x, y}, std::make_unique<PassableBlock>());
+              map.setBlockAt({x, y}, std::make_unique<Block>(BlockTypeAirBlock));
             }
           }
         }

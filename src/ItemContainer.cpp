@@ -17,6 +17,7 @@ ItemContainer::ItemContainer(GameObject& gObj, const SerializedObj& serObj) : Co
   for(const auto& item : items){
     mItems.emplace_back(generateItem(item));
   }
+  ItemPool::registerItem(this);
 }
   SerializedObj ItemContainer::serialize() const{
     SerializedObj out = createSerializedObj<ItemContainer>();

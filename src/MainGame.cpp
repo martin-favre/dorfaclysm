@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "Font.h"
 #include "FpsCounter.h"
+#include "GameObject.h"
 #include "GridActor.h"
 #include "GridMap.h"
 #include "GridMapRenderer.h"
@@ -24,6 +25,7 @@
 #include "Vector2DInt.h"
 #include "Serializer.h"
 #include "RequestPoolComponent.h"
+#include "GridMapLoader.h"
 
 void foo() {
   int mapSize = 128;
@@ -43,6 +45,11 @@ void foo() {
   // }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
+    gObj.addComponent<GridMapLoader>();
+    gObj.setName("GridMapLoader");
+  }
+  {
+    GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
     gObj.setPosition({20, 20});
     gObj.setScale({2, 2});
@@ -55,21 +62,18 @@ void foo() {
     gObj.addComponent<GridMapRenderer>();
     gObj.setRenderDepth(RenderDepths::GridMap);
     gObj.setName("Gridmaprenderer");
-
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<AirDepthRenderer>();
     gObj.setRenderDepth(RenderDepths::AirDepth);
     gObj.setName("Airdepthrenderer");
-
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
     gObj.addComponent<CameraControllerComponent>();
     gObj.setPosition({0, 0, mapSize / 2});
     gObj.setName("Cameracontroller");
-
   }
   {
     GameObject& gObj = Engine::addGameObject<GameObject>();
@@ -92,7 +96,6 @@ void foo() {
     gObj.addComponent<TextComponent>(Paths::UBUNTU_FONT, 24);
     gObj.setRenderDepth(RenderDepths::GUI);
     gObj.setName("Playercontroller");
-
   }
   {
     for (int i = 0; i < 1; ++i) {
@@ -108,7 +111,7 @@ void foo() {
       Engine::addGameObject(j);
     }
   }
-    {
+  {
     for (int i = 0; i < 1; ++i) {
       GameObject& gObj = Engine::addGameObject<GameObject>();
       gObj.addComponent<DorfController>();

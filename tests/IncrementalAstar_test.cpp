@@ -3,10 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include "AirBlock.h"
 #include "GridMap.h"
-#include "RockBlock.h"
-#include "StairUpDownBlock.h"
 #include "Timer.h"
 #include "Vector3DInt.h"
 

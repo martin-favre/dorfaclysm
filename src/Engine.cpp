@@ -211,7 +211,10 @@ void Engine::runSetups(std::vector<GameObject*>& gameobjects) {
 
 GameObject* Engine::getGameObject(const Uuid& identifier) {
   for (auto& go : mGameobjects) {
-    if (go->getIdentifier() == identifier) {
+    // When a component wants to get 
+    // the gameobjects it's being deleted from
+    // go may be null.
+    if (go && go->getIdentifier() == identifier) {
       return go.get();
     }
   }

@@ -15,6 +15,7 @@
 #include "ItemContainer.h"
 #include "ShowPositionComponent.h"
 #include "FpsCounter.h"
+#include "GridMapLoader.h"
 
 #define ENTRY(type) \
   { type::getTypeString(), &StringToComponent::unserializeComponent<type> }
@@ -32,4 +33,5 @@ const std::map<std::string, void (*)(GameObject&, const SerializedObj&)>
                                                   ENTRY(Debug_CloseGameComponent),
                                                   ENTRY(GridMapRenderer),
                                                   ENTRY(PlayerControllerComponent),
+                                                  ENTRY(GridMapLoader),
                                                   ENTRY(RequestPoolComponent)};

@@ -2,10 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "AirBlock.h"
-#include "DefaultBlock.h"
 #include "Engine.h"
-#include "GrassBlock.h"
 #include "Vector2DInt.h"
 #include "helpers/gridmap_testhelpers.h"
 class TestGridMap : public ::testing::Test {

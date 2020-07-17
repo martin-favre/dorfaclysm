@@ -2,7 +2,6 @@
 
 #include "BlockType.h"
 #include "Paths.h"
-#include "RockBlock.h"
 #include "SpriteLoader.h"
 #include "ItemType.h"
 std::unique_ptr<Sprite> RockBlockItem::mSprite;

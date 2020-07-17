@@ -4,15 +4,12 @@
 #include <memory>
 #include <queue>
 
-#include "AirBlock.h"
 #include "Block.h"
-#include "BlockFactory.h"
 #include "BlockIdentifier.h"
 #include "BlockType.h"
 #include "DeltaPositions.h"
 #include "Engine.h"
 #include "GameObject.h"
-#include "GrassBlock.h"
 #include "GridActor.h"
 #include "GridMapHelpers.h"
 #include "Helpers.h"
@@ -20,9 +17,24 @@
 #include "ItemContainer.h"
 #include "ItemContainerObject.h"
 #include "Logging.h"
+#include "Serializer.h"
 #include "Vector3DInt.h"
 
 GridMap GridMap::mActiveMap;
+
+namespace {
+
+// constexpr size_t posToIndex(const Vector3DInt& pos, const Vector3DInt& size) {
+//   return pos.x + size.y * (pos.y + size.z * pos.z);
+// }
+
+constexpr Vector3DInt indexToPos(size_t index, const Vector3DInt& size) {
+  int z = index / (size.x * size.y);
+  index -= (z * size.x * size.y);
+  int y = index / size.x;
+  int x = index % size.x;
+  return Vector3DInt{x, y, z};
+}
 
 template <class T>
 void initializeGrid(T& grid, const Vector3DInt& size) {
@@ -38,19 +50,21 @@ void initializeGrid(T& grid, const Vector3DInt& size) {
   }
 }
 
-
-void makeGridGrass(std::vector<std::vector<std::vector<std::unique_ptr<Block>>>>& grid,
-                   const Vector3DInt& size) {
+void makeGridGrass(
+    std::vector<std::vector<std::vector<std::unique_ptr<Block>>>>& grid,
+    const Vector3DInt& size) {
   for (int z = 0; z < size.z; ++z) {
     for (int y = 0; y < size.y; ++y) {
       for (int x = 0; x < size.x; ++x) {
-        grid[z][y][x] = std::make_unique<GrassBlock>();
+        grid[z][y][x] = std::make_unique<Block>(BlockTypeGrassBlock);
       }
     }
   }
 }
 
-void allocateGridActors(std::unordered_map<Vector3DInt, std::list<GridActor*>, Vector3DIntHash>& gridActors, const Vector3DInt& size){
+void allocateGridActors(std::unordered_map<Vector3DInt, std::list<GridActor*>,
+                                           Vector3DIntHash>& gridActors,
+                        const Vector3DInt& size) {
   for (int z = 0; z < size.z; ++z) {
     for (int y = 0; y < size.y; ++y) {
       for (int x = 0; x < size.x; ++x) {
@@ -58,8 +72,8 @@ void allocateGridActors(std::unordered_map<Vector3DInt, std::list<GridActor*>, V
       }
     }
   }
-
 }
+}  // namespace
 
 GridMap& GridMap::generateActiveMap(
     const Vector3DInt& size,
@@ -140,8 +154,7 @@ void GridMap::removeBlockAt(const Vector3DInt& pos) {
     addItemAt(pos, block.getItem());
   }
   {
-    std::scoped_lock lock(mLock);
-    mBlocks[pos.z][pos.y][pos.x] = std::make_unique<AirBlock>();
+    setBlockAt(pos, BlockTypeAirBlock);
   }
   GridMapHelpers::exploreMap(*this, pos);
 }
@@ -151,11 +164,12 @@ void GridMap::setBlockAt(const Vector3DInt& pos, BlockType newBlock) {
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
   if (mBlocks[pos.z][pos.y][pos.x]) {
     BlockIdentifier newIdent =
-        mBlocks[pos.z][pos.y][pos.x]->getIdentifier().generateReplacement(newBlock);
-    mBlocks[pos.z][pos.y][pos.x] = BlockFactory::makeBlock(newIdent);
+        mBlocks[pos.z][pos.y][pos.x]->getIdentifier().generateReplacement(
+            newBlock);
+    mBlocks[pos.z][pos.y][pos.x] = std::make_unique<Block>(newIdent);
   } else {
     BlockIdentifier newIdent{newBlock};
-    mBlocks[pos.z][pos.y][pos.x] = BlockFactory::makeBlock(newIdent);
+    mBlocks[pos.z][pos.y][pos.x] = std::make_unique<Block>(newIdent);
   }
 }
 
@@ -172,7 +186,7 @@ bool GridMap::isPosFree(const Vector3DInt& pos) const {
 const std::list<GridActor*>& GridMap::getGridActorsAt(const Vector3DInt& pos) {
   ASSERT(isPosInMap(pos), "Trying to access out of bounds");
   std::scoped_lock lock(mLock);
-  if(!mGridActors.count(pos)) mGridActors[pos] = {};
+  if (!mGridActors.count(pos)) mGridActors[pos] = {};
   return mGridActors[pos];
 }
 
@@ -198,3 +212,29 @@ void GridMap::unregisterGridActorAt(const Vector3DInt& pos,
 }
 
 GridMap& GridMap::getActiveMap() { return mActiveMap; }
+
+void GridMap::loadActiveMap(const SerializedObj& serObj) {
+  mActiveMap.mSize = serObj["size"];
+  initializeGrid(mActiveMap.mBlocks, mActiveMap.mSize);
+  allocateGridActors(mActiveMap.mGridActors, mActiveMap.mSize);
+
+  std::vector<SerializedObj> blocks = serObj["blocks"];
+  for(size_t i = 0; i < blocks.size(); ++i){
+    Vector3DInt pos = indexToPos(i, mActiveMap.mSize);
+    mActiveMap.mBlocks[pos.z][pos.y][pos.x] = std::make_unique<Block>(blocks[i]);
+  }
+}
+
+void to_json(SerializedObj& json, const GridMap& gridMap) {
+  std::vector<SerializedObj> blocks;
+  for (int z = 0; z < gridMap.mSize.z; ++z) {
+    for (int y = 0; y < gridMap.mSize.y; ++y) {
+      for (int x = 0; x < gridMap.mSize.x; ++x) {
+        blocks.emplace_back(gridMap.getBlockAt({x,y,z}));
+      }
+    }
+  }
+
+  json["size"] = gridMap.mSize;
+  json["blocks"] = blocks;
+}

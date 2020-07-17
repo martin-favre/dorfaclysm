@@ -1,12 +1,8 @@
 #include "MapGenerator.h"
 
-#include "AirBlock.h"
 #include "BlockType.h"
 #include "Engine.h"
-#include "GrassBlock.h"
 #include "Helpers.h"
-#include "RockBlock.h"
-#include "StairUpDownBlock.h"
 #include "Tree.h"
 void MapGenerator::generateFlatWorld(GridMap& gridMap,
                                      const Vector3DInt& size) {

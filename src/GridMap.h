@@ -37,7 +37,7 @@ class GridMap {
 
   void removeBlockAt(const Vector3DInt& pos);
   void setBlockAt(const Vector3DInt& pos, BlockType newBlock);
-  void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>); // unittests
+  void setBlockAt(const Vector3DInt& pos, std::unique_ptr<Block>);  // unittests
   void addItemAt(const Vector3DInt& pos, std::unique_ptr<Item>&& item);
 
   inline BlockIdentifier getBlockIdentifier(const Vector3DInt& pos) const {
@@ -47,7 +47,6 @@ class GridMap {
 
   inline bool blockIdentifierMatches(const BlockIdentifier& blockIdent,
                                      const Vector3DInt& pos) const {
-                                    
     ASSERT(isPosInMap(pos), "Trying to get tile out of map");
     ASSERT(isBlockValid(pos), "Block ptr is null");
     return mBlocks[pos.z][pos.y][pos.x]->getIdentifier() == blockIdent;
@@ -75,15 +74,20 @@ class GridMap {
   static GridMap& generateActiveMap(
       const Vector3DInt& size,
       std::function<void(GridMap&, const Vector3DInt&)> generator);
+  static void loadActiveMap(const SerializedObj&);
   static GridMap& getActiveMap();
 
  private:
+  friend void to_json(SerializedObj& json, const GridMap& gridMap);
   bool isBlockValid(const Vector3DInt& pos) const;
   std::vector<std::vector<std::vector<std::unique_ptr<Block>>>> mBlocks;
-  std::unordered_map<Vector3DInt, std::list<GridActor*>, Vector3DIntHash> mGridActors;
+  std::unordered_map<Vector3DInt, std::list<GridActor*>, Vector3DIntHash>
+      mGridActors;
   GridMap() = default;
 
   Vector3DInt mSize;
   static GridMap mActiveMap;
   mutable std::mutex mLock;
 };
+
+void to_json(SerializedObj& json, const GridMap& gridMap);

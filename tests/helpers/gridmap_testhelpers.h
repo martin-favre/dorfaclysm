@@ -1,16 +1,6 @@
 
-#include "DefaultBlock.h"
+#include "BlockType.h"
 #include "GridMap.h"
-
-class UnPassableBlock : public DefaultBlock {
- public:
-  bool mayPassThrough() const override { return false; }
-};
-
-class PassableBlock : public DefaultBlock {
- public:
-  bool mayPassThrough() const override { return true; }
-};
 
 inline void generateFlatWorld(GridMap& gridMap, const Vector3DInt& size) {
   int firstPassableHeight = size.z / 2;
@@ -19,9 +9,9 @@ inline void generateFlatWorld(GridMap& gridMap, const Vector3DInt& size) {
       for (int x = 0; x < size.x; ++x) {
         const Vector3DInt pos{x, y, z};
         if (z < firstPassableHeight) {
-          gridMap.setBlockAt(pos, std::make_unique<UnPassableBlock>());
+          gridMap.setBlockAt(pos, std::make_unique<Block>(BlockTypeRockBlock));
         } else {
-          gridMap.setBlockAt(pos, std::make_unique<PassableBlock>());
+          gridMap.setBlockAt(pos, std::make_unique<Block>(BlockTypeAirBlock));
         }
       }
     }
