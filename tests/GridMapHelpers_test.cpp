@@ -32,21 +32,21 @@ TEST(TestGridMap, getLowestPassablePositionFrom_TopOfWorld) {
         ...
         ###
         */
-        map.setBlockAt({0, 0}, std::make_unique<Block>(BlockTypeRockBlock));
-        map.setBlockAt({1, 0}, std::make_unique<Block>(BlockTypeRockBlock));
-        map.setBlockAt({2, 0}, std::make_unique<Block>(BlockTypeRockBlock));
+        map.setBlockAt({0, 0}, Block(BlockTypeRockBlock));
+        map.setBlockAt({1, 0}, Block(BlockTypeRockBlock));
+        map.setBlockAt({2, 0}, Block(BlockTypeRockBlock));
 
-        map.setBlockAt({0, 1}, std::make_unique<Block>(BlockTypeRockBlock));
-        map.setBlockAt({1, 1}, std::make_unique<Block>(BlockTypeRockBlock));
-        map.setBlockAt({2, 1}, std::make_unique<Block>(BlockTypeRockBlock));
+        map.setBlockAt({0, 1}, Block(BlockTypeRockBlock));
+        map.setBlockAt({1, 1}, Block(BlockTypeRockBlock));
+        map.setBlockAt({2, 1}, Block(BlockTypeRockBlock));
 
-        map.setBlockAt({0, 2}, std::make_unique<Block>(BlockTypeAirBlock));
-        map.setBlockAt({1, 2}, std::make_unique<Block>(BlockTypeAirBlock));
-        map.setBlockAt({2, 2}, std::make_unique<Block>(BlockTypeAirBlock));
+        map.setBlockAt({0, 2}, Block(BlockTypeAirBlock));
+        map.setBlockAt({1, 2}, Block(BlockTypeAirBlock));
+        map.setBlockAt({2, 2}, Block(BlockTypeAirBlock));
 
-        map.setBlockAt({0, 3}, std::make_unique<Block>(BlockTypeRockBlock));
-        map.setBlockAt({1, 3}, std::make_unique<Block>(BlockTypeRockBlock));
-        map.setBlockAt({2, 3}, std::make_unique<Block>(BlockTypeRockBlock));
+        map.setBlockAt({0, 3}, Block(BlockTypeRockBlock));
+        map.setBlockAt({1, 3}, Block(BlockTypeRockBlock));
+        map.setBlockAt({2, 3}, Block(BlockTypeRockBlock));
       };
   GridMap::generateActiveMap({3, 4, 1}, foo);
   GridMap& map = GridMap::getActiveMap();
@@ -79,11 +79,11 @@ TEST(TestGridMap, getClosestFreePositionToTest)
           {
             if(x > 1 && y < 3)
             {
-              map.setBlockAt({x, y}, std::make_unique<Block>(BlockTypeRockBlock));
+              map.setBlockAt({x, y}, Block(BlockTypeRockBlock));
             }
             else
             {
-              map.setBlockAt({x, y}, std::make_unique<Block>(BlockTypeAirBlock));
+              map.setBlockAt({x, y}, Block(BlockTypeAirBlock));
             }
           }
         }

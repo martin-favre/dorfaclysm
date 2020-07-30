@@ -1,13 +1,14 @@
 #include "Block.h"
 
-#include "BlockType.h"
-#include "GridActor.h"
-#include "PlayerRequestType.h"
-#include "RockBlockItem.h"
-#include "SpriteLoader.h"
-#include "Paths.h"
 #include <cstddef>
 #include <memory>
+
+#include "BlockType.h"
+#include "GridActor.h"
+#include "ItemType.h"
+#include "Paths.h"
+#include "PlayerRequestType.h"
+#include "SpriteLoader.h"
 
 namespace {
 struct BlockDefinition {
@@ -17,7 +18,7 @@ struct BlockDefinition {
   bool mayClimbUpFrom;
   bool mayWalkOnTop;
   bool isSeeThrough;
-  bool spawnsItem;
+  ItemType itemType;
 };
 
 std::unique_ptr<Sprite> grassBlockSprite;
@@ -34,24 +35,20 @@ void loadSprites() {
       SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {2, 6});
 }
 void generateDefinitions() {
-  
-  blockDefinitions[BlockTypeAirBlock] = {"Air", nullptr, true, false,
-                                         false, true,    false};
-  
-  blockDefinitions[BlockTypeGrassBlock] = {
-      "Grass", grassBlockSprite.get(), false, false, true, false, false};
+  blockDefinitions[BlockTypeAirBlock] = {
+      "Air", nullptr, true, false, false, true, ItemType_Invalid};
 
+  blockDefinitions[BlockTypeGrassBlock] = {
+      "Grass", grassBlockSprite.get(), false, false, true,
+      false,   ItemType_Invalid};
 
   blockDefinitions[BlockTypeRockBlock] = {
-      "Rock", rockBlockSprite.get(), false, false, true, false, true};
-  
-  blockDefinitions[BlockTypeStairUpDownBlock] = {"Up/Down Stair",
-                                                 stairUpDownBlockSprite.get(),
-                                                 true,
-                                                 true,
-                                                 true,
-                                                 false,
-                                                 true};
+      "Rock", rockBlockSprite.get(), false, false, true,
+      false,  ItemType_RockBlockItem};
+
+  blockDefinitions[BlockTypeStairUpDownBlock] = {
+      "Up/Down Stair", stairUpDownBlockSprite.get(), true, true, true, false,
+      ItemType_Invalid};
 }
 
 }  // namespace
@@ -66,9 +63,9 @@ void Block::initialize() {
   }
 }
 
-Block::Block(BlockType type) : mIdentifier(type) {
-  initialize();
-}
+Block::Block() { initialize(); }
+
+Block::Block(BlockType type) : mIdentifier(type) { initialize(); }
 
 Block::Block(const BlockIdentifier& identifier) : mIdentifier(identifier) {
   initialize();
@@ -109,15 +106,12 @@ bool Block::isSeeThrough() const {
   return blockDefinitions[mIdentifier.getBlockType()].isSeeThrough;
 }
 bool Block::spawnsItem() const {
-  return blockDefinitions[mIdentifier.getBlockType()].spawnsItem;
+  return blockDefinitions[mIdentifier.getBlockType()].itemType !=
+         ItemType_Invalid;
 }
-std::unique_ptr<Item> Block::getItem() const {
-  switch (mIdentifier.getBlockType()) {
-    case BlockTypeRockBlock:
-      return std::make_unique<RockBlockItem>();
-    default:
-      return nullptr;
-  }
+
+ItemType Block::getItem() const {
+  return blockDefinitions[mIdentifier.getBlockType()].itemType;
 }
 
 bool Block::isExplored() const { return mExplored; }
@@ -127,4 +121,9 @@ const BlockIdentifier& Block::getIdentifier() const { return mIdentifier; }
 void to_json(SerializedObj& out, const Block& block) {
   out["identifier"] = block.getIdentifier();
   out["explored"] = block.isExplored();
+}
+
+void from_json(const SerializedObj& in, Block& block) {
+  block.mExplored = in["explored"];
+  block.mIdentifier = in["identifier"];
 }

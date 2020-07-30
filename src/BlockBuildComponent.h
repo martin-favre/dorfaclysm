@@ -23,19 +23,14 @@ class BlockBuildComponent : public Component {
   void update() override {
     const auto& actors = mGridMap.getGridActorsAt(owner().getPosition());
     for (const auto& actor : actors) {
-      if (actor->getType() == GridActor::item) {
-        ItemContainer* cont = actor->owner().getComponent<ItemContainer>();
-        ASSERT(cont, "ItemObject without Itemcontainer, not ok");
-        std::unique_ptr<Item> item = cont->getItem(mNeededItem);
-        if (item) {
-          ASSERT(item->isPlaceable(), "This should be a placeable item");
-          IPlaceableItem* placeableItem =
-              dynamic_cast<IPlaceableItem*>(item.get());
-          ASSERT(placeableItem, "Says it's placeable, so should be placeable");
-          mGridMap.setBlockAt(owner().getPosition(), placeableItem->getBlock());
-          Engine::removeGameObject(&owner());
-          mGridMap.getBlockAt(owner().getPosition()).setExplored();
-        }
+      ItemContainer* cont = actor->owner().getComponent<ItemContainer>();
+      if (!cont) continue;
+
+      Item item = cont->getItem(mNeededItem);
+      if (item.isValid() && item.isPlaceable()) {
+        mGridMap.setBlockAt(owner().getPosition(), item.getBlockType());
+        Engine::removeGameObject(&owner());
+        mGridMap.getBlockAt(owner().getPosition()).setExplored();
       }
     }
   }

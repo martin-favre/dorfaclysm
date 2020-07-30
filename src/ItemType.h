@@ -1,7 +1,6 @@
 #pragma once
-#include <memory>
 enum ItemType {
+  ItemType_Invalid,
   ItemType_RockBlockItem,
+  ItemType_NumberOfItems
 };
-class Item;
-std::unique_ptr<Item> generateItem(ItemType type);

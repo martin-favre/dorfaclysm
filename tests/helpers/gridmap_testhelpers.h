@@ -9,9 +9,9 @@ inline void generateFlatWorld(GridMap& gridMap, const Vector3DInt& size) {
       for (int x = 0; x < size.x; ++x) {
         const Vector3DInt pos{x, y, z};
         if (z < firstPassableHeight) {
-          gridMap.setBlockAt(pos, std::make_unique<Block>(BlockTypeRockBlock));
+          gridMap.setBlockAt(pos, Block(BlockTypeRockBlock));
         } else {
-          gridMap.setBlockAt(pos, std::make_unique<Block>(BlockTypeAirBlock));
+          gridMap.setBlockAt(pos, Block(BlockTypeAirBlock));
         }
       }
     }

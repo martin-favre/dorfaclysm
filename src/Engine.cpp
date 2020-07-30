@@ -185,22 +185,26 @@ void Engine::putGameObjectsIntoWorld() {
   Engine::runSetups(addedItems);
 }
 void Engine::removeGameObjectFromWorld() {
-  std::scoped_lock lock(mMutex);
+  std::vector<std::unique_ptr<GameObject>> removedObjects;
+  {
+    std::scoped_lock lock(mMutex);
+    for (auto gObj_to_remove : mGameobjectsToRemove) {
+      auto gObj_in_world = mGameobjects.begin();
+      while (gObj_in_world != mGameobjects.end()) {
+        if ((gObj_in_world->get()) == (gObj_to_remove)) {
+          removedObjects.emplace_back(std::move(*gObj_in_world));
+          gObj_in_world = mGameobjects.erase(gObj_in_world);
+          continue;
+        }
 
-  for (auto gObj_to_remove = mGameobjectsToRemove.begin();
-       gObj_to_remove != mGameobjectsToRemove.end(); ++gObj_to_remove) {
-    auto gObj_in_world = mGameobjects.begin();
-    while (gObj_in_world != mGameobjects.end()) {
-      if ((gObj_in_world->get()) == (*gObj_to_remove)) {
-        (*gObj_in_world)->teardown();
-        gObj_in_world = mGameobjects.erase(gObj_in_world);
-        continue;
+        ++gObj_in_world;
       }
-
-      ++gObj_in_world;
     }
+    mGameobjectsToRemove.clear();
   }
-  mGameobjectsToRemove.clear();
+  for (auto& obj : removedObjects) {
+    obj->teardown();
+  }
 }
 
 void Engine::runSetups(std::vector<GameObject*>& gameobjects) {
@@ -211,7 +215,7 @@ void Engine::runSetups(std::vector<GameObject*>& gameobjects) {
 
 GameObject* Engine::getGameObject(const Uuid& identifier) {
   for (auto& go : mGameobjects) {
-    // When a component wants to get 
+    // When a component wants to get
     // the gameobjects it's being deleted from
     // go may be null.
     if (go && go->getIdentifier() == identifier) {
@@ -243,7 +247,7 @@ void Engine::loadScene() {
       mGameobjectsToAdd.emplace_back(std::make_unique<GameObject>(obj));
     }
   }
-{
+  {
     // gently clear all gameobjects
     for (const auto& gObj : mGameobjects) {
       removeGameObject(gObj.get());

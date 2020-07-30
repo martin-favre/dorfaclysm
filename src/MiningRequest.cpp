@@ -35,8 +35,6 @@ bool MiningRequest::isValid() const {
 
 const Vector3DInt &MiningRequest::getPos() const { return mPos; }
 bool MiningRequest::operator==(const MiningRequest &other) const {
-  ASSERT(isValid(), "Check if block is valid before calling");
-  ASSERT(other.isValid(), "Check if block is valid before calling");
   return mTarget == other.mTarget && mPos == other.mPos;
   }
 

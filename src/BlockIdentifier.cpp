@@ -13,7 +13,8 @@ bool BlockIdentifier::operator==(const BlockIdentifier& block) const {
 int BlockIdentifier::getVersion() const { return mVersion; }
 BlockType BlockIdentifier::getBlockType() const { return mType; }
 
-BlockIdentifier BlockIdentifier::generateReplacement(const BlockType& newType) const {
+BlockIdentifier BlockIdentifier::generateReplacement(
+    const BlockType& newType) const {
   BlockIdentifier out{newType};
   out.mVersion = mVersion + 1;
   return out;
@@ -22,4 +23,9 @@ BlockIdentifier BlockIdentifier::generateReplacement(const BlockType& newType) c
 void to_json(SerializedObj& out, const BlockIdentifier& vec) {
   out["version"] = vec.getVersion();
   out["type"] = vec.getBlockType();
+}
+
+void from_json(const SerializedObj& in, BlockIdentifier& ident) {
+  ident.mVersion = in["version"];
+  ident.mType = in["type"];
 }

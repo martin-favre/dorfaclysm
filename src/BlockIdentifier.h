@@ -6,17 +6,23 @@
 
 class BlockIdentifier {
  public:
-  BlockIdentifier(const BlockType& type);        // create new
-  BlockIdentifier(const SerializedObj& serObj);  // unserialize existing
+  BlockIdentifier() = default;
+  BlockIdentifier(const BlockType& type);
+  BlockIdentifier(const SerializedObj& serObj);
   BlockIdentifier(const BlockIdentifier&) = default;
+  BlockIdentifier(BlockIdentifier&&) = default;
+  BlockIdentifier& operator=(BlockIdentifier&&) = default;
+  BlockIdentifier& operator=(const BlockIdentifier&) = default;
   bool operator==(const BlockIdentifier& block) const;
   int getVersion() const;
   BlockType getBlockType() const;
-  BlockIdentifier generateReplacement(const BlockType& newType)const;
+  BlockIdentifier generateReplacement(const BlockType& newType) const;
+  friend void from_json(const SerializedObj& in, BlockIdentifier& ident);
 
  private:
   int mVersion{0};
-  BlockType mType;
+  BlockType mType{BlockTypeInvalid};
 };
 
 void to_json(SerializedObj& out, const BlockIdentifier& vec);
+void from_json(const SerializedObj& in, BlockIdentifier& ident);

@@ -17,7 +17,6 @@
 #include "MineBlockObject.h"
 #include "MiningRequestPool.h"
 #include "PlayerRequestType.h"
-#include "RockBlockItem.h"
 #include "Serializer.h"
 const std::map<int, PlayerControllerComponent::Mode>
     PlayerControllerComponent::mKeyToMode = {

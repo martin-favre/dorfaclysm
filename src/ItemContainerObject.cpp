@@ -10,6 +10,7 @@ ItemContainerObject::ItemContainerObject() {
   addComponent<GridActor>(GridActor::item);
   addComponent<ItemContainer>();
   addComponent<SpriteComponent>(Paths::RG_TILE, Vector2DInt{8, 6});
+  addComponent<Inventory>();
   setRenderDepth(RenderDepths::Actors);
   setName("Item Container");
 }

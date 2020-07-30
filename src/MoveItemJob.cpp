@@ -60,7 +60,7 @@ class FetchWalkingState : public WalkingState {
 class PlaceWalkingState : public WalkingState {
  public:
   PlaceWalkingState(GridActor& user, std::shared_ptr<MoveItemRequest> request,
-                    std::unique_ptr<Item>&& item)
+                    Item&& item)
       : WalkingState(user, msPerMove),
         mUser(user),
         mRequest(request),
@@ -74,7 +74,7 @@ class PlaceWalkingState : public WalkingState {
       : WalkingState(user, 100),
         mUser(user),
         mRequest(std::make_shared<MoveItemRequest>(serObj.at("request"))),
-        mItem(generateItem(serObj.at("item"))),
+        mItem(serObj.at("item")),
         mTargetPos(serObj.at("position")) {}
 
   SerializedObj serialize() const override {
@@ -83,7 +83,7 @@ class PlaceWalkingState : public WalkingState {
     out["type"] = State_PlaceWalkingState;
     out["request"] = *mRequest;
     out["position"] = mTargetPos;
-    out["item"] = mItem->getItemType();
+    out["item"] = mItem.getItemType();
     return out;
   }
 
@@ -99,7 +99,7 @@ class PlaceWalkingState : public WalkingState {
  private:
   GridActor& mUser;
   std::shared_ptr<MoveItemRequest> mRequest;
-  std::unique_ptr<Item> mItem;
+  Item mItem;
   Vector3DInt mTargetPos;
 };
 
@@ -107,11 +107,10 @@ std::unique_ptr<State> FetchWalkingState::onReachedTarget() {
   const auto& gridActors =
       GridMap::getActiveMap().getGridActorsAt(mUser.getCurrentPos());
   for (const auto& actor : gridActors) {
-    if (actor->getType() == GridActor::item) {
-      ItemContainer* cmp = actor->owner().getComponent<ItemContainer>();
-      ASSERT(cmp, "Got item component without itemcontainer");
-      std::unique_ptr<Item> item = cmp->getItem(mRequest->getType());
-      if (item) {
+    ItemContainer* cmp = actor->owner().getComponent<ItemContainer>();
+    if (cmp) {
+      Item item = cmp->getItem(mRequest->getType());
+      if (item.isValid()) {
         return transitTo<PlaceWalkingState>(mUser, std::move(mRequest),
                                             std::move(item));
       }

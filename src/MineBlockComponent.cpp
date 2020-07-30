@@ -1,10 +1,19 @@
 #include "MineBlockComponent.h"
 
 #include "Block.h"
+#include "Component.h"
 #include "GameObject.h"
 #include "GridMap.h"
 #include "MiningRequestPool.h"
 MineBlockComponent::MineBlockComponent(GameObject& gObj) : Component(gObj) {}
+MineBlockComponent::MineBlockComponent(GameObject& gObj, const SerializedObj& serObj)
+    : Component(gObj, serObj[SerializeString_Parent]) {}
+
+SerializedObj MineBlockComponent::serialize() const {
+  SerializedObj out = createSerializedObj<MineBlockComponent>();
+  out[SerializeString_Parent] = Component::serialize();
+  return out;
+}
 
 void MineBlockComponent::onJobComplete() { owner().destroy(); }
 

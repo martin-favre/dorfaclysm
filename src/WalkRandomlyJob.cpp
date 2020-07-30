@@ -33,7 +33,7 @@ class WaitingState : public State {
 
  private:
   Timer mTimer;
-  int mWaitingTimeMs{3000};
+  int mWaitingTimeMs{200};
 };
 
 class CalculatingPositionState : public State {
