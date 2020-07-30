@@ -46,6 +46,10 @@ class GenericRequestPool {
     mRequests.emplace_back(std::move(request));
   }
 
+  void clearRequests() {
+    mRequests.clear();
+  }
+
   const std::list<std::shared_ptr<T>> &getRequests() const { return mRequests; }
 
  private:
@@ -54,17 +58,12 @@ class GenericRequestPool {
 
 template <class T>
 void to_json(SerializedObj &out, const GenericRequestPool<T> &vec) {
-  std::vector<SerializedObj> requests;
-  for (const std::shared_ptr<T> &req : vec.getRequests()) {
-    requests.emplace_back(*req);
-  }
-  out["requests"] = requests;
+  (void)out;
+  (void)vec;
 }
 
 template <class T>
 void from_json(const SerializedObj &serObj, GenericRequestPool<T> &vec) {
-  std::vector<SerializedObj> requests = serObj.at("requests");
-  for (const SerializedObj &req : requests) {
-    vec.addRequest(std::make_unique<T>(req));
-  }
+  (void)serObj;
+  (void)vec;
 }

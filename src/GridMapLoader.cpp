@@ -3,12 +3,13 @@
 #include "GameObject.h"
 #include "GridMap.h"
 #include "Serializer.h"
+#include "MapGenerator.h"
 
 GridMapLoader::GridMapLoader(GameObject& owner) : Component(owner) {}
 GridMapLoader::GridMapLoader(GameObject& owner, const SerializedObj& serObj)
     : Component(owner, serObj[SerializeString_Parent])
 {
-  GridMap::getActiveMap().loadActiveMap(serObj["gridmap"]);
+  GridMap::getActiveMap().loadActiveMap(serObj["gridmap"], MapGenerator::generate);
 }
 
 SerializedObj GridMapLoader::serialize() const {

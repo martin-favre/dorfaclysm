@@ -52,6 +52,7 @@ void Engine::start() {
 void Engine::stop() { Engine::mRunning = false; }
 
 void Engine::removeGameObject(GameObject* gObj) {
+  if(!Engine::mRunning) return;
   std::scoped_lock lock(mMutex);
   LOG("Removing GameObject " << gObj->name() << " " << gObj);
   Engine::mGameobjectsToRemove.insert(gObj);

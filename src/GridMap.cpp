@@ -24,8 +24,7 @@ GridMap GridMap::mActiveMap;
 
 namespace {
 
-constexpr size_t posToIndex(const Vector3DInt& pos, const Vector3DInt& size)
-{
+constexpr size_t posToIndex(const Vector3DInt& pos, const Vector3DInt& size) {
   return pos.x + size.y * (pos.y + size.z * pos.z);
 }
 
@@ -76,7 +75,7 @@ void allocateGridActors(std::unordered_map<Vector3DInt, std::list<GridActor*>,
 }
 }  // namespace
 
-size_t GridMap::posToIndex(const Vector3DInt& pos) const{
+size_t GridMap::posToIndex(const Vector3DInt& pos) const {
   return ::posToIndex(pos, mActiveMap.mSize);
 }
 
@@ -91,7 +90,8 @@ GridMap& GridMap::generateActiveMap(
   // vector<vector<vector<double>>> f(
   //     3, vector<vector<double>>(4, vector<double>(5)));
 
-  mActiveMap.mBlocks = {static_cast<size_t>(size.x*size.y*size.x), Block(BlockTypeGrassBlock)};
+  mActiveMap.mBlocks = {static_cast<size_t>(size.x * size.y * size.x),
+                        Block(BlockTypeGrassBlock)};
 
   // initializeGrid(mActiveMap.mBlocks, size);
   allocateGridActors(mActiveMap.mGridActors, size);
@@ -134,7 +134,8 @@ bool GridMap::isPosInMap(const Vector3DInt& pos) const {
 
 // Irrelevant if we don't use ptrs
 bool GridMap::isBlockValid(const Vector3DInt& pos) const {
-  return mBlocks[posToIndex(pos)].getIdentifier().getBlockType() != BlockTypeInvalid;
+  return mBlocks[posToIndex(pos)].getIdentifier().getBlockType() !=
+         BlockTypeInvalid;
 }
 
 void GridMap::addItemAt(const Vector3DInt& pos, Item&& item) {
@@ -170,8 +171,10 @@ void GridMap::setBlockAt(const Vector3DInt& pos, BlockType newBlock) {
   std::scoped_lock lock(mLock);
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
   BlockIdentifier newIdent =
-      mBlocks[posToIndex(pos)].getIdentifier().generateReplacement(
-          newBlock);
+      mBlocks[posToIndex(pos)].getIdentifier().generateReplacement(newBlock);
+  if (mBlocks[posToIndex(pos)].getIdentifier().getVersion() > 1) {
+    mModifiedBlocks.emplace(pos);
+  }
   mBlocks[posToIndex(pos)] = Block(newIdent);
 }
 
@@ -179,6 +182,7 @@ void GridMap::setBlockAt(const Vector3DInt& pos, Block&& block) {
   std::scoped_lock lock(mLock);
   ASSERT(isPosInMap(pos), "Trying to get tile out of map");
   mBlocks[posToIndex(pos)] = std::move(block);
+  mModifiedBlocks.emplace(pos);
 }
 
 bool GridMap::isPosFree(const Vector3DInt& pos) const {
@@ -215,31 +219,33 @@ void GridMap::unregisterGridActorAt(const Vector3DInt& pos,
 
 GridMap& GridMap::getActiveMap() { return mActiveMap; }
 
-void GridMap::loadActiveMap(const SerializedObj& serObj) {
+void GridMap::loadActiveMap(
+    const SerializedObj& serObj,
+    std::function<void(GridMap&, const Vector3DInt&)> generator) {
   mActiveMap.mSize = serObj["size"];
-  // initializeGrid(mActiveMap.mBlocks, mActiveMap.mSize);
+  mActiveMap.mBlocks = {
+      static_cast<size_t>(mActiveMap.mSize.x * mActiveMap.mSize.y *
+                          mActiveMap.mSize.z),
+      Block(BlockTypeGrassBlock)};
+  generator(mActiveMap, mActiveMap.mSize);
   allocateGridActors(mActiveMap.mGridActors, mActiveMap.mSize);
-  nlohmann::from_json(serObj["blocks"], mActiveMap.mBlocks);
-
-  // std::vector<SerializedObj> blocks = serObj["blocks"];
-  // for (size_t i = 0; i < blocks.size(); ++i) {
-  //   Vector3DInt pos = indexToPos(i, mActiveMap.mSize);
-  //   mActiveMap.mBlocks[pos.z][pos.y][pos.x] =
-  //       Block(blocks[i]);
-  // }
+  std::vector<SerializedObj> blocks = serObj["blocks"];
+  for (auto serBlock : blocks) {
+    Vector3DInt pos = serBlock[0];
+    Block block = serBlock[1];
+    mActiveMap.setBlockAt(pos, std::move(block));
+  }
 }
 
 void to_json(SerializedObj& json, const GridMap& gridMap) {
-  json["blocks"] = gridMap.mBlocks;
-  // std::vector<SerializedObj> blocks;
-  // for (int z = 0; z < gridMap.mSize.z; ++z) {
-  //   for (int y = 0; y < gridMap.mSize.y; ++y) {
-  //     for (int x = 0; x < gridMap.mSize.x; ++x) {
-  //       blocks.emplace_back(gridMap.getBlockAt({x, y, z}));
-  //     }
-  //   }
-  // }
+  std::vector<SerializedObj> blocks;
+  for (const auto& pos : gridMap.mModifiedBlocks) {
+    SerializedObj block = gridMap.getBlockAt(pos);
+    SerializedObj serPos = pos;
+    SerializedObj pair = {serPos, block};
+    blocks.emplace_back(pair);
+  }
+  json["blocks"] = blocks;
 
   json["size"] = gridMap.mSize;
-  // json["blocks"] = blocks;
 }

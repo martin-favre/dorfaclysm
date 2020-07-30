@@ -5,6 +5,7 @@
 #include <list>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <unordered_map>
 #include <vector>
 
@@ -74,7 +75,9 @@ class GridMap {
   static GridMap& generateActiveMap(
       const Vector3DInt& size,
       std::function<void(GridMap&, const Vector3DInt&)> generator);
-  static void loadActiveMap(const SerializedObj&);
+  static void loadActiveMap(
+      const SerializedObj&,
+      std::function<void(GridMap&, const Vector3DInt&)> generator);
   static GridMap& getActiveMap();
 
  private:
@@ -82,6 +85,8 @@ class GridMap {
   bool isBlockValid(const Vector3DInt& pos) const;
   size_t posToIndex(const Vector3DInt& pos) const;
   std::vector<Block> mBlocks;
+  std::set<Vector3DInt> mModifiedBlocks;
+  // std::unordered_map<Vector3DInt, Block, Vector3DIntHash> mModifiedBlocks;
   std::unordered_map<Vector3DInt, std::list<GridActor*>, Vector3DIntHash>
       mGridActors;
   GridMap() = default;

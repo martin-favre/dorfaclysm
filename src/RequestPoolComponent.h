@@ -8,6 +8,7 @@ class RequestPoolComponent : public Component {
  public:
   RequestPoolComponent(GameObject& owner);
   RequestPoolComponent(GameObject& owner, const SerializedObj& serObj);
+  void teardown() override;
   static std::string getTypeString();
   SerializedObj serialize() const override;
 };
