@@ -26,7 +26,7 @@ const Sprite* getSeeThroughSprite(const GridMap& gridmap, Vector3DInt pos) {
   */
   int depth = 0;
   constexpr uint8_t maxDepth = 20;
-  while (gridmap.getBlockAt(pos).isSeeThrough()) {
+  while (!gridmap.getBlockAt(pos).getTopSprite()) {
     pos += {0, 0, -1};
     ++depth;
     if (depth >= maxDepth) break;
@@ -64,8 +64,8 @@ void GridMapRenderer::prepareViewedArea() {
       const int renderPosX = Camera::tileRenderSize.x * x;
       const int renderPosY = Camera::tileRenderSize.y * y;
 
-      const Sprite* sprite{nullptr};
-      if (block.isSeeThrough()) {
+      const Sprite* sprite = block.getTopSprite();
+      if (!sprite) {
         sprite = getSeeThroughSprite(mActiveGridMap, pos);
       } else {
         // sprite = block.getTopSprite();

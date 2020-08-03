@@ -17,7 +17,6 @@ struct BlockDefinition {
   bool mayPassThrough;
   bool mayClimbUpFrom;
   bool mayWalkOnTop;
-  bool isSeeThrough;
   ItemType itemType;
 };
 
@@ -35,19 +34,18 @@ void loadSprites() {
       SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {2, 6});
 }
 void generateDefinitions() {
-  blockDefinitions[BlockTypeAirBlock] = {
-      "Air", nullptr, true, false, false, true, ItemType_Invalid};
+  blockDefinitions[BlockTypeAirBlock] = {"Air", nullptr, true,
+                                         false, false,   ItemType_Invalid};
 
   blockDefinitions[BlockTypeGrassBlock] = {
-      "Grass", grassBlockSprite.get(), false, false, true,
-      false,   ItemType_Invalid};
+      "Grass", grassBlockSprite.get(), false, false, true, ItemType_Invalid};
 
-  blockDefinitions[BlockTypeRockBlock] = {
-      "Rock", rockBlockSprite.get(), false, false, true,
-      false,  ItemType_RockBlockItem};
+  blockDefinitions[BlockTypeRockBlock] = {"Rock", rockBlockSprite.get(),
+                                          false,  false,
+                                          true,   ItemType_RockBlockItem};
 
   blockDefinitions[BlockTypeStairUpDownBlock] = {
-      "Up/Down Stair", stairUpDownBlockSprite.get(), true, true, true, false,
+      "Up/Down Stair", stairUpDownBlockSprite.get(), true, true, true,
       ItemType_Invalid};
 }
 
@@ -102,9 +100,7 @@ bool Block::supportsJob(PlayerRequestType type) const {
       return false;
   }
 }
-bool Block::isSeeThrough() const {
-  return blockDefinitions[mIdentifier.getBlockType()].isSeeThrough;
-}
+
 bool Block::spawnsItem() const {
   return blockDefinitions[mIdentifier.getBlockType()].itemType !=
          ItemType_Invalid;
