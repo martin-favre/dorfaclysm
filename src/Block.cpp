@@ -29,7 +29,7 @@ std::vector<BlockDefinition> blockDefinitions(
 
 void loadSprites() {
   grassBlockSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {6, 0});
-  rockBlockSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {1, 0});
+  rockBlockSprite = SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {0, 13});
   stairUpDownBlockSprite =
       SpriteLoader::loadSpriteByIndex(Paths::RG_TILE, {2, 6});
 }
