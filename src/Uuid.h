@@ -5,6 +5,7 @@
 
 class Uuid {
  public:
+  Uuid(const Uuid&) = default;
   Uuid(const SerializedObj& rawUuid);
   static Uuid generateNew();
   bool operator==(const Uuid& other) const;

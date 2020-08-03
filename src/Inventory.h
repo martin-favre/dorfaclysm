@@ -1,7 +1,8 @@
 #pragma once
 
 #include <cstddef>
-#include <list>
+#include <functional>
+#include <set>
 #include <memory>
 
 #include "Component.h"
@@ -18,10 +19,13 @@ class Inventory : public Component {
   void addItem(Item&& item);
   Item getItem(ItemType type);
   bool containsItem(ItemType type) const;
-  size_t count() const;
+  size_t countNumberOfItem(ItemType type) const;
+  size_t countItemTypes() const;
   SerializedObj serialize() const override;
   static std::string getTypeString() { return "Inventory"; }
+  void registerOnItemAddedCallback(std::function<void()> onItemAdded);
 
  private:
-  std::list<Item> mItems;
+  std::function<void()> mOnItemAdded;
+  std::map<ItemType, Item> mItems;
 };

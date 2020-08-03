@@ -7,34 +7,47 @@
 #include "ItemType.h"
 #include "Serializer.h"
 
-void Inventory::addItem(Item&& item) { mItems.emplace_back(std::move(item)); }
+void Inventory::addItem(Item&& item) {
+  auto iter{mItems.find(item.getItemType())};
+  if (iter == mItems.end()) {
+    mItems.emplace(item.getItemType(), std::move(item));
+  } else {
+    iter->second.addItems(1);
+  }
+  if(mOnItemAdded) mOnItemAdded();
+}
 
 Item Inventory::getItem(ItemType type) {
-  for (auto it = mItems.begin(); it != mItems.end(); ++it) {
-    if ((*it).getItemType() == type) {
-      Item item = std::move(*it);
-      mItems.erase(it);
-      return item;
-    }
+  auto iter{mItems.find(type)};
+  if (iter != mItems.end()) {
+    Item& myItem = iter->second;
+    Item out{myItem.getItemType()};
+    myItem.addItems(-1);
+    if (myItem.isEmpty()) mItems.erase(iter);
+    return out;
   }
   return Item(ItemType_Invalid);
 }
 
-bool Inventory::containsItem(ItemType type) const {
-  for (const auto& item : mItems) {
-    if (item.getItemType() == type) return true;
-  }
-  return false;
-}
+bool Inventory::containsItem(ItemType type) const { return mItems.count(type); }
 
-size_t Inventory::count() const { return mItems.size(); }
+size_t Inventory::countItemTypes() const { return mItems.size(); }
+
+size_t Inventory::countNumberOfItem(ItemType type) const {
+  auto iter = mItems.find(type);
+  if (iter != mItems.end()) {
+    return iter->second.getCount();
+  } else {
+    return 0;
+  }
+}
 
 Inventory::Inventory(GameObject& owner) : Component(owner) {}
 Inventory::Inventory(GameObject& owner, const SerializedObj& serObj)
     : Component(owner, serObj[SerializeString_Parent]) {
   std::vector<SerializedObj> items = serObj["items"];
-  for(const auto& item : items){
-    mItems.emplace_back(item);
+  for (const auto& item : items) {
+    addItem(Item(item));
   }
 }
 
@@ -43,10 +56,14 @@ SerializedObj Inventory::serialize() const {
   out[SerializeString_Parent] = Component::serialize();
   std::vector<SerializedObj> items;
   for (const auto& item : mItems) {
-    items.emplace_back(item);
+    items.emplace_back(item.second);
   }
   out["items"] = items;
   return out;
+}
+
+void Inventory::registerOnItemAddedCallback(std::function<void()> onItemChanged) {
+  mOnItemAdded = onItemChanged;
 }
 
 // void to_json(SerializedObj& out, const Inventory& inv) {

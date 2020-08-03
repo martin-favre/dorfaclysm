@@ -47,7 +47,7 @@ void ItemContainer::addItem(Item&& item) {
 Item ItemContainer::getItem(ItemType type) {
   if (!mInventory) return Item::invalidItem();
   Item item = mInventory->getItem(type);
-  if (mInventory->count() == 0) owner().destroy();
+  if (mInventory->countItemTypes() == 0) owner().destroy();
   return item;
 }
 

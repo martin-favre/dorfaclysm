@@ -10,4 +10,5 @@ class MapGenerator {
  private:
   static void generateFlatWorld(GridMap& gridMap, const Vector3DInt& size);
   static void generateStairWorld(GridMap& gridMap, const Vector3DInt& size);
+  static void generateTwoLevelWorld(GridMap& gridMap, const Vector3DInt& size);
 };

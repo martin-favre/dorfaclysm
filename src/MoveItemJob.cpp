@@ -129,7 +129,22 @@ std::unique_ptr<State> FetchWalkingState::onReachedTarget() {
 }
 
 std::unique_ptr<State> PlaceWalkingState::onReachedTarget() {
-  GridMap::getActiveMap().addItemAt(mRequest->getPos(), std::move(mItem));
+  if (mRequest->hasRecepient()) {
+    for (auto& actor :
+         GridMap::getActiveMap().getGridActorsAt(mRequest->getPos())) {
+      if (actor->owner().getIdentifier() == mRequest->getRecepient()) {
+        Inventory* inv = actor->owner().getComponent<Inventory>();
+        if (inv) {
+          inv->addItem(std::move(mItem));
+        } else {
+          LOGL("Recepient did not have an inventory", Logging::error);
+          onPathFindFail();
+        }
+      }
+    }
+  } else {
+    GridMap::getActiveMap().addItemAt(mRequest->getPos(), std::move(mItem));
+  }
   terminateMachine();
   return noTransition();
 }

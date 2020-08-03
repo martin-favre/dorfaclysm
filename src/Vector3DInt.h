@@ -6,8 +6,9 @@
 #include <cmath>
 #include <functional>
 #include <ostream>
-#include "Serializer.h"
+
 #include "Helpers.h"
+#include "Serializer.h"
 
 /*-------------------------------------------------------
         Contains 3D vector of integers
@@ -17,6 +18,8 @@ class Vector3DInt {
  public:
   Vector3DInt() = default;
   Vector3DInt(const SerializedObj& serObj);
+  Vector3DInt(Vector3DInt&&) = default;
+  Vector3DInt& operator=(Vector3DInt&&) = default;
   Vector3DInt& operator=(const Vector3DInt& vec) = default;
   Vector3DInt(const Vector3DInt& vec) = default;
   constexpr Vector3DInt(int x_, int y_, int z_ = 0) : x(x_), y(y_), z(z_) {}
@@ -52,6 +55,8 @@ class Vector3DInt {
   constexpr Vector3DInt operator+(const Vector3DInt& val) const {
     return Vector3DInt{x + val.x, y + val.y, z + val.z};
   }
+
+  constexpr Vector3DInt operator+(const Vector2DInt& val) const;
 
   constexpr Vector3DInt operator-(const Vector3DInt& val) const {
     return Vector3DInt{x - val.x, y - val.y, z - val.z};
@@ -89,3 +94,7 @@ void from_json(const SerializedObj& j, Vector3DInt& vec);
 
 constexpr Vector3DInt::Vector3DInt(const Vector2DInt& vec)
     : x(vec.x), y(vec.y) {}
+
+constexpr Vector3DInt Vector3DInt::operator+(const Vector2DInt& vec) const {
+  return Vector3DInt{x + vec.x, y + vec.y, z};
+}

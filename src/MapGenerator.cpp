@@ -46,7 +46,29 @@ void MapGenerator::generateStairWorld(GridMap& gridMap,
     }
   }
 }
-
+// void MapGenerator::generateTwoLevelWorld(GridMap& gridMap,
+//                                          const Vector3DInt& size) {
+//   for (int z = 0; z < size.z; ++z) {
+//     for (int y = 0; y < size.y; ++y) {
+//       for (int x = 0; x < size.x; ++x) {
+//         const Vector3DInt pos{x, y, z};
+//         if (z == 32) {
+//           gridMap.setBlockAt(pos, BlockTypeRockBlock);
+//         } else if (z == 33) {
+//           if (x < 10) {
+//             gridMap.setBlockAt(pos, BlockTypeAirBlock);
+//           } else if (x == 10) {
+//             gridMap.setBlockAt(pos, BlockTypeStairUpDownBlock);
+//           } else {
+//             gridMap.setBlockAt(pos, BlockTypeRockBlock);
+//           }
+//         } else {
+//           gridMap.setBlockAt(pos, BlockTypeAirBlock);
+//         }
+//       }
+//     }
+//   }
+// }
 void MapGenerator::generate(GridMap& gridMap, const Vector3DInt& size) {
   generateStairWorld(gridMap, size);
   // generateFlatWorld(gridMap, size);

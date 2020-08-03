@@ -6,6 +6,8 @@
 #include "BlockBuildComponent.h"
 #include "BlockBuildObject.h"
 #include "BlockBuildingRequestPool.h"
+#include "BuildThingComponent.h"
+#include "BuildThingObject.h"
 #include "Camera.h"
 #include "Component.h"
 #include "Engine.h"
@@ -13,16 +15,19 @@
 #include "GridActor.h"
 #include "GridMap.h"
 #include "GridMapHelpers.h"
+#include "ItemType.h"
 #include "MineBlockComponent.h"
 #include "MineBlockObject.h"
 #include "MiningRequestPool.h"
 #include "PlayerRequestType.h"
 #include "Serializer.h"
+#include "Vector3DInt.h"
 const std::map<int, PlayerControllerComponent::Mode>
     PlayerControllerComponent::mKeyToMode = {
         {SDL_SCANCODE_1, mine},
         {SDL_SCANCODE_2, place},
         {SDL_SCANCODE_3, clear},
+        {SDL_SCANCODE_4, build},
 };
 
 PlayerControllerComponent::PlayerControllerComponent(GameObject& gObj)
@@ -51,6 +56,7 @@ void PlayerControllerComponent::renderText() {
       if (mMode == mine) outStr += "\nMining";
       if (mMode == place) outStr += "\nPlacing";
       if (mMode == clear) outStr += "\nClearing";
+      if (mMode == clear) outStr += "\nBuilding";
       mTextComponent->setText(outStr);
     }
   }
@@ -106,6 +112,28 @@ void PlayerControllerComponent::handleClick() {
         Engine::removeGameObject(&item->owner());
       }
     }
+  } else if (mMode == Mode::build) {
+    for (int x = 0; x < 3; x++) {
+      for (int y = 0; y < 3; y++) {
+        Block& block =
+            gridMap.getBlockAt({mousePos.x + x, mousePos.y + y, mousePos.z});
+        if (!block.supportsJob(requestTypePlacing)) return;
+      }
+    }
+    for (const auto& actor : gridMap.getGridActorsAt(mousePos)) {
+      // if we're not already building here
+      if (actor->owner().hasComponent<BuildThingComponent>()) return;
+    }
+    std::list<std::pair<ItemType, uint>> items = {{ItemType_RockBlockItem, 3}};
+    GameObject& gObj = Engine::addGameObject<BuildThingObject>(
+        std::move(items),
+        [](const Vector3DInt& pos) {
+          Engine::addGameObject<BlockBuildObject>(
+              ItemType(ItemType::ItemType_RockBlockItem))
+              .setPosition(pos);
+        }
+    );
+    gObj.setPosition(mousePos);
   }
 }
 

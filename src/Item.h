@@ -19,6 +19,10 @@ class Item {
   BlockType getBlockType() const;
   bool isPlaceable() const;
   bool isValid() const;
+  uint32_t getCount() const;
+  bool isEmpty() const;
+  void addItems(uint32_t count);
+  void removeItems(uint32_t count);
   static constexpr Item invalidItem() { return Item(ItemType_Invalid); }
 
  private:
@@ -26,6 +30,7 @@ class Item {
   static bool mInitialized;
 
   ItemType mType;
+  uint32_t mCount{1};
 };
 
 void to_json(SerializedObj& out, const Item& item);

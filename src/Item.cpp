@@ -38,17 +38,24 @@ void Item::initialize() {
   if (!mInitialized) {
     loadSprites();
     generateDefinitions();
+    mInitialized = true;
   }
 }
 
-Item::Item(const SerializedObj& serObj) : mType(serObj["type"]) {
+Item::Item(const SerializedObj& serObj)
+    : mType(serObj["type"]), mCount(serObj["count"]) {
   initialize();
 }
 
 void to_json(SerializedObj& out, const Item& item) {
   out["type"] = item.getItemType();
+  out["count"] = item.getCount();
 }
 
+uint32_t Item::getCount() const { return mCount; }
+void Item::addItems(uint32_t count) { mCount += count; }
+void Item::removeItems(uint32_t count) { addItems(-count); }
+bool Item::isEmpty() const { return mCount == 0; }
 const std::string& Item::getName() const { return definitions[mType].name; }
 const std::string& Item::getDescription() const {
   return definitions[mType].description;

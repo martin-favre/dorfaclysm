@@ -17,7 +17,7 @@ class PlayerControllerComponent : public Component
   void render()override;
   static std::string getTypeString();
   private:
-  enum Mode {mine, place, clear};
+  enum Mode {mine, place, clear, build};
   void renderText();
   void handleClick();
   TextComponent* mTextComponent{nullptr};
