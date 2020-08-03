@@ -19,7 +19,6 @@ class Block {
   Block(const Block&) = default;
   Block(Block&&) = default;
   Block(const SerializedObj& block);
-  Block& operator=(const Block&) = default;
   Block& operator=(Block&&) = default;
   ~Block() = default;
   const Sprite* getTopSprite() const;

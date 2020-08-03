@@ -8,7 +8,7 @@
 #include "Sprite.h"
 class Item {
  public:
-  Item(SerializedObj& serObj);
+  Item(const SerializedObj& serObj);
   constexpr Item(ItemType type) : mType(type) {}
   Item(Item&&) = default;
   const std::string& getName() const;

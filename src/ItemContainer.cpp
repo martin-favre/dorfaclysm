@@ -38,6 +38,7 @@ std::string ItemContainer::getTypeString() { return "ItemContainer"; }
 
 void ItemContainer::teardown() { ItemPool::unRegisterItem(this); }
 void ItemContainer::addItem(Item&& item) {
+  if (!mInventory) mInventory = owner().getComponent<Inventory>();
   if (mInventory) {
     mInventory->addItem(std::move(item));
   }

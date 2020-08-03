@@ -20,12 +20,16 @@ class FetchWalkingState : public WalkingState {
     bool success = ItemPool::whereIsClosestItem(
         mUser.getCurrentPos(), mTargetPos, mRequest->getType());
     if (!success) {
+      LOGL("Could not find item to move", Logging::info);
       onPathFindFail();
       return;
     }
     success = GridMapHelpers::getClosestFreePositionTo(
         GridMap::getActiveMap(), mTargetPos, mTargetPos, 1);
-    if (!success) onPathFindFail();
+    if (!success) {
+      LOGL("Could not find path to item", Logging::info);
+      onPathFindFail();
+    }
   }
 
   FetchWalkingState(GridActor& user, const SerializedObj& serObj)
@@ -67,7 +71,10 @@ class PlaceWalkingState : public WalkingState {
         mItem(std::move(item)) {
     bool success = GridMapHelpers::getClosestFreePositionTo(
         GridMap::getActiveMap(), mRequest->getPos(), mTargetPos, 1, 1);
-    if (!success) onPathFindFail();
+    if (!success) {
+      LOGL("Could not find position adjecent to target", Logging::info);
+      onPathFindFail();
+    }
   }
 
   PlaceWalkingState(GridActor& user, const SerializedObj& serObj)
@@ -116,6 +123,7 @@ std::unique_ptr<State> FetchWalkingState::onReachedTarget() {
       }
     }
   }
+  LOGL("Could not find item to fetch", Logging::info);
   onPathFindFail();
   return noTransition();
 }

@@ -7,9 +7,7 @@
 #include "ItemType.h"
 #include "Serializer.h"
 
-void Inventory::addItem(Item&& item) {
-  mItems.emplace_back(std::move(item));
-}
+void Inventory::addItem(Item&& item) { mItems.emplace_back(std::move(item)); }
 
 Item Inventory::getItem(ItemType type) {
   for (auto it = mItems.begin(); it != mItems.end(); ++it) {
@@ -33,7 +31,12 @@ size_t Inventory::count() const { return mItems.size(); }
 
 Inventory::Inventory(GameObject& owner) : Component(owner) {}
 Inventory::Inventory(GameObject& owner, const SerializedObj& serObj)
-    : Component(owner, serObj[SerializeString_Parent]) {}
+    : Component(owner, serObj[SerializeString_Parent]) {
+  std::vector<SerializedObj> items = serObj["items"];
+  for(const auto& item : items){
+    mItems.emplace_back(item);
+  }
+}
 
 SerializedObj Inventory::serialize() const {
   SerializedObj out = createSerializedObj<Inventory>();

@@ -41,7 +41,7 @@ void Item::initialize() {
   }
 }
 
-Item::Item(SerializedObj& serObj) : mType(serObj["type"]) { initialize(); }
+Item::Item(const SerializedObj& serObj) : mType(serObj["type"]) { initialize(); }
 
 void to_json(SerializedObj& out, const Item& item) {
   out["type"] = item.getItemType();

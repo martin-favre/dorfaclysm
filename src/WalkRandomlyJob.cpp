@@ -33,7 +33,7 @@ class WaitingState : public State {
 
  private:
   Timer mTimer;
-  int mWaitingTimeMs{200};
+  int mWaitingTimeMs;
 };
 
 class CalculatingPositionState : public State {
@@ -47,7 +47,7 @@ class CalculatingPositionState : public State {
 
 
 std::unique_ptr<State> WalkingRandomlyState::onReachedTarget() {
-  return transitTo<WaitingState>(3000);
+  return transitTo<WaitingState>(200);
 }
 
 std::unique_ptr<State> WaitingState::onDuring() {
